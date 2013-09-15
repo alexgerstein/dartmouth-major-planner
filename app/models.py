@@ -1,11 +1,15 @@
+from flask import session
 from app import db
+from sqlalchemy.ext.associationproxy import association_proxy
 
-course_table = db.Table('course_table',
-	db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
-	db.Column('section_id', db.Integer, db.ForeignKey('offering.id'))
+user_course = db.Table('user_course',
+	db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+	db.Column('offering_id', db.Integer, db.ForeignKey('courses.id'))
 )
 
 class User(db.Model):
+	__tablename__ = 'users'
+
 	id = db.Column(db.Integer, primary_key = True)
 	netid = db.Column(db.String(15), index = True, unique=True)
 	full_name = db.Column(db.String(200))
@@ -13,10 +17,9 @@ class User(db.Model):
 	grad_year = db.Column(db.SmallInteger)
 
 	courses = db.relationship('Offering', 
-		secondary=course_table,
-		primaryjoin = (course_table.c.student_id == id),
-		secondaryjoin = (course_table.c.section_id == id),
-		backref = 'users', lazy='dynamic')
+		secondary=user_course,
+		backref=db.backref('users', lazy = 'dynamic'),
+		lazy = 'dynamic')
 
 	def __init__(self, full_name, netid):
 		self.full_name = full_name
@@ -26,10 +29,23 @@ class User(db.Model):
 	def email(self):
 		return "%s@dartmouth.edu" % self.netid
 
+	def take(self, offering):
+		if not self.is_taking(offering):
+			self.courses.append(offering)
+			return self
+
+	def is_taking(self, offering):
+		return self.courses.filter(user_course.c.offering_id == offering.id).count() > 0
+
+	def get_id(self):
+		return unicode(self.id)
+
 	def __repr__(self):
 		return str(self.netid)
 
 class Offering(db.Model):
+	__tablename__ = 'courses'
+
 	id = db.Column(db.Integer, primary_key = True)
 	course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
 	term_id = db.Column(db.Integer, db.ForeignKey('term.id'))
@@ -37,7 +53,7 @@ class Offering(db.Model):
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 
 	def __repr__(self):
-		return '<%r - %r>' % (Course.query.get(int(course_id)), Term.query.get(int(term_id)))
+		return '<%r>' % (Course.query.get(int(self.course_id)))
 
 class Course(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -50,8 +66,11 @@ class Course(db.Model):
 
 	offerings = db.relationship('Offering', backref = 'course')
 
+	def __init__(self, name):
+		self.name = name
+
 	def __repr__(self):
-		return '<%r %r>' % (self.department, self.number)
+		return '%s' % (self.name)
 
 class Term(db.Model):
 	id = db.Column(db.Integer, primary_key = True)

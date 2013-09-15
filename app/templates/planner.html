@@ -1,7 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if user %}
+{% if user.nickname %}
 <h1>Hi, {{user.nickname}}!</h1>
 {% endif %}
+
+<form action="" method="post" name="add">
+    {{form.hidden_tag()}}
+    <table>
+        <tr>
+            <td>Coursename:</td>
+            <td>
+                {{form.course_name(size = 24)}}
+                {% for error in form.errors.nickname %}
+                <br><span style="color: red;">[{{error}}]</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Add Course"></td>
+        </tr>
+    </table>
+</form>
+
+<h2>My Courses</h2>
+{% for course in user.courses %}
+	{% include 'course.html' %}
+{% endfor %}
 {% endblock %}

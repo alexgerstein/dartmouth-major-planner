@@ -11,3 +11,10 @@ class EditForm(Form):
 	def __init__(self, original_nickname, *args, **kwargs):
 		Form.__init__(self, *args, **kwargs)
 		self.original_nickname = original_nickname
+
+class AddForm(Form):
+	course_name = TextField('Course Name', validators = [Required()])
+
+	def __init__(self, original_name, *args, **kwargs):
+		Form.__init__(self, *args, **kwargs)
+		self.original_name = original_name

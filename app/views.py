@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for, session, g
 from app import app, db
-from models import User
+from models import User, Offering, Course
 from flask_cas import login_required
-from forms import EditForm
+from forms import EditForm, AddForm
 
 @app.before_request
 def fetch_user():
@@ -23,12 +23,50 @@ def index():
         title = 'Home',
         user = g.user)
 
-@app.route('/planner')
+@app.route('/planner', methods = ['GET', 'POST'])
 @login_required
 def planner():
+	form = AddForm("")
+	if form.validate_on_submit():
+		name = form.course_name.data
+		
+		c1 = Course(name)
+		db.session.add(c1)
+		db.session.commit()
+
+		o1 = Offering(course = c1)
+		db.session.add(o1)
+		db.session.commit()
+
+		u = g.user.take(o1)
+		db.session.add(u)
+		db.session.commit()
+
+		flash('Your changes have been saved.')
+		return redirect(url_for('planner'))
+	else:
+		form.course_name.data = ""
+
 	return render_template("planner.html",
         title = 'My Plan',
-        user = g.user)
+        user = g.user,
+        form = form)
+
+@app.route('/take/<id>')
+@login_required
+def take(id):
+	offering = Offering.query.filter_by(id = id).first()
+	if offering == None:
+		flash('Course offering ' + id + ' not found.')
+		return redirect(url_for('planner'))
+	u = g.user.take(offering)
+	if u is None:
+		flash('Cannot take ' + id + '.')
+		return redirect(url_for('planner'))
+	db.session.add(u)
+	db.session.commit()
+	flash('You are now taking ' + id + '!')
+	return (redirect(url_for('planner')))
 
 @app.route('/settings')
 @login_required
