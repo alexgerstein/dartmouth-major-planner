@@ -1,0 +1,32 @@
+<html>
+  <head>
+  	{% if title %}
+    <title>{{title}} - Major Planner</title>
+    {% else %}
+    <title>Welcome to Dartmouth Major Planner</title>
+    {% endif %}
+  </head>
+  <body>
+      <div>Dartmouth Major Planner: 
+        <a href="/index">Home</a>
+        {% if user %}
+        | <a href="{{ url_for('planner') }}">My Course Plan</a>
+        | <a href="{{ url_for('settings') }}">Settings</a>
+        | <a href="{{ url_for('flask_cas.logout') }}">Logout</a>
+        {% else %}
+        | <a href="{{ url_for('flask_cas.login') }}">Login</a>
+        {% endif %}
+      </div>
+      <hr>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul>
+      {% for message in messages %}
+          <li>{{ message }} </li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+  </body>
+</html>
