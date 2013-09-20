@@ -1,6 +1,5 @@
 *.py[cod]
 *.db
-tests.py
 config.py
 get_course_names.py
 
