@@ -9,10 +9,19 @@
     {{form.hidden_tag()}}
     <table>
         <tr>
-            <td>Coursename:</td>
+            <td>Department:</td>
             <td>
-                {{form.course_name(size = 24)}}
-                {% for error in form.errors.nickname %}
+                {{form.dept_name}}
+                {% for error in form.errors.dept_name %}
+                <br><span style="color: red;">[{{error}}]</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td>Course:</td>
+            <td>
+                {{form.course_name}}
+                {% for error in form.errors.course_name %}
                 <br><span style="color: red;">[{{error}}]</span>
                 {% endfor %}
             </td>
@@ -24,8 +33,4 @@
     </table>
 </form>
 
-<h2>My Courses</h2>
-{% for course in user.courses %}
-	{% include 'course.html' %}
-{% endfor %}
 {% endblock %}

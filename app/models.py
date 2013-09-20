@@ -53,11 +53,11 @@ class Offering(db.Model):
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 
 	def __repr__(self):
-		return '<%r>' % (Course.query.get(int(self.course_id)))
+		return '%r' % (Course.query.get(int(self.course_id)))
 
 class Course(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
-	number = db.Column(db.SmallInteger, unique = True)
+	number = db.Column(db.SmallInteger)
 	name = db.Column(db.String(200), index = True)
 
 	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
@@ -66,11 +66,13 @@ class Course(db.Model):
 
 	offerings = db.relationship('Offering', backref = 'course')
 
-	def __init__(self, name):
+	def __init__(self, number, name, department):
 		self.name = name
+		self.number = number
+		self.department_id = department
 
 	def __repr__(self):
-		return '%s' % (self.name)
+		return '%03d - %s' % (self.number, self.name)
 
 class Term(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -91,7 +93,6 @@ class Hour(db.Model):
 
 class Professor(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
-	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
 	name = db.Column(db.String(100), index = True, unique = True)
 	
 	offerings = db.relationship('Offering', backref = 'professor')
@@ -102,12 +103,16 @@ class Professor(db.Model):
 class Department(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	name = db.Column(db.String(50), index = True, unique = True)
+	abbr = db.Column(db.String(10), index = True, unique = True)
 
 	courses = db.relationship('Course', backref = 'department')
-	professors = db.relationship('Professor', backref = 'department')
+
+	def __init__(self, name, abbr):
+		self.name = name
+		self.abbr = abbr
 
 	def __repr__(self):
-		return '<%s>' % (self.name)
+		return '%s - %s' % (self.abbr, self.name)
 
 class Distrib(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -116,7 +121,7 @@ class Distrib(db.Model):
 	courses = db.relationship('Course', backref = 'distrib')
 
 	def __repr__(self):
-		return '<%s>' % (self.distributive)
+		return '%s' % (self.distributive)
 
 class Wc(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -125,4 +130,4 @@ class Wc(db.Model):
 	courses = db.relationship('Course', backref = 'wc')
 
 	def __repr__(self):
-		return '<%s>' % (self.wc)
+		return '%s' % (self.wc)

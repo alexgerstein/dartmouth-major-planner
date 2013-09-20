@@ -1,3 +1,5 @@
+# Adapted from Dartmouth Hacker Club
+
 from flask import Blueprint, request, make_response, redirect, session, url_for
 import urllib
 import requests

@@ -1,7 +1,8 @@
 from flask.ext.wtf import Form, TextField, IntegerField
-from wtforms import TextField, IntegerField
+from wtforms import TextField, IntegerField, SelectField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import Required, Length, NumberRange
-from app.models import User
+from app.models import Course, User, Department
 
 
 class EditForm(Form):
@@ -12,9 +13,6 @@ class EditForm(Form):
 		Form.__init__(self, *args, **kwargs)
 		self.original_nickname = original_nickname
 
-class AddForm(Form):
-	course_name = TextField('Course Name', validators = [Required()])
-
-	def __init__(self, original_name, *args, **kwargs):
-		Form.__init__(self, *args, **kwargs)
-		self.original_name = original_name
+class DeptForm(Form):
+	dept_name = QuerySelectField('Department', query_factory=Department.query.all, allow_blank=True)
+	course_name = QuerySelectField('Course', allow_blank=True)

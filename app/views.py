@@ -1,8 +1,8 @@
-from flask import render_template, flash, redirect, url_for, session, g
+from flask import render_template, request, flash, redirect, url_for, session, g
 from app import app, db
-from models import User, Offering, Course
+from models import User, Offering, Course, Department
 from flask_cas import login_required
-from forms import EditForm, AddForm
+from forms import EditForm, DeptForm
 
 @app.before_request
 def fetch_user():
@@ -26,27 +26,14 @@ def index():
 @app.route('/planner', methods = ['GET', 'POST'])
 @login_required
 def planner():
-	form = AddForm("")
+	form = DeptForm()
+	form.course_name.query_factory = Course.query.filter_by(department = form.dept_name.data).all
+
+	
 	if form.validate_on_submit():
-		name = form.course_name.data
-		
-		c1 = Course(name)
-		db.session.add(c1)
-		db.session.commit()
-
-		o1 = Offering(course = c1)
-		db.session.add(o1)
-		db.session.commit()
-
-		u = g.user.take(o1)
-		db.session.add(u)
-		db.session.commit()
 
 		flash('Your changes have been saved.')
-		return redirect(url_for('planner'))
-	else:
-		form.course_name.data = ""
-
+	
 	return render_template("planner.html",
         title = 'My Plan',
         user = g.user,
@@ -98,4 +85,4 @@ def edit():
 		form.nickname.data = g.user.nickname
 		form.grad_year.data = g.user.grad_year
 	return render_template('edit.html',
-		form = form)
+		form = form, user = g.user)
