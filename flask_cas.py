@@ -4,7 +4,7 @@ from flask import Blueprint, request, make_response, redirect, session, url_for
 import urllib
 import requests
 from lxml import etree
-from functools import wraps
+
 
 from config import CAS_URL, APP_NAME
 
@@ -35,14 +35,6 @@ def login():
         return cas_login(callback_url)
 
     return redirect(url_for('planner'))
-
-def login_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        if 'user' not in session:
-            return redirect(url_for('flask_cas.login'))
-        return fn(*args, **kwargs)
-    return wrapper
 
 @flask_cas.route("/logout")
 def logout():

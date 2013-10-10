@@ -13,6 +13,14 @@ class EditForm(Form):
 		Form.__init__(self, *args, **kwargs)
 		self.original_nickname = original_nickname
 
-class DeptForm(Form):
-	dept_name = QuerySelectField('Department', query_factory=Department.query.all, allow_blank=True)
-	course_name = QuerySelectField('Course', allow_blank=True)
+class DeptPickerForm(Form):
+	dept_name = SelectField('Department', coerce=int)
+
+	def validate(self):
+
+		print self.dept_name.data
+
+		if self.dept_name.data == -1:
+			return False
+
+		return True

@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% include 'flash.html' %}
+
 {% if user.nickname %}
 <h1>Hi, {{user.nickname}}!</h1>
 {% endif %}
+
+<style type="text/css">
+    .term {float: right;}
+    .classesBlock {float: left;}
+    .sortable1, .sortable2 { list-style-type: none; margin: 0; padding: 0; margin-right: 100px; background: #eee; padding: 5px; width: 300px; border: 1px solid black;}
+    .sortable1 li, .sortable2 li{ cursor: move; margin: 5px; padding: 5px; font-size: 1em; width: 250px;  background: none; background-color: white;}
+</style>
 
 <form action="" method="post" name="add">
     {{form.hidden_tag()}}
@@ -17,20 +27,92 @@
                 {% endfor %}
             </td>
         </tr>
-        <tr>
-            <td>Course:</td>
-            <td>
-                {{form.course_name}}
-                {% for error in form.errors.course_name %}
-                <br><span style="color: red;">[{{error}}]</span>
-                {% endfor %}
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input type="submit" value="Add Course"></td>
-        </tr>
+
     </table>
 </form>
+
+<div class="classesBlock">
+    <h2>Courses</h2>
+    <ul id="" class="sortable1 dropfalse" unselectable="on" style="max-height: 128px; overflow:scroll; list-style-type: none;"></ul>
+</div>
+
+<div class="termsBlock">
+    <h2>My Terms</h2>
+    {% for term in terms %}
+        <div class="term">
+            <h3>{{term}}</h3>
+            <ul class="sortable2 droptrue ui-sortable" unselectable="on" style="max-height: 128px; overflow:scroll; list-style-type: none">
+                {% for course in courses %}
+                    {% if course.term == term %}
+                        <li class='ui-state-default draggable' id="'""'"> 
+                            {{course}}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+$(".term").each(function() {
+        var $box = $( this );
+        $box.find("ul").attr("id", $box.find("h3").text());
+    })
+
+$(".sortable1, .sortable2").sortable({
+    cursor: "crosshair",
+    connectWith: '.droptrue',
+    opacity: 0.6,
+    zIndex: 10000,
+    scroll: false,
+    receive: saveCourse
+  });
+
+$(".sortable1, .sortable2").disableSelection();
+
+$("#dept_name").change(function () {
+    var selectVal = $('#dept_name').find(":selected").val();
+    showCourses(selectVal)
+});
+
+function saveCourse(event, ui) {
+    if (ui.sender =! null) {
+        var posting = $.post('/savecourse', { course_item: ui.item.text(), term: $( this ).attr("id")});
+    };
+}
+
+function showCourses(dept){
+    var posting = $.post('/getcourses', { dept: dept });
+    
+    posting.done(function (data) {
+        $(".classesBlock ul.sortable1").empty();
+        $.each(data['courses'], function(index, item) {
+            $(".classesBlock ul.sortable1").append("<li class='ui-state-default draggable' id='" + item['full_name'] + "' >" + item['full_name'] + "</li>");
+        });
+        $(".sortable1, .sortable2").css('minHeight',$(".sortable1").height()+"px");
+
+    });
+
+
+    // posting.fail(function (xhr, textStatus, errorThrown) {
+    //     alert(xhr.responseText);
+    // });
+    // }).done(function(courses) {
+    //     alert ("AND AGAIN!");
+    // }
+    //     $('#course_name').get(0).options.length = 0;
+    //     $('#course_name').get(0).options[0] = new Option("Select course", "-1");
+
+    //     .each(courses['courses'], function(index, item) {
+    //         $("#course_name").get(0),options[$("course_name").get(0).options.length] = new Option(item.number, item.name)
+    //     })
+    // }).fail(function() {
+    //     $('#course_name').get(0).options.length = 0;
+    //     flash('Error: Could not contact server.')
+    // });
+}
+</script>
+
 
 {% endblock %}
