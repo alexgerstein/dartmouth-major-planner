@@ -72,16 +72,19 @@ def index():
         title = 'Home',
         user = g.user)
 
-@app.route('/planner', methods = ['GET', 'POST'])
+@app.route('/planner', methods = ['GET'])
 @login_required
 @year_required
 def planner():
+
 	form = DeptPickerForm()
+
 	form.dept_name.choices = [(a.id, a.abbr + " - " + a.name) for a in Department.query.order_by('abbr')]
 	form.dept_name.choices.insert(0, (-1,"Choose a Department"))
-
+	
 	if form.validate_on_submit():
 		flash('Your changes have been saved.')
+
 	return render_template("planner.html",
         title = 'My Plan',
         user = g.user,
@@ -102,45 +105,55 @@ def getcourses():
 @login_required
 def savecourse():
 
-	split_course = request.form["course_item"].split(" ")
+	split_course = request.form["course_item"].strip().split(" ")
 
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 
-
 	year = "20" + request.form['term'][:2]
-	print year
 	season = request.form['term'][2]
 
 	t = Term.query.filter_by(year = year, season = season).first()
 
-	o1 = Offering.query.filter_by(course = c1).first()
+	o1 = Offering.query.filter_by(course = c1, term = t).first()
 	if (o1 is None):
 		o1 = Offering(course = c1, term = t.id)
 		db.session.add(o1)
-		g.user.take(o1)
 		if not c1.is_offering(o1):
 			c1.offer(o1)
 
-		db.session.commit()
+	success = g.user.take(o1)
+	if success is None:
+		j = jsonify( { 'error' : "Course could not be added" } )
 
-	return jsonify ( {} )
+		return j
 
-@app.route('/take/<id>')
-@login_required
-def take(id):
-	offering = Offering.query.filter_by(id = id).first()
-	if offering == None:
-		flash('Course offering ' + id + ' not found.')
-		return redirect(url_for('planner'))
-	u = g.user.take(offering)
-	if u is None:
-		flash('Cannot take ' + id + '.')
-		return redirect(url_for('planner'))
-	db.session.add(u)
 	db.session.commit()
-	flash('You are now taking ' + id + '!')
-	return (redirect(url_for('planner')))
+
+	j = jsonify( { 'name' : str(o1) } )
+
+	return j
+
+@app.route('/removecourse', methods = ['POST'])
+@login_required
+def removecourse():
+	
+	split_course = request.form["course"].strip().split(" ")
+
+	d1 = Department.query.filter_by(abbr = split_course[0]).first()
+	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+	year = "20" + request.form['term'][:2]
+	season = request.form['term'][2]
+	
+	t = Term.query.filter_by(year = year, season = season).first()
+
+	o1 = Offering.query.filter_by(course = c1, term = t).first()
+
+	g.user.drop(o1)
+	db.session.commit()
+
+	return jsonify ({})
+
 
 @app.route('/settings')
 @login_required
@@ -149,7 +162,7 @@ def settings():
 
 @app.route('/user/<netid>')
 @login_required
-def user(netid, page = 1):
+def user(netid):
 	user = User.query.filter_by(netid = netid).first()
 	if user == None:
 		flash('User ' + netid + ' not found.')

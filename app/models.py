@@ -36,6 +36,13 @@ class User(db.Model):
 			self.courses.append(offering)
 			return self
 
+		return None
+
+	def drop(self, offering):
+		if self.is_taking(offering):
+			self.courses.remove(offering)
+			return self
+
 	def add_term(self, term):
 		self.terms.append(term)
 		return self
@@ -63,13 +70,17 @@ class Offering(db.Model):
 	professor_id = db.Column(db.Integer, db.ForeignKey('professor.id'))
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 
-
 	def __init__(self, course, term):
 		self.course_id = course
 		self.term_id = term
 
+	def get_full_name(self):
+		return str(Course.query.filter_by(id = self.course_id).first())
+
 	def __repr__(self):
-		return str((Course.query.filter_by(id = self.course_id)).first())
+		course = Course.query.filter_by(id = self.course_id).first()
+
+		return "%s %03d" % (course.department.abbr, course.number)
 
 class Course(db.Model):
 	__tablename__ = 'course'
@@ -99,17 +110,15 @@ class Course(db.Model):
 
 	@property
 	def serialize(self):
-		full_name = '%s %s - %s' % (self.department.abbr, self.number, self.name)
-
 		return {
-		'full_name' :	full_name,
+		'full_name' :	str(self),
 		'id'		:	self.id,
 		'number' 	:	self.number,
 		'name'		:	self.name
 		}
 
 	def __repr__(self):
-		return '%s %03d - %s' % (self.department.abbr, self.number, self.name)
+		return '%s %s - %s' % (self.department.abbr, self.number, self.name)
 
 class Term(db.Model):
 	__tablename__ = 'term'
