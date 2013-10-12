@@ -5,7 +5,7 @@ from models import User, Offering, Course, Department, Term
 from forms import EditForm, DeptPickerForm
 from functools import wraps
 
-seasons = ["W", "S", "X", "F"]
+SEASONS = ["W", "S", "X", "F"]
 
 def login_required(fn):
     @wraps(fn)
@@ -28,21 +28,19 @@ def year_required(fn):
 
 def add_terms(grad_year):
 	# Add Freshman Fall
-	t = Term.query.filter_by(year=grad_year - 4, season=seasons[3]).first()
+	t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
 	if t is None:
-		t = Term(grad_year - 4, seasons[3])
+		t = Term(grad_year - 4, SEASONS[3])
 		db.session.add(t)
-		g.user.add_term(t)
-		print "Added: " + str(t) + "\n"
+	g.user.add_term(t)
 
 	for year_diff in reversed(range(4)):
-		for season in seasons:
+		for season in SEASONS:
 			t = Term.query.filter_by(year=grad_year - year_diff, season=season).first()
 			if t is None:
 				t = Term(grad_year - year_diff, season)
 				db.session.add(t)
 			g.user.add_term(t)
-			print "Added: " + str(t) + "\n"
 	
 	# Remove Extra Fall
 	db.session.expunge(t)
@@ -116,13 +114,11 @@ def savecourse():
 	t = Term.query.filter_by(year = year, season = season).first()
 
 	o1 = Offering.query.filter_by(course = c1, term = t).first()
-	if (o1 is None):
-		o1 = Offering(course = c1, term = t.id)
-		db.session.add(o1)
-		if not c1.is_offering(o1):
-			c1.offer(o1)
 
-	success = g.user.take(o1)
+	success = None
+	if o1 is not None:
+		success = g.user.take(o1)
+	
 	if success is None:
 		j = jsonify( { 'error' : "Course could not be added" } )
 
@@ -154,6 +150,27 @@ def removecourse():
 
 	return jsonify ({})
 
+@app.route('/findterms', methods = ['POST'])
+@login_required
+def findterms():
+	# Get Course
+	print request.form['course_item']
+	split_course = request.form['course_item'].strip().split(" ")
+
+
+	d1 = Department.query.filter_by(abbr = split_course[0]).first()
+	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+
+	available_offerings = Offering.query.filter_by(course = c1)
+
+	terms = []
+	for offering in available_offerings:
+		if offering.term not in terms:
+			terms.append(offering.term)
+
+	j = jsonify( { 'terms' : [i.serialize for i in terms] })
+
+	return j
 
 @app.route('/settings')
 @login_required

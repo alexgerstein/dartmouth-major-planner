@@ -4,10 +4,11 @@
 	background: #eee; 
 	border: 1px solid black;
 	overflow:scroll; 
+	margin: 5px 0px;
 }
 
 .sortable1 {
-	height: 400px;
+	height: 25%;
 }
 
 .sortable2 {
@@ -21,22 +22,30 @@
 	background-color: white; 
 	border: 1px solid black;
 	vertical-align: middle;
+	z-index: 1000;
 }
 
 .sortable1 li {
 	font-size: 1em;
 }
 
-.sortable2 li {
-	font-size: 1.5em;
+li.draggable.ui-state-default  {
 	line-height: 35px;
+	padding: 0px 5px;
+}
+
+li.term-name {
+	font-size: 1.5em;
+	color: white;
+	background-color: green;
+	text-align: center;
+}
+
+.btn-danger {
+	margin: 0px 6px;
 }
 
 /*.ui-draggable-helper {
 	width: 300px;
 	height: 200px;
 }*/
-
-.btn-danger {
-	line-height: 35px;
-}
