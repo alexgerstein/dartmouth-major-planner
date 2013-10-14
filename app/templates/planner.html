@@ -4,6 +4,8 @@
 
 {% include 'flash.html' %}
 
+<script src="/static/js/planner.js"></script>
+
 <div class="container-fluid">
     <div class="row-fluid">
 
@@ -31,28 +33,16 @@
                             <div class="row-fluid">
                         {% endif %}
                             <div class="span3 term">
-                                <div class="shaded">
                                 <ul id="{{ term }}" class="sortable2 droptrue ui-sortable" unselectable="on">
-                                    <li class="term-name">{{term}}</li>
+                                    <li class="term-name pin">{{term}}</li>
                                     {% for course in courses %}
-                                        {% if course.term == term %}
-                                            <div class="row-fluid">
-                                                <div class="span12">
-                                                    <li id="{{ course.get_full_name() }}" class='ui-state-default draggable'> 
-                                                        <div class="row-fluid">
-                                                            <div class="span12">
-                                                                {{ course }} 
-
-                                                                <a href="#"><i class="btn btn-danger"><span class='icon-trash icon-white'></i></a>
-                                                            </div>
-
-                                                    </li>
-                                                </div>
-                                            </div>
-                                        {% endif %}
+                                    {% if course.term == term %}
+                                        <script>
+                                            addCourse("#{{term}}", "{{ course.get_full_name() }}", "{{ course }}");
+                                        </script>
+                                    {% endif %}
                                     {% endfor %}
                                 </ul>
-                                </div>
                             {% if loop.index + 3 % 4 == 0 %}
                                 </div>
                             {% endif %}
@@ -66,125 +56,41 @@
 
 <script>
 
-window.onload = function () {
-    $("#dept_name").val({{dept}}).trigger('change');
-}
-
-$(".sortable1, .sortable2").sortable({
-    helper: function(event) {
-                return $(event.target).clone().css({
-                    width: $(event.target).width(),
-                    height: $(event.target).height()
-                });
-            },
-    cursor: "crosshair",
-    connectWith: '.droptrue',
-    opacity: 0.6,
-    zIndex: 10000,
-    scroll: false,
-    receive: saveCourse,
-    start: function (event, ui) {
-        $(ui.helper).addClass("ui-draggable-helper");
-        showAvailableSlots(event, ui);
-    },
-    stop: function (event, ui) {
-        $(this).sortable('cancel');
-        clearAvailableSlots(event, ui);
+    window.onload = function () {
+        $("#dept_name").trigger('change');
     }
-  });
 
-$(".sortable1, .sortable2").disableSelection();
-
-$("#dept_name").change(function () {
-    var selectVal = $('#dept_name').find(":selected").val();
-    showCourses(selectVal)
-});
-
-function showAvailableSlots(event, ui) {
-    var posting = $.post('/findterms', { course_item: ui.helper.attr('id') });
-
-    posting.done(function (data) {
-        $.each(data['terms'], function(index, item) {
-            term_id = "#" + item['term'];
-            $(term_id).css("background-color", '#A5E89E');
-        });
-    });
-}
-
-function clearAvailableSlots(event, ui) {
-    $.each($('.sortable2'), function(index, item) {
-        $(this).css("background-color", 'eee');
-    });
-}
-
-function saveCourse(event, ui) {
-    
-    var selectVal = $('#dept_name').find(":selected").val();
-
-    var text = ui.item.text();
-
-    if (ui.sender =! null) {
-        var term_id = ($( this ).attr("id"));
-        var ext_term_id = "#" + term_id;
-        var posting = $.post('/savecourse', { course_item: ui.item.text(), term: term_id });
-
-
-
-        posting.done(function (data) {
-            if (data['error'] != null) {
-                $("#flash span").text(data['error']);
-                return;
-            }
-
-            var obj = ($(".termsBlock").find(ext_term_id));
-            obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + text + '"class="ui-state-default draggable"> <div class="row-fluid"> <div class="span8">' + data['name'] + '</div> <div class="span4"> <a href="#"><i class="btn btn-danger vcenter"><span onclick="removeCourse()"" class="icon-trash icon-white"></i></a> </div> </li> </div> </div>');
-
-            $('i.btn-danger').click(removeCourse);
-        })
-
-    };
-}
-
-
-$('i.btn-danger').click(removeCourse);
-
-function removeCourse(event){
-    var term_id = $( this ).parents('ul').attr('id');
-    $(this).parents('li').parent().remove();
-    var posting = $.post('/removecourse', { course: $(this).parents("li").attr("id"), term: term_id });
-}
-
-
-function showCourses(dept){
-    var posting = $.post('/getcourses', { dept: dept });
-    
-    posting.done(function (data) {
-        $(".classesBlock ul.sortable1").empty();
-        $.each(data['courses'], function(index, item) {
-            $(".classesBlock ul.sortable1").append("<div='row-fluid'> <div='span12'> <li class='ui-state-default draggable' id='" + item['full_name'] + "' >" + item['full_name'] + "</li> </div> </div>");
-        });
-
+    $("#dept_name").change(function () {
+        var selectVal = $('#dept_name').find(":selected").val();
+        showCourses(selectVal)
     });
 
+    $(".sortable1, .sortable2").sortable({
+        helper: function(event) {
+                    return $(event.target).clone().css({
+                        width: $(event.target).width(),
+                        height: $(event.target).height(),
+                    });
+                },
+        items: "li:not(.pin)",
+        cursor: "crosshair",
+        connectWith: '.droptrue',
+        opacity: 0.6,
+        zIndex: 10000,
+        scroll: false,
+        receive: saveCourse,
+        start: function (event, ui) {
+            $(ui.helper).addClass("ui-draggable-helper");
+            showAvailableSlots(event, ui);
+        },
+        stop: function (event, ui) {
+            $(this).sortable('cancel');
+            clearAvailableSlots(event, ui);
+        }
+      });
 
-    // posting.fail(function (xhr, textStatus, errorThrown) {
-    //     alert(xhr.responseText);
-    // });
-    // }).done(function(courses) {
-    //     alert ("AND AGAIN!");
-    // }
-    //     $('#course_name').get(0).options.length = 0;
-    //     $('#course_name').get(0).options[0] = new Option("Select course", "-1");
+    $(".sortable1, .sortable2").disableSelection();
 
-    //     .each(courses['courses'], function(index, item) {
-    //         $("#course_name").get(0),options[$("course_name").get(0).options.length] = new Option(item.number, item.name)
-    //     })
-    // }).fail(function() {
-    //     $('#course_name').get(0).options.length = 0;
-    //     flash('Error: Could not contact server.')
-    // });
-}
 </script>
-
 
 {% endblock %}

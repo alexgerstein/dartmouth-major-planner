@@ -121,7 +121,6 @@ def savecourse():
 	
 	if success is None:
 		j = jsonify( { 'error' : "Course could not be added" } )
-
 		return j
 
 	db.session.commit()
@@ -138,6 +137,7 @@ def removecourse():
 
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+	
 	year = "20" + request.form['term'][:2]
 	season = request.form['term'][2]
 	
