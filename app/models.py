@@ -43,6 +43,8 @@ class User(db.Model):
 			self.courses.remove(offering)
 			return self
 
+		return None
+
 	def is_enrolled(self, term):
 		return term in self.terms
 

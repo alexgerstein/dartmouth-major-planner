@@ -151,6 +151,8 @@ def removecourse():
 	
 	split_course = request.form["course"].strip().split(" ")
 
+	print request.form['course']
+
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 	
@@ -161,10 +163,17 @@ def removecourse():
 
 	o1 = Offering.query.filter_by(course = c1, term = t).first()
 
-	g.user.drop(o1)
+	success = g.user.drop(o1)
+
+	if not success:
+		j = jsonify( { 'error' : "Course could not be added" } )
+		return j
+
 	db.session.commit()
 
-	return jsonify ({})
+	j = jsonify ( { 'error' : "", 'course' : str(o1) })
+
+	return j
 
 @app.route('/findterms', methods = ['POST'])
 @login_required
