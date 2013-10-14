@@ -15,7 +15,7 @@ class User(db.Model):
 	nickname = db.Column(db.String(64))
 	grad_year = db.Column(db.SmallInteger)
 
-	terms = db.relationship("Term", backref = "user")
+	terms = db.relationship("Term", backref = "user", lazy='dynamic')
 
 
 	courses = db.relationship('Offering', 
@@ -140,7 +140,7 @@ class Term(db.Model):
 	season = db.Column(db.String(15))
 
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-	offerings = db.relationship('Offering', backref = 'term')
+	offerings = db.relationship('Offering', backref = 'term', lazy='dynamic')
 
 	def __init__(self, year, season):
 		self.year = year

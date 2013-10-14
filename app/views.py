@@ -27,6 +27,23 @@ def year_required(fn):
     return wrapper
 
 def add_terms(grad_year):
+	latest_term = g.user.terms.order_by(Term.year.desc()).first()
+
+	# If new grad_year is earlier than previous, remove all later terms
+	if (latest_term.year > grad_year):
+		for year in range(grad_year + 1, latest_term.year + 1):
+			for season in SEASONS:
+				t = Term.query.filter_by(year = year, season = season).first()
+				if t is not None:
+					g.user.remove_term(t)
+
+		# Remove last fall
+		t = Term.query.filter_by(year = latest_term.year - 1, season = SEASONS[3]).first()
+		if t is not None:
+			g.user.remove_term(t)
+
+			db.session.commit()
+
 	# Add Freshman Fall
 	t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
 	if t is None:
@@ -45,10 +62,9 @@ def add_terms(grad_year):
 	# Remove Extra Fall
 	db.session.expunge(t)
 	g.user.remove_term(t)
+
 	
 	db.session.commit()
-
-	print g.user.terms
 
 @app.before_request
 def fetch_user():
@@ -154,7 +170,6 @@ def removecourse():
 @login_required
 def findterms():
 	# Get Course
-	print request.form['course_item']
 	split_course = request.form['course_item'].strip().split(" ")
 
 
