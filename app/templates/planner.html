@@ -32,7 +32,19 @@
                         {% endif %}
                             <div class="span3 term">
                                 <ul id="{{ term }}" class="sortable2 droptrue ui-sortable" unselectable="on">
-                                    <li class="term-name pin">{{term}}</li>
+                                    <li class="term-name pin">{{term}}<i class="btn off" style="float: right">TAKE OFF</i></li>
+                                    {% for off_term in off_terms %}
+                                    {{ term.to_str }}
+                                    {{ off_term.to_str }}
+                                    {% if term|string == off_term %}
+                                        <script>
+                                            $("#{{term}}").addClass('off-term');
+                                            $("#{{term}}").removeClass('droptrue');
+                                            $("#{{term}} i").text('STAY ON');
+                                        </script>
+                                        {% break %}
+                                    {% endif %}
+                                    {% endfor %}
                                     {% for course in courses %}
                                     {% if course.term == term %}
                                         <script>
@@ -58,6 +70,13 @@
         $("#dept_name").trigger('change');
     }
 
+    $(document).ready(function() {
+        $('.off').click(function() {
+            var btn_id = $(this).parents('ul').attr('id');
+            swap_term(btn_id);
+        });
+    });
+
     $("#dept_name").change(function () {
         var selectVal = $('#dept_name').find(":selected").val();
         showCourses(selectVal)
@@ -68,7 +87,7 @@
                     return $(event.target).clone().css({
                         width: $(event.target).width(),
                         height: $(event.target).height(),
-                    });
+                    })
                 },
         items: "li:not(.pin)",
         cursor: "crosshair",

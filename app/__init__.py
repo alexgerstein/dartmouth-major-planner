@@ -8,6 +8,8 @@ app.config.from_object('config')
 
 app.register_blueprint(flask_cas)
 
+app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+
 db = SQLAlchemy(app)
 
 from app import views, models

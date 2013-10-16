@@ -27,22 +27,10 @@ def year_required(fn):
     return wrapper
 
 def add_terms(grad_year):
-	latest_term = g.user.terms.order_by(Term.year.desc()).first()
+	for term in g.user.terms:
+		g.user.remove_term(term)
 
-	# If new grad_year is earlier than previous, remove all later terms
-	if (latest_term.year > grad_year):
-		for year in range(grad_year + 1, latest_term.year + 1):
-			for season in SEASONS:
-				t = Term.query.filter_by(year = year, season = season).first()
-				if t is not None:
-					g.user.remove_term(t)
-
-		# Remove last fall
-		t = Term.query.filter_by(year = latest_term.year - 1, season = SEASONS[3]).first()
-		if t is not None:
-			g.user.remove_term(t)
-
-			db.session.commit()
+	db.session.commit()
 
 	# Add Freshman Fall
 	t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
@@ -104,7 +92,8 @@ def planner():
         user = g.user,
         form = form,
         courses = g.user.courses,
-        terms = g.user.terms)
+        terms = g.user.terms,
+        off_terms = g.user.off_terms)
 
 @app.route('/getcourses', methods = ['POST'])
 @login_required
@@ -151,8 +140,6 @@ def removecourse():
 	
 	split_course = request.form["course"].strip().split(" ")
 
-	print request.form['course']
-
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 	
@@ -193,6 +180,28 @@ def findterms():
 			terms.append(offering.term)
 
 	j = jsonify( { 'terms' : [i.serialize for i in terms] })
+
+	return j
+
+@app.route('/swapterm', methods = ['POST'])
+@login_required
+def swapterm():
+	term_name = request.form['term']
+	year = "20" + request.form['term'][:2]
+	season = request.form['term'][2]
+
+	t1 = Term.query.filter_by(year = year, season = season).first()
+
+	print t1
+
+	g.user.swap_onterm(t1)
+	db.session.commit()
+
+
+	print "OFF: " + str(g.user.off_terms)
+	print "ALL: " + str(g.user.terms.all())
+
+	j = jsonify( {} )
 
 	return j
 

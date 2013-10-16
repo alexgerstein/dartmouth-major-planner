@@ -16,7 +16,7 @@ class User(db.Model):
 	grad_year = db.Column(db.SmallInteger)
 
 	terms = db.relationship("Term", backref = "user", lazy='dynamic')
-
+	off_terms = []
 
 	courses = db.relationship('Offering', 
 		secondary=user_course,
@@ -57,9 +57,24 @@ class User(db.Model):
 		self.terms.remove(term)
 		return self
 
+	def swap_onterm(self, term):
+		if self.is_enrolled(term):
+			if self.is_on(term):
+				self.off_terms.append(str(term))
+			else:
+				self.off_terms.remove(str(term))
+			return self
+
 
 	def is_taking(self, offering):
 		return self.courses.filter(user_course.c.offering_id == offering.id).count() > 0
+
+	def is_on(self, term):
+		for off_term in self.off_terms:
+			if str(term) == str(off_term):
+				return False
+
+		return True
 
 	def get_id(self):
 		return unicode(self.id)
@@ -76,6 +91,8 @@ class Offering(db.Model):
 	professor_id = db.Column(db.Integer, db.ForeignKey('professor.id'))
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 
+	added = db.Column(db.String(2))
+
 	def __init__(self, course, term, hour):
 		self.course_id = course
 		self.term_id = term
@@ -83,6 +100,14 @@ class Offering(db.Model):
 
 	def get_full_name(self):
 		return str(Course.query.filter_by(id = self.course_id).first())
+
+	def mark_added(self):
+		self.added = "Y"
+		return self
+
+	def mark_empty(self):
+		self.added = ""
+		return self
 
 	def __repr__(self):
 		course = Course.query.filter_by(id = self.course_id).first()

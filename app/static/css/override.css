@@ -29,6 +29,10 @@
 	font-size: 1em;
 }
 
+.off-term {
+	background-color: black;
+}
+
 li.draggable.ui-state-default  {
 	line-height: 35px;
 	padding: 0px 5px;
@@ -39,10 +43,24 @@ li.term-name {
 	color: white;
 	background-color: green;
 	text-align: center;
+	line-height: normal;
+}
+
+.available {
+	background-color: #A5E89E;
+}
+
+.available-off {
+	background-color: #3A5E36;
 }
 
 .btn-danger {
 	margin: 0px 6px;
+}
+
+.btn.off {
+	font-size: .5em;
+	line-height: normal;
 }
 
 /*.ui-draggable-helper {
