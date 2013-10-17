@@ -168,7 +168,6 @@ def findterms():
 	# Get Course
 	split_course = request.form['course_item'].strip().split(" ")
 
-
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 
@@ -179,7 +178,9 @@ def findterms():
 		if offering.term not in terms:
 			terms.append(offering.term)
 
-	j = jsonify( { 'terms' : [i.serialize for i in terms] })
+	j = jsonify ( {} )
+	if (terms != []):
+		j = jsonify( { 'terms' : [i.serialize for i in terms] })
 
 	return j
 
@@ -192,14 +193,8 @@ def swapterm():
 
 	t1 = Term.query.filter_by(year = year, season = season).first()
 
-	print t1
-
 	g.user.swap_onterm(t1)
 	db.session.commit()
-
-
-	print "OFF: " + str(g.user.off_terms)
-	print "ALL: " + str(g.user.terms.all())
 
 	j = jsonify( {} )
 

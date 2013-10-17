@@ -72,12 +72,15 @@
 
     $(document).ready(function() {
         $('.off').click(function() {
-            var btn_id = $(this).parents('ul').attr('id');
-            swap_term(btn_id);
+            if (confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
+                var btn_id = $(this).parents('ul').attr('id');
+                swap_term(btn_id);
+            }
         });
     });
 
     $("#dept_name").change(function () {
+        $('.sortable1').scrollTop(0);
         var selectVal = $('#dept_name').find(":selected").val();
         showCourses(selectVal)
     });

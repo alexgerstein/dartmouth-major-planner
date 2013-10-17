@@ -7,7 +7,7 @@ from app.models import Course, User, Department
 
 class EditForm(Form):
 	nickname = TextField('nickname', validators = [Required()])
-	grad_year = IntegerField('Graduating Year', validators = [Required(), NumberRange(min=2000, max=2040)])
+	grad_year = IntegerField('Graduating Year', validators = [Required(), NumberRange(min=2009, max=2099)])
 
 	def __init__(self, original_nickname, *args, **kwargs):
 		Form.__init__(self, *args, **kwargs)
