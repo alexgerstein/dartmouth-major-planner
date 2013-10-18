@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 from flask import session
 from app import db
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -91,6 +94,9 @@ class Offering(db.Model):
 	professor_id = db.Column(db.Integer, db.ForeignKey('professor.id'))
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 
+	distributives = db.relationship("Distrib", backref="offering")
+	wc_id = db.Column(db.Integer, db.ForeignKey('wc.id'))
+
 	added = db.Column(db.String(2))
 
 	def __init__(self, course, term, hour):
@@ -111,8 +117,9 @@ class Offering(db.Model):
 
 	def __repr__(self):
 		course = Course.query.filter_by(id = self.course_id).first()
+		hour = Hour.query.filter_by(id = self.hour_id).first()
 
-		return "%s %s (%s)" % (course.department.abbr, course.number, self.hour)
+		return "%s %s (%s)" % (course.department.abbr, course.number, hour)
 
 class Course(db.Model):
 	__tablename__ = 'course'
@@ -122,19 +129,13 @@ class Course(db.Model):
 	name = db.Column(db.String(300), index = True)
 
 	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
-	distributives = db.relationship("Distrib", backref="course")
-	wc_id = db.Column(db.Integer, db.ForeignKey('wc.id'))
 
 	offerings = db.relationship('Offering', backref = 'course')
 
-	def __init__(self, number, name, department, distribs, wc):
+	def __init__(self, number, name, department):
 		self.name = name
 		self.number = number
 		self.department_id = department
-
-		self.wc_id = wc
-		for distrib in distribs:
-			self.distributives.append(distrib)
 
 	def offer(self, offering):
 		if not self.is_offering(offering):
@@ -146,8 +147,9 @@ class Course(db.Model):
 
 	@property
 	def serialize(self):
+
 		return {
-		'full_name' :	str(self),
+		'full_name' :	repr(self).encode('ascii', 'ignore'),
 		'id'		:	self.id,
 		'number' 	:	self.number,
 		'name'		:	self.name
@@ -156,8 +158,7 @@ class Course(db.Model):
 	def __repr__(self):
 		department = Department.query.filter_by(id = self.department_id).first()
 
-
-		return '%s %s - %s' % (department.abbr, self.number, self.name)
+		return '%s %s - %s' % (department.abbr, self.number, self.name.encode('ascii', 'ignore'))
 
 class Term(db.Model):
 	__tablename__ = 'term'
@@ -231,7 +232,7 @@ class Distrib(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	distributive = db.Column(db.String(4), index = True, unique = True)
 
-	parent_id = db.Column(db.Integer, db.ForeignKey('course.id'))
+	parent_id = db.Column(db.Integer, db.ForeignKey('offering.id'))
 
 	def __init__(self, abbr):
 		self.distributive = abbr
@@ -245,7 +246,7 @@ class Wc(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	wc = db.Column(db.String(4), index = True, unique = True)
 
-	courses = db.relationship('Course', backref = 'wc')
+	courses = db.relationship('Offering', backref = 'wc')
 
 	def __init__(self, abbr):
 		self.wc = abbr

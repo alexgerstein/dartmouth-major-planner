@@ -32,7 +32,7 @@
                         {% endif %}
                             <div class="span3 term">
                                 <ul id="{{ term }}" class="sortable2 droptrue ui-sortable" unselectable="on">
-                                    <li class="term-name pin">{{term}}<i class="btn off" style="float: right">TAKE OFF</i></li>
+                                    <li class="term-name pin">{{term}}<i class="btn off" style="float: right">Off?</i></li>
                                     {% for off_term in off_terms %}
                                     {{ term.to_str }}
                                     {{ off_term.to_str }}
@@ -40,7 +40,7 @@
                                         <script>
                                             $("#{{term}}").addClass('off-term');
                                             $("#{{term}}").removeClass('droptrue');
-                                            $("#{{term}} i").text('STAY ON');
+                                            $("#{{term}} i").text('On?');
                                         </script>
                                         {% break %}
                                     {% endif %}
