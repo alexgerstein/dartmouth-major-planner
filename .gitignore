@@ -1,7 +1,6 @@
 *.py[cod]
 *.db
 config.py
-get_course_names.py
 
 db_repository/*
 
