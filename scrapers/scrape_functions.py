@@ -35,6 +35,19 @@ WCS = ["W", "NW", "CI"]
 HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "8AM-9:50AM", "3-6pm", "7pm", "2:00-4:00", "2:00-6:00", "2:00-3:05pm", "8-10", "4-6pm", "4-6PM", "T3-6", "3-6", "D.F.S.P", "D.L.S.A", "FSP", "2-5pm", "1:00-3:00", "4:00-5:00", "4:00-6:00", "6-9", "3:00-5:00", "2-5", "1"]
 SEASONS = ["W", "S", "X", "F"]
 
+# Alert function that makes a message stand out when running hte scraper
+def print_alert(message):
+	print ('\n\n')
+	print '*******' + message + '*******\n'
+
+# Helper to check if string is a number
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 # Add all missing distribs and World Cultures to the database
 def store_distribs():
 	for distrib in DISTRIBS:
@@ -70,6 +83,156 @@ def store_terms():
 				db.session.add(t)
 
 	db.session.commit()
+
+# Loop through each offering, adding the terms to a list of offered terms and 
+# the hours to a list of offered hours. When the category of the offerings 
+# switch from terms offered to hours offered and back, we know that all 
+# possible combinations have been found. So we run these combinations through 
+# the add_offerings function.
+#
+# For example, an offerings list is often in the format: 
+# 	"[TERM1], [TERM2]: [HOUR1], [HOUR2]"
+# In this case, there would be 4 offerings, one for each combination of the
+# terms and hours
+def store_offerings(offering_info, c1, d1, info_soup, year):
+	# Initialize offered lists to empty
+	terms_offered = []
+	hours_offered = []
+
+	# Initialize first category to TERM
+	new_category = "TERM"
+	old_category = ""
+
+	# Loop each word in the offering listing
+	for offer in offering_info:
+		
+		# Remove any non-alphanumeric characters on each end
+		stripped_offering = re.sub('(^[\W_]*)|([\W_]*$)', '', offer)
+		print stripped_offering
+
+		# Move to next component if blank
+		if stripped_offering == "":
+			continue
+
+		# If first word is "Not", then assume it continues "Not offered..." 
+		# and break
+		if stripped_offering == "Not":
+			break
+
+		# If offering starts with "All," assume that it continues "All Terms."
+		# Then add All Terms in the current ORC using the year from the url
+		if stripped_offering == "All":
+			add_all_terms(year, terms_offered)
+			
+			# Switch categories to mark TERM as just having been checked
+			old_category = new_category
+			new_category = "TERM"
+			continue
+
+		# If "summer" is in the listing, then assume it reads "All terms, 
+		# except summer." So, remove all summer terms in the list of terms
+		# offered.
+		if stripped_offering == "summer":
+			remove_all_summer_terms(year, terms_offered)
+			
+			# Switch categories to mark TERM as just having been checked
+			old_category = new_category
+			new_category = "TERM"
+			continue
+
+		# Since the "period" Arrange is not a number, check for it early and
+		# add it to the list of possible hours before issues arise.
+		if stripped_offering == "Arrange":
+			possible_hour = Hour.query.filter_by(period = "Arrange").first()
+			if possible_hour:
+				hours_offered.append(possible_hour)
+				old_category = new_category
+				new_category = "HOUR"
+
+			# Assume no other hours offered, since Arrange is usually listed 
+			# for the later terms, so run combinator fcn for offering lists 
+			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
+			continue
+
+		# Ignore Lab and Discussion hours 
+		if "LAB" in stripped_offering.upper():
+			break
+		if "DISCUSSION" in stripped_offering.upper():
+			break
+
+		# Assume this might lead to "Times vary", so continue
+		if "Times" in stripped_offering:
+			continue
+
+		# If "Dist:" in offering listing, skip
+		if "Dist" in stripped_offering:
+			break
+
+		# If offerings vary, should check for topics offerings
+		if stripped_offering == "Varies" or stripped_offering == "vary:
+			scan_topics_offerings(info_soup, c1, d1, year)
+			break
+
+		# Check for other key terms that signal a halt in offerings
+		if stripped_offering == "See":
+			break
+		if "Section" in stripped_offering:
+			break
+		if "field" in stripped_offering:
+			break
+		if "Field" in stripped_offering:
+			break
+
+		# Similar to "Arrange", these FSP periods are not numbers, so check and
+		# add them early.
+		if stripped_offering == "FSP" \
+		or stripped_offering == "D.F.S.P" \
+		or stripped_offering == "D.L.S.A":
+			possible_hour = Hour.query.filter_by(period = stripped_offering).first()
+			if (possible_hour):
+				hours_offered.append(possible_hour)
+				old_category = new_category
+				new_category = "HOUR"
+
+		# If first digit of the offering is not a number, then it can no 
+		# longer be a term or a period
+		if not is_number(stripped_offering[0]):
+			continue
+
+		# Check for typos on the ORC listing
+		stripped_offering = fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category)
+
+		# If typo check returned nothing, then add the current combinations
+		# to the offerings and move on to the next word in offerings
+		if stripped_offering == "":
+			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
+			continue
+
+		# Check if word is an hour. If it is, append it to hours_offered
+		possible_hour = Hour.query.filter_by(period = stripped_offering).first()
+		if possible_hour:
+			hours_offered.append(possible_hour)
+			old_category = new_category
+			new_category = "HOUR"
+
+			continue
+
+		# Check if word is a term. If it is, append it to terms_offered
+		possible_term = Term.query.filter_by(year = int("20" + stripped_offering[:2]), season = stripped_offering[2]).first()
+		if possible_term:
+			old_category = new_category
+			new_category = "TERM"
+
+			# If the categories swapped from hours, back to term, then add all
+			# possible combinations of the terms and hours
+			if (old_category != "" and old_category != new_category):
+				terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
+
+			# Append the new term
+			terms_offered.append(possible_term)
+
+	# Now that loop has been exited, add then clear any remaining combinations
+	terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
 
 # Generalized check for missing space between terms and hours
 def check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category):
@@ -124,19 +287,6 @@ def check_misplaced_comma(stripped_offering, hours_offered, terms_offered):
 		stripped_offering = split_comma[len(split_comma) - 1]
 
 	return stripped_offering
-
-# Alert function that makes a message stand out when running hte scraper
-def print_alert(message):
-	print ('\n\n')
-	print '*******' + message + '*******\n'
-
-# Helper to check if string is a number
-def is_number(s):
-    try:
-        float(s)
-        return True
-    except ValueError:
-        return False
 
 # Helper to append all terms covered by an ORC to the terms_offered list
 def add_all_terms(year, terms_offered):
