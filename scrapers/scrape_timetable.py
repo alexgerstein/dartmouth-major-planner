@@ -7,7 +7,7 @@ from scrape_functions import *
 import urllib2
 import bs4
 
-timetable_url = 'winter 2013 tt.html'
+timetable_url = 'W2013.html'
 
 SEASON_MONTH = {"01": "W", "03": "S", "06": "X", "09": "F"}
 
