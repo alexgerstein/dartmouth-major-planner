@@ -27,10 +27,11 @@ def get_link_rightpanel(url):
 	return orig_soup.find("div", id='rightpanel')
 
 # Return the links to each department's course listings
-def get_undergrad_course_links(department_list):
+def get_course_links(url_ext, department_list):
 	links = []
-	for link in department_list.find_all(href=re.compile(UG_DEPT_URL)):
+	for link in department_list.find_all(href=re.compile(url_ext)):
 		links.append(link)
+		print link
 
 	return links
 
@@ -135,13 +136,13 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 		store_course_info(BASE_URL + course['href'], course_number, " ".join(course_name), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
 
 # Search through the courses in each department's listing
-def search_course_links (links, year, lock_term_start, lock_term_end):
+def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):
 	
 	for link in links:
 
 		right_panel = get_link_rightpanel(BASE_URL + link['href'])
 		link = right_panel.find("a")
-		if (link != None and UG_DEPT_URL in link['href']):
+		if (link != None and url_ext in link['href']):
 			link_breakdown = link['href'].split('/')
 			last_link = link_breakdown[-1].split('-')
 			if ('Requirements' not in last_link[-1] 
@@ -154,23 +155,31 @@ def search_course_links (links, year, lock_term_start, lock_term_end):
 				search_courses(BASE_URL + link['href'], last_link[0], " ".join(last_link[1:]), year, lock_term_start, lock_term_end)
 
 # Main function for scraping the current ORC
-def scrape_curr_orc(lock_term_start, lock_term_end, start_dept_name = ""):
+def scrape_college_orc(url_ext, lock_term_start, lock_term_end, start_dept_name = ""):
 	
 	# Use CSS formatting to find each department's link
-	department_list = get_link_rightpanel(BASE_URL + UG_DEPT_URL)
+	department_list = get_link_rightpanel(BASE_URL + url_ext)
 
 	# Store the year of the current ORC
-	year = UG_DEPT_URL.split("/")[2]
+	year = url_ext.split("/")[2]
 
 	# Store links to each department's course lists
-	links = get_undergrad_course_links(department_list)
-	
+	links = get_course_links(url_ext, department_list)
+
 	# If debugging the scraping, find debugger's starting department
 	abbr_index = find_starting_abbr(links, start_dept_name)
 
 	# Search through the courses in each department
-	search_course_links (links[abbr_index:], int(year), lock_term_start, lock_term_end)
+	search_course_links (url_ext, links[abbr_index:], int(year), lock_term_start, lock_term_end)
+
+	return int(year)
+
+	
+
+def scrape_curr_orc(lock_term_start, lock_term_end, start_dept_name = ""):
+	scrape_college_orc(UG_DEPT_URL, lock_term_start, lock_term_end, start_dept_name = "")
+	year = scrape_college_orc(GRAD_DEPT_URL, lock_term_start, lock_term_end, start_dept_name = "")
 
 	# Repeat for all missed departments
 	for listing in MISSED_LISTINGS:
-		search_courses(listing[0], listing[1], listing[2], int(year), lock_term_start, lock_term_end)
+		search_courses(listing[0], listing[1], listing[2], year, lock_term_start, lock_term_end)

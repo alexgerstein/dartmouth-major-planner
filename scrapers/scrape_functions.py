@@ -16,13 +16,14 @@ from app.models import User, Offering, Course, Department, Hour, Term
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
 UG_DEPT_URL = "/en/2013/orc/Departments-Programs-Undergraduate"
+GRAD_DEPT_URL = "/en/2013/orc/Departments-Programs-Graduate"
 
 # # Distributives and World Culture Abbreviations
 # DISTRIBS = ["ART", "LIT", "TMV", "INT", "SOC", "QDS", "SCI", "SLA", "TAS", "TLA"]
 # WCS = ["W", "NW", "CI"]
 
 # Hours and Seasons
-HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "8AM-9:50AM", "3-6pm", "7pm", "2:00-4:00", "2:00-6:00", "2:00-3:05pm", "8-10", "4-6pm", "4-6PM", "T3-6", "3-6", "D.F.S.P", "D.L.S.A", "FSP", "FS", "LS", "2-5pm", "1:00-3:00", "4:00-5:00", "4:00-6:00", "6-9", "3:00-5:00", "2-5", "1"]
+HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "8AM-9:50AM", "7pm", "D.F.S.P", "D.L.S.A", "FSP", "FS", "LS", "1"]
 
 SEASONS = ["W", "S", "X", "F"]
 
@@ -111,7 +112,7 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
 		elif (stripped_offering[len(stripped_offering) - 1] == ','):
 			c1 = Course.query.filter_by(department = d1, number = stripped_offering[:2]).first()
 			stripped_offering = ""
-	
+
 	# "Chemistry": Different formatting of CHEM 5 and others
 	elif (d1.abbr == "CHEM"):
 		if (len(stripped_offering) < 3 and (terms_offered == [])):
@@ -181,6 +182,13 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
 	elif (c1.name == "Studies in German History"):
 		if (stripped_offering == "14:F"):
 			stripped_offering = "14F"
+
+	# Some listings say "Offered every 4th..."
+	elif stripped_offering == "4th":
+		stripped_offering = ""
+
+	elif (d1.abbr == 'ECS'):
+		stripped_offering = ""
 
 	stripped_offering = check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category)
 
@@ -321,6 +329,19 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 
 			continue
 
+		# Check if word is in the format of a time slot. If so, create it and 
+		# append
+		if re.search('[0-9][0-9]?:[0-9][0-9]', stripped_offering) or re.search('[0-9]-[0-9]', stripped_offering):
+			possible_hour = Hour(period = stripped_offering)
+			db.session.add(possible_hour)
+			db.session.commit()
+
+			hours_offered.append(possible_hour)
+			old_category = new_category
+			new_category = "HOUR"
+
+			continue
+
 		# Check if word is a term. If it is, append it to terms_offered
 		possible_term = Term.query.filter_by(year = int("20" + stripped_offering[:2]), season = stripped_offering[2]).first()
 		if possible_term:
@@ -412,6 +433,9 @@ def add_all_terms(year, terms_offered):
 				terms_offered.append(possible_term)
 
 def remove_all_summer_terms(year, terms_offered):
+	if terms_offered == []:
+		return
+
 	years = [year + 1, year + 2]
 	for year_after in years:
 		for summer_term in Term.query.filter_by(year = year_after, season = "X").all():
