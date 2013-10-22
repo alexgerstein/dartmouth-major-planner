@@ -1,3 +1,6 @@
+# scrape_old_orcs.py
+# Alex Gerstein
+
 from scrape_functions import *
 
 # Base URL for achived ORCs
@@ -26,79 +29,33 @@ def fix_dept_typos(dept):
 
 	return dept
 
-# Check each stripped offering for typos in the ORC's listing
-def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category):
-	
-	# "Asian and Middle Eastern Languages": Different formatting of language courses
-	if (d1.abbr == "AMEL"):
-		if (len(stripped_offering) < 3) and (terms_offered == []):
-			c1 = Course.query.filter_by(department = d1, number = stripped_offering).first()
-			stripped_offering = ""
-		elif (stripped_offering[len(stripped_offering) - 1] == ','):
-			c1 = Course.query.filter_by(department = d1, number = stripped_offering[:2]).first()
-			stripped_offering = ""
-	
-	# "Chemistry": Different formatting of CHEM 5 and others
-	if (d1.abbr == "CHEM"):
-		if (len(stripped_offering) < 3 and (terms_offered == [])):
-			c1 = Course.query.filter_by(department = d1, number = stripped_offering).first()
-			stripped_offering = ""
-
-	# "Classics": Intermediate Latin missing space between hours offered
-	if (d1.abbr == "CLST"):
-		if (c1.name == "Intermediate Latin"):
-			if (stripped_offering == "9,2"):
-				possible_hour = Hour.query.filter_by(period = "9").first()
-				hours_offered.append(possible_hour)
-				stripped_offering = "2"
-
-	# "Earth Sciences": Invalid initial character for some years
-	if (d1.abbr == "EARS"):
-		if (c1.number == "70"):
-			stripped_offering = ""
-
-	# "Government": Misplaced colon
-	if (d1.abbr == "GOVT"):
-		if 60 == c1.number:
-			if "11:F" in stripped_offering:
-				stripped_offering = "11F"
-
-	# "International Studies": Missing space between term and hour
-	if (d1.abbr == "INTS"):
-		if stripped_offering == "12W:W":
-			possible_term = Term.query.filter_by(year = "2012", season = "W").first()
-			terms_offered.append(possible_term)
-			stripped_offering = ""
-
-	# "Mathematics": Some courses are no longer offered
-	if (d1.abbr == "MATH"):
-		if (c1.name == "Discrete Mathematics in Computer Science"):
-			stripped_offering = ""
-		elif "Linear Programming" in c1.name:
-			stripped_offering = ""
-
-	# "Music": Individual music have section numbers that get confused as hours
-	if (d1.abbr == "MUS"):
-		if (c1.name == "Performance Laboratories"):
-			if len(stripped_offering) == 1:
-				stripped_offering = ""
-
-	stripped_offering = check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category)
-
-	stripped_offering = check_misplaced_comma(stripped_offering, hours_offered,terms_offered)
-
-	return stripped_offering
-
 # Use the "coursetitle" class to find each course in the department's listing
-def add_offerings_by_tag(soup, dept, year):
+def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 
 	# For each course in the listing, add offerings to the database
 	for title in soup.find_all("p", { "class" : "coursetitle" }):
-		
+
 		# Split the course heading into its number and name
 		split_title = title.text.strip(" ").split(" ")
 		course_number = split_title[0].strip(".")
 		course_name = " ".join(split_title[1:]).strip(" ")
+
+		abbreviation = dept.abbr
+
+		old_dept = dept
+
+		# Adjust for AMEL department
+		if old_dept.abbr == "AMEL":
+			if "Arab" in course_name:
+				abbreviation = "ARAB"
+			elif "Chinese" in course_name:
+				abbreviation = "CHIN"
+			elif "Hebrew" in course_name:
+				abbreviation = "HEBR"
+			elif "Japanese"in course_name:
+				abbreviation = "JAPN"
+
+			dept = Department.query.filter_by(abbr = abbreviation).first()
 
 		print "Number: " + str(course_number)
 		print "Name: " + course_name
@@ -107,7 +64,8 @@ def add_offerings_by_tag(soup, dept, year):
 		# Look for the course in the database by department
 		course = Course.query.filter_by(number = str(course_number), department_id = dept.id).first()
 		if not (is_number(course_number[0])) and (course is None):
-			break
+			dept = old_dept
+			continue
 
 		# If course not in database, add it.
 		if (course is None):
@@ -124,20 +82,51 @@ def add_offerings_by_tag(soup, dept, year):
 		if (offerings.text == "Contact Us"):
 			break
 
+		# Initialize concatenated offering description for info page
+		offering_html = title
+
 		# For each list of offerings of the course, add to the database
 		while (offerings['class'] ==  ["courseoffered"]):
 			
 			# Split the offering into a list of each word
 			offering_split = offerings.text.split(" ")
 
+			print course
+
+			# Concatenate listing from orc page
+			offering_html.append(offerings)
+			description = offerings.findNext('p', {'class': 'coursedescptnpar'})
+			while (description is not None) and (description['class'] == ['coursedescptnpar']):
+				
+				# Append description and look for another
+				offering_html.append(description)
+				description = description.findNext("p")
+
+				# Check if tag was incorrectly assigned to title
+				if (description is not None) and (description.get("class") == ['coursetitle']):
+					if not is_number(description.text[0]):
+						description = description.findNext("p")
+
+				if description and description.get("class"):
+					continue
+				else:
+					break
+
 			# Iterate through the list of words, storing each offering
-			store_offerings(offering_split, c1, dept, soup, year)
+			store_offerings(offering_split, course, dept, soup, year, offering_html, lock_term_start, lock_term_end)
 
 			# Step to next set of offerings
 			offerings = offerings.findNext("p")
 
-			if not "class" in offerings:
+			# Reset info page html
+			offering_html = title
+
+			if 'class' in offerings:
+				continue
+			else:
 				break
+
+		dept = old_dept
 
 	return
 
@@ -146,11 +135,11 @@ def add_offerings_by_headers(soup, dept):
 	return
 
 # Scrape a department's courses and offerings off its "Courses" page
-def get_old_courses(url, dept):
+def get_old_courses(url, dept, lock_term_start, lock_term_end):
 	
 	# Convert page to BeautifulSoup
 	r = requests.get(url)
-	soup = BeautifulSoup(r.content.decode("utf-8"))
+	soup = BeautifulSoup(r.content.decode("utf-8"), "lxml")
 
 	# Parse out the year from the curret url
 	split_url = url.split("/")
@@ -168,12 +157,12 @@ def get_old_courses(url, dept):
 
 	# Depending on how the page is formatted, call the appropriate function to scrape the page
 	if soup.find("p", { "class" : "coursetitle" } ):
-		add_offerings_by_tag(soup, d1, int(year))
+		add_offerings_by_tag(soup, d1, int(year), lock_term_start, lock_term_end)
 	else:
 		add_offerings_by_headers(soup, d1)
 
 # Main function for scraping the archived ORCs 
-def scrape_old_orcs(start_abbr = ""):
+def scrape_old_orcs(lock_term_start, lock_term_end, start_abbr = ""):
 	
 	# Use CSS formatting to find each department's link
 	old_orc_links = get_old_links(PAST_BASE_URL)
@@ -212,4 +201,4 @@ def scrape_old_orcs(start_abbr = ""):
 			department = course_link.split("/")
 			dept_abbr = department[len(department) - 1].split(".")[0].upper()
 
-			get_old_courses(course_link, dept_abbr)
+			get_old_courses(course_link, dept_abbr, lock_term_start, lock_term_end)

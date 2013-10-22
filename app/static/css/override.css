@@ -8,7 +8,7 @@
 }
 
 .sortable1 {
-	height: 25%;
+	height: 50%;
 }
 
 .sortable2 {
@@ -61,6 +61,11 @@ li.term-name {
 .btn.off {
 	font-size: .5em;
 	line-height: normal;
+}
+
+.popover-content {
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 /*.ui-draggable-helper {

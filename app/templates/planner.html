@@ -79,6 +79,16 @@
         });
     });
 
+    $("i[class='popover-trigger']").popover(
+            {
+                "title":"Course Info",
+                // "content":"<p class='popover_body_text'>"+t.content+"</p>",
+                "html":true,
+                "animation":true,
+                "placement":"bottom",
+                "trigger":"click"
+            });
+
     $("#dept_name").change(function () {
         $('.sortable1').scrollTop(0);
         var selectVal = $('#dept_name').find(":selected").val();
@@ -110,6 +120,7 @@
     });
 
     $(".sortable1, .sortable2").disableSelection();
+
 
 </script>
 

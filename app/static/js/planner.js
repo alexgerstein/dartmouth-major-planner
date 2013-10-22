@@ -4,11 +4,27 @@ function addCourse(term, course, short_name) {
 
     var obj = ($(".termsBlock").find(term));
 
-    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + course + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<i class="btn btn-danger"><span class="icon-trash icon-white"></i> </div> </div> </li> </div> </div>');
-
+    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + course + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<i class="btn btn-danger"><span class="icon-trash icon-white"></i> <i class="btn btn-info popover-trigger"><span class="icon-search"></i> </div> </div> </li> </div> </div>');
 
     $('i.btn-danger').click(removeCourse);
-}
+
+    $('.popover-trigger').click( function(e) {
+        el = $(this);
+        $.post("/getCourseInfo", 
+            {
+                course: el.parents("li").attr("id"),
+                term: el.parents('ul').attr('id')
+            }, 
+            function(response) {
+                el.unbind('click').popover({
+                    content: response['info'],
+                    title: 'Course Info',
+                    html: true,
+                    delay: {show:500, hide: 100}
+            })
+        }).popover('toggle');
+    });
+};
 
 function showAvailableSlots(event, ui) {
     var posting = $.post('/findterms', { course_item: ui.item.attr('id') });
@@ -46,7 +62,7 @@ function saveCourse(event, ui) {
         return;
     }
 
-    var posting = $.post('/savecourse', { course_item: text, term: term_id });
+    var posting = $.post('/savecourse', { course: text, term: term_id });
 
     posting.done(function (data) {
         var senderclass = ui.sender.attr('class');
@@ -78,6 +94,20 @@ function removeCourse(event){
     var posting = $.post('/removecourse', { course: $(this).parents("li").attr("id"), term: term_id });
 
     $(this).parents('li').parent().remove();
+
+}
+
+function getCourseInfo(event){
+
+    var term_id = $( this ).parent();
+
+    var posting = $.post('/courseinfo', { course: "Test", term: term_id });
+
+    var button = $(this)
+
+    posting.done(function (data) {
+        return data['info']
+    }) 
 
 }
 

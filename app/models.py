@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
-
-
 from flask import session
 from app import db
 from sqlalchemy.ext.associationproxy import association_proxy
+
+SEASONS = ["W", "S", "X", "F"]
+
 
 user_course = db.Table('user_course',
 	db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
@@ -37,6 +37,7 @@ class User(db.Model):
 	def take(self, offering):
 		if not self.is_taking(offering):
 			self.courses.append(offering)
+			db.session.commit()
 			return self
 
 		return None
@@ -44,6 +45,7 @@ class User(db.Model):
 	def drop(self, offering):
 		if self.is_taking(offering):
 			self.courses.remove(offering)
+			db.session.commit()
 			return self
 
 		return None
@@ -91,24 +93,34 @@ class Offering(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
 	term_id = db.Column(db.Integer, db.ForeignKey('term.id'))
-	professor_id = db.Column(db.Integer, db.ForeignKey('professor.id'))
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 
-	distributives = db.relationship("Distrib", backref="offering")
-	wc_id = db.Column(db.Integer, db.ForeignKey('wc.id'))
+	desc = db.Column(db.String(1500))
+
+	# distributives = db.relationship("Distrib", backref="offering")
+	# wc_id = db.Column(db.Integer, db.ForeignKey('wc.id'))
 
 	added = db.Column(db.String(2))
 
-	def __init__(self, course, term, hour):
+	def __init__(self, course, term, hour, desc):
 		self.course_id = course
 		self.term_id = term
 		self.hour_id = hour
+		self.desc = desc
+
+		# self.wc_id = wc
+
+		# for distrib in distribs:
+		# 	self.distributives.append(distrib)
 
 	def get_full_name(self):
 		return str(Course.query.filter_by(id = self.course_id).first())
 
-	def mark_added(self):
-		self.added = "Y"
+	def get_term(self):
+		return Term.query.filter_by(id = self.term_id).first()
+
+	def mark(self, str):
+		self.added = str
 		return self
 
 	def mark_empty(self):
@@ -174,6 +186,33 @@ class Term(db.Model):
 		self.year = year
 		self.season = season
 
+	def in_range(self, start_term, end_term):
+
+		# Check if year is out of range
+		if (self.year > end_term.year) or (self.year < start_term.year):
+			return False
+
+		# Check if year is definitively in the range
+		elif (self.year < end_term.year) and (self.year > start_term.year):
+			return True
+
+		# Check if term is on boundary
+		elif (self.season == start_term.season) and (self.year == start_term.year):
+			return True
+		elif (self.season == end_term.season) and (self.year == end_term.year):
+			return True
+
+		# If year is same as start, check if term fits
+		elif (self.year == start_term.year):
+			if (SEASONS.index(self.season) > SEASONS.index(start_term.season)):
+				return True
+
+		elif (self.year == end_term.year):
+			if (SEASONS.index(self.season) < SEASONS.index(end_term.season)):
+				return True
+
+		return False
+
 	@property
 	def serialize(self):
 		return {
@@ -199,17 +238,6 @@ class Hour(db.Model):
 
 		return '%s' % (self.period)
 
-class Professor(db.Model):
-	__tablename__ = "professor"
-
-	id = db.Column(db.Integer, primary_key = True)
-	name = db.Column(db.String(100), index = True, unique = True)
-	
-	offerings = db.relationship('Offering', backref = 'professor')
-
-	def __repr__(self):
-		return '<%s>' % (self.name)
-
 class Department(db.Model):
 	__tablename__ = "department"
 
@@ -225,31 +253,3 @@ class Department(db.Model):
 
 	def __repr__(self):
 		return '%s' % (self.abbr)
-
-class Distrib(db.Model):
-	__tablename__ = "distrib"
-
-	id = db.Column(db.Integer, primary_key = True)
-	distributive = db.Column(db.String(4), index = True, unique = True)
-
-	parent_id = db.Column(db.Integer, db.ForeignKey('offering.id'))
-
-	def __init__(self, abbr):
-		self.distributive = abbr
-
-	def __repr__(self):
-		return '%s' % (self.distributive)
-
-class Wc(db.Model):
-	__tablename__ = "wc"
-
-	id = db.Column(db.Integer, primary_key = True)
-	wc = db.Column(db.String(4), index = True, unique = True)
-
-	courses = db.relationship('Offering', backref = 'wc')
-
-	def __init__(self, abbr):
-		self.wc = abbr
-
-	def __repr__(self):
-		return '%s' % (self.wc)

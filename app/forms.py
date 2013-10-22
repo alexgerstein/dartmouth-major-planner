@@ -1,3 +1,9 @@
+# forms.py
+# Alex Gerstein
+# Client-side Forms:
+# 1) Edit username/year
+# 2) Select department in planner
+
 from flask.ext.wtf import Form, TextField, IntegerField
 from wtforms import TextField, IntegerField, SelectField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -18,9 +24,7 @@ class DeptPickerForm(Form):
 
 	def validate(self):
 
-		print self.dept_name.data
-
 		if self.dept_name.data == -1:
 			return False
-
+			
 		return True

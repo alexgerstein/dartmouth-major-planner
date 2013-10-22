@@ -1,3 +1,7 @@
+# views.py
+# Alex Gerstein
+# Routes for the user
+
 from flask import render_template, request, flash, redirect, url_for, session, g, jsonify
 from app import app, db
 from models import User, Offering, Course, Department, Term
@@ -7,6 +11,7 @@ from functools import wraps
 
 SEASONS = ["W", "S", "X", "F"]
 
+# Wrapper function so certain pages remain private to new users
 def login_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -16,6 +21,7 @@ def login_required(fn):
         return fn(*args, **kwargs)
     return wrapper
 
+# Wrapper to make sure students can't view planner without giving it its range
 def year_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -26,10 +32,12 @@ def year_required(fn):
     	return fn(*args, **kwargs)
     return wrapper
 
+# If graduation year changes for user, adjusts terms in planner
 def add_terms(grad_year):
+	
+	# Clear all terms, start clean
 	for term in g.user.terms:
 		g.user.remove_term(term)
-
 	db.session.commit()
 
 	# Add Freshman Fall
@@ -39,6 +47,7 @@ def add_terms(grad_year):
 		db.session.add(t)
 	g.user.add_term(t)
 
+	# Add all following terms
 	for year_diff in reversed(range(4)):
 		for season in SEASONS:
 			t = Term.query.filter_by(year=grad_year - year_diff, season=season).first()
@@ -47,13 +56,32 @@ def add_terms(grad_year):
 				db.session.add(t)
 			g.user.add_term(t)
 	
-	# Remove Extra Fall
+	# Remove extra Fall
 	db.session.expunge(t)
 	g.user.remove_term(t)
 
 	
 	db.session.commit()
 
+# Helper method to get the offering a user is editing on the planner interface
+def get_requested_offering(form):
+	
+	# Deconstruct the dragged item's id to get the course from the database
+	split_course = request.form["course"].strip().split(" ")
+	d1 = Department.query.filter_by(abbr = split_course[0]).first()
+	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+	
+	# Construct the requested offering based on where dropped
+	year = "20" + request.form['term'][:2]
+	season = request.form['term'][2]
+	t = Term.query.filter_by(year = year, season = season).first()
+	o1 = Offering.query.filter_by(course = c1, term = t).first()
+
+	return o1
+
+
+# Always track if there is a current user signed in
+# If unrecognized user is in, add them to user database
 @app.before_request
 def fetch_user():
 
@@ -67,6 +95,7 @@ def fetch_user():
 	else:
 		g.user = None
 
+# Landing Page for All Users
 @app.route('/')
 @app.route('/index')
 def index():
@@ -74,18 +103,16 @@ def index():
         title = 'Home',
         user = g.user)
 
+# Planner page for signed in users
 @app.route('/planner', methods = ['GET'])
 @login_required
 @year_required
 def planner():
 
+	# Initialize the department selection form
 	form = DeptPickerForm()
-
 	form.dept_name.choices = [(a.id, a.abbr + " - " + a.name) for a in Department.query.order_by('abbr')]
 	form.dept_name.choices.insert(0, (-1,"Choose a Department"))
-	
-	if form.validate_on_submit():
-		flash('Your changes have been saved.')
 
 	return render_template("planner.html",
         title = 'My Plan',
@@ -95,6 +122,7 @@ def planner():
         terms = g.user.terms,
         off_terms = g.user.off_terms)
 
+# After change in dept form, send courses in that dept to user's view
 @app.route('/getcourses', methods = ['POST'])
 @login_required
 def getcourses():
@@ -104,93 +132,94 @@ def getcourses():
 
 	return j
 
+# If new course dragged into a box, store it in the user's courses
+# Send the hour of the offering to the user
 @app.route('/savecourse', methods = ['POST'])
 @login_required
 def savecourse():
 
-	split_course = request.form["course_item"].strip().split(" ")
-
-	d1 = Department.query.filter_by(abbr = split_course[0]).first()
-	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
-
-	year = "20" + request.form['term'][:2]
-	season = request.form['term'][2]
-
-	t = Term.query.filter_by(year = year, season = season).first()
-
-	o1 = Offering.query.filter_by(course = c1, term = t).first()
+	offering = get_requested_offering(request.form)
 
 	success = None
-	if o1 is not None:
-		success = g.user.take(o1)
-	
+	if offering is not None:
+		success = g.user.take(offering)
+
 	if success is None:
 		j = jsonify( { 'error' : "Course could not be added" } )
 		return j
 
-	db.session.commit()
-
-	j = jsonify( { 'name' : str(o1) } )
+	j = jsonify( { 'name' : str(offering) } )
 
 	return j
 
+# Callback to delete a course if user pressed red "Trash" button
 @app.route('/removecourse', methods = ['POST'])
 @login_required
 def removecourse():
 	
-	split_course = request.form["course"].strip().split(" ")
-
-	d1 = Department.query.filter_by(abbr = split_course[0]).first()
-	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+	offering = get_requested_offering(request.form)
 	
-	year = "20" + request.form['term'][:2]
-	season = request.form['term'][2]
-	
-	t = Term.query.filter_by(year = year, season = season).first()
-
-	o1 = Offering.query.filter_by(course = c1, term = t).first()
-
-	success = g.user.drop(o1)
+	success = None
+	if offering is not None:
+		success = g.user.drop(offering)
 
 	if not success:
 		j = jsonify( { 'error' : "Course could not be added" } )
 		return j
 
-	db.session.commit()
 
-	j = jsonify ( { 'error' : "", 'course' : str(o1) })
+	j = jsonify ( { 'error' : "", 'course' : str(offering) })
 
 	return j
 
+# Callback to see text of course offering
+@app.route('/getCourseInfo', methods = ['POST'])
+@login_required
+def getCourseInfo():
+
+	print "Course: " + str(request.form['course'])
+	print "Term: " + str(request.form['term'])
+
+	offering = get_requested_offering(request.form)
+
+	print offering.desc
+
+	return jsonify ( { "info" : offering.desc})
+
+# Callback to send all available terms of course so they can be highlighted on planner
 @app.route('/findterms', methods = ['POST'])
 @login_required
 def findterms():
+	
 	# Get Course
 	split_course = request.form['course_item'].strip().split(" ")
-
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 
 	available_offerings = Offering.query.filter_by(course = c1)
 
+	# Save every term/hour offered in array
 	terms = []
 	for offering in available_offerings:
 		if offering.term not in terms:
 			terms.append(offering.term)
 
+	# Send array of terms to client's view
 	j = jsonify ( {} )
 	if (terms != []):
 		j = jsonify( { 'terms' : [i.serialize for i in terms] })
 
 	return j
 
+# Toggle on/off terms
 @app.route('/swapterm', methods = ['POST'])
 @login_required
 def swapterm():
+	
+	# Get term from database
 	term_name = request.form['term']
 	year = "20" + request.form['term'][:2]
 	season = request.form['term'][2]
-
 	t1 = Term.query.filter_by(year = year, season = season).first()
 
 	g.user.swap_onterm(t1)
@@ -200,11 +229,14 @@ def swapterm():
 
 	return j
 
+# Settings redirect's to user's own profile page
 @app.route('/settings')
 @login_required
 def settings():
 	return redirect(url_for('user', netid = g.user.netid))
 
+# Profile Pages
+# TODO: Have profile show current plan
 @app.route('/user/<netid>')
 @login_required
 def user(netid):
@@ -215,21 +247,24 @@ def user(netid):
 	return render_template('user.html',
 		user = user)
 
+# Edit Page to change Name and Graduation Year
 @app.route('/edit', methods = ['GET', 'POST'])
 @login_required
 def edit():
 	form = EditForm(g.user.nickname)
+	
 	if form.validate_on_submit():
-		# if g.user.grad_year is None:
 		add_terms(int(form.grad_year.data))
 
 		g.user.nickname = form.nickname.data
 		g.user.grad_year = form.grad_year.data
+		
 		db.session.add(g.user)
 		db.session.commit()
-		flash('Your changes have been saved.')
+
 		return redirect(url_for('planner'))
 	else:
+		# Reset form to current entries
 		form.nickname.data = g.user.nickname
 		form.grad_year.data = g.user.grad_year
 	return render_template('edit.html',

@@ -1,39 +1,45 @@
+# scrape_functions.py
+# Alex Gerstein
+# 'Header' functions required for all scrapers
+
 import os
 
 from bs4 import BeautifulSoup, BeautifulStoneSoup
+from html5lib import HTMLParser, treebuilders
 import unicodedata
 import requests
 import re
 
 from app import db
-from app.models import User, Offering, Course, Department, Hour, Distrib, Wc, Term
+from app.models import User, Offering, Course, Department, Hour, Term
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
 UG_DEPT_URL = "/en/2013/orc/Departments-Programs-Undergraduate"
 
-# List of all departments missed in scraping of the ORL
-# Format: URLs, Abbreviation, Name
-MISSED_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/LAT-Latin', 'LAT', 'Latin'], 
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/CLST-Classical-Studies', 'CLST', 'Classical Studies'], 
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/GRK-Greek', 'GRK', 'Greek'], 
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/ARAB-Arabic', "ARAB", "Arabic"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/CHIN-Chinese', "CHIN", "Chinese"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/HEBR-Hebrew', "HEBR", "Hebrew"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/JAPN-Japanese', "JAPN", "Japanese"], 
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/The-Nelson-A-Rockefeller-Center-for-Public-Policy/Public-Policy-Minor/PBPL-Public-Policy', 'PBPL', 'Public Policy'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/WRIT-Writing', 'WRIT', 'Writing'], 
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/SPEE-Speech', 'SPEE', 'Speech'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Humanities/HUM-Humanities', 'HUM', "Humanities"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Physics-and-Astronomy/PHYS-Physics-Undergraduate', 'PHYS', "Physics"]]
-
-# Distributives and World Culture Abbreviations
-DISTRIBS = ["ART", "LIT", "TMV", "INT", "SOC", "QDS", "SCI", "SLA", "TAS", "TLA"]
-WCS = ["W", "NW", "CI"]
+# # Distributives and World Culture Abbreviations
+# DISTRIBS = ["ART", "LIT", "TMV", "INT", "SOC", "QDS", "SCI", "SLA", "TAS", "TLA"]
+# WCS = ["W", "NW", "CI"]
 
 # Hours and Seasons
-HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "8AM-9:50AM", "3-6pm", "7pm", "2:00-4:00", "2:00-6:00", "2:00-3:05pm", "8-10", "4-6pm", "4-6PM", "T3-6", "3-6", "D.F.S.P", "D.L.S.A", "FSP", "2-5pm", "1:00-3:00", "4:00-5:00", "4:00-6:00", "6-9", "3:00-5:00", "2-5", "1"]
+HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "8AM-9:50AM", "3-6pm", "7pm", "2:00-4:00", "2:00-6:00", "2:00-3:05pm", "8-10", "4-6pm", "4-6PM", "T3-6", "3-6", "D.F.S.P", "D.L.S.A", "FSP", "FS", "LS", "2-5pm", "1:00-3:00", "4:00-5:00", "4:00-6:00", "6-9", "3:00-5:00", "2-5", "1"]
+
 SEASONS = ["W", "S", "X", "F"]
+
+# Since the timetable is the authority on course offerings (as I learned when 
+# the registrar refused to give me an NW for my Japanese Cinema Course), keep
+# track of the terms I collected into the database so I don't delete them.
+TIMETABLE_START_YEAR = 2013
+TIMETABLE_START_SEASON = "W"
+
+TIMETABLE_LATEST_YEAR = 2013
+TIMETABLE_LATEST_SEASON = "F"
+
+TIMETABLE_LOCK_YEAR = 2013
+TIMETABLE_LOCK_SEASON = "F"
+
+ARBITRARY_OLD_YEAR = 2005
+ARBITRARY_SEASON = "W"
 
 # Alert function that makes a message stand out when running hte scraper
 def print_alert(message):
@@ -84,6 +90,104 @@ def store_terms():
 
 	db.session.commit()
 
+# Check for offerings being listed in the sections of a topics course
+# For example, some descriptions start: "13F at 2..."
+def scan_topics_offerings(course_soup, course, dept, year, lock_term_start, lock_term_end):
+	text = course_soup.text
+
+	# Regex search for all instances of "[TERM] at [HOUR]"
+	for offering in course_soup.find_all(text=re.compile('[0-9][0-9][FWSX] at [0-9A-Z]{1,2}')):
+		split_offering = offering.split(" ")
+		store_offerings(split_offering, course, dept, course_soup, year, course_soup, lock_term_start, lock_term_end)
+
+# Check each stripped offering for typos in the ORC's listing
+def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category):
+	
+	# "Asian and Middle Eastern Languages": Different formatting of language courses
+	if (d1.abbr == "ARAB") or (d1.abbr == "HEBR") or (d1.abbr == "CHIN") or (d1.abbr == "JAPN"):
+		if (len(stripped_offering) < 3) and (terms_offered == []):
+			c1 = Course.query.filter_by(department = d1, number = stripped_offering).first()
+			stripped_offering = ""
+		elif (stripped_offering[len(stripped_offering) - 1] == ','):
+			c1 = Course.query.filter_by(department = d1, number = stripped_offering[:2]).first()
+			stripped_offering = ""
+	
+	# "Chemistry": Different formatting of CHEM 5 and others
+	elif (d1.abbr == "CHEM"):
+		if (len(stripped_offering) < 3 and (terms_offered == [])):
+			c1 = Course.query.filter_by(department = d1, number = stripped_offering).first()
+			stripped_offering = ""
+
+	# "Classics": Intermediate Latin missing space between hours offered
+	elif (d1.abbr == "CLST"):
+		if (c1.name == "Intermediate Latin"):
+			if (stripped_offering == "9,2"):
+				possible_hour = Hour.query.filter_by(period = "9").first()
+				hours_offered.append(possible_hour)
+				stripped_offering = "2"
+
+	# "Earth Sciences": Invalid initial character for some years
+	elif (d1.abbr == "EARS"):
+		if (c1.number == "70"):
+			stripped_offering = ""
+
+	# "Government": Misplaced colon
+	elif (d1.abbr == "GOVT"):
+		if "11" in stripped_offering:
+			if terms_offered == []:
+				stripped_offering = "11F"
+
+		elif 60 == c1.number:
+			if "11:F" in stripped_offering:
+				stripped_offering = "11F"
+
+	# "International Studies": Missing space between term and hour
+	elif (d1.abbr == "INTS"):
+		if stripped_offering == "12W:W":
+			possible_term = Term.query.filter_by(year = "2012", season = "W").first()
+			terms_offered.append(possible_term)
+			stripped_offering = ""
+
+	# "Mathematics": Some courses are no longer offered
+	elif (d1.abbr == "MATH"):
+		if (c1.name == "Discrete Mathematics in Computer Science"):
+			stripped_offering = ""
+		elif "Linear Programming" in c1.name:
+			stripped_offering = ""
+
+	# "Linguistics": LING 80 switch characters
+	elif (d1.abbr == "LING"):
+		if stripped_offering == "31S":
+			stripped_offering = "13S"
+
+	# "Music": Individual music have section numbers that get confused as hours
+	elif (d1.abbr == "MUS"):
+		if (c1.name == "Performance Laboratories"):
+			if len(stripped_offering) == 1:
+				stripped_offering = ""
+
+	# "Economics": Missing F for fall in term listed
+	elif (c1.name == "International Finance and Open-Economy Macroeconomics"):
+		if (str(stripped_offering) == "14"):
+			stripped_offering = "14F"
+
+	# "Spanish LSA": Missing X for summer
+	elif (c1.name == "Language Study Abroad"):
+		if (stripped_offering =="14"):
+			if (d1.abbr == "SPAN"):
+				stripped_offering = "14X"
+
+	# "German": Misplaced colon
+	elif (c1.name == "Studies in German History"):
+		if (stripped_offering == "14:F"):
+			stripped_offering = "14F"
+
+	stripped_offering = check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category)
+
+	stripped_offering = check_misplaced_comma(stripped_offering, hours_offered,terms_offered)
+
+	return stripped_offering, c1
+	
 # Loop through each offering, adding the terms to a list of offered terms and 
 # the hours to a list of offered hours. When the category of the offerings 
 # switch from terms offered to hours offered and back, we know that all 
@@ -94,7 +198,7 @@ def store_terms():
 # 	"[TERM1], [TERM2]: [HOUR1], [HOUR2]"
 # In this case, there would be 4 offerings, one for each combination of the
 # terms and hours
-def store_offerings(offering_info, c1, d1, info_soup, year):
+def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term_start, lock_term_end):
 	# Initialize offered lists to empty
 	terms_offered = []
 	hours_offered = []
@@ -142,7 +246,7 @@ def store_offerings(offering_info, c1, d1, info_soup, year):
 
 		# Since the "period" Arrange is not a number, check for it early and
 		# add it to the list of possible hours before issues arise.
-		if stripped_offering == "Arrange":
+		if stripped_offering == "Arrange" or stripped_offering == "arranged" or stripped_offering.upper() == "ARR":
 			possible_hour = Hour.query.filter_by(period = "Arrange").first()
 			if possible_hour:
 				hours_offered.append(possible_hour)
@@ -151,7 +255,7 @@ def store_offerings(offering_info, c1, d1, info_soup, year):
 
 			# Assume no other hours offered, since Arrange is usually listed 
 			# for the later terms, so run combinator fcn for offering lists 
-			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
+			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
 			continue
 
 		# Ignore Lab and Discussion hours 
@@ -169,8 +273,8 @@ def store_offerings(offering_info, c1, d1, info_soup, year):
 			break
 
 		# If offerings vary, should check for topics offerings
-		if stripped_offering == "Varies" or stripped_offering == "vary:
-			scan_topics_offerings(info_soup, c1, d1, year)
+		if stripped_offering == "Varies" or stripped_offering == "vary":
+			scan_topics_offerings(info_soup, c1, d1, year, lock_term_start, lock_term_end)
 			break
 
 		# Check for other key terms that signal a halt in offerings
@@ -200,12 +304,12 @@ def store_offerings(offering_info, c1, d1, info_soup, year):
 			continue
 
 		# Check for typos on the ORC listing
-		stripped_offering = fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category)
+		stripped_offering, c1 = fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category)
 
 		# If typo check returned nothing, then add the current combinations
 		# to the offerings and move on to the next word in offerings
 		if stripped_offering == "":
-			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
+			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
 			continue
 
 		# Check if word is an hour. If it is, append it to hours_offered
@@ -226,13 +330,13 @@ def store_offerings(offering_info, c1, d1, info_soup, year):
 			# If the categories swapped from hours, back to term, then add all
 			# possible combinations of the terms and hours
 			if (old_category != "" and old_category != new_category):
-				terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
+				terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
 
 			# Append the new term
 			terms_offered.append(possible_term)
 
 	# Now that loop has been exited, add then clear any remaining combinations
-	terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered)
+	terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
 
 # Generalized check for missing space between terms and hours
 def check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category):
@@ -340,23 +444,36 @@ def remove_course_marks():
 # Delete all terms not marked as added, because they were not found in the 
 # latest scraping. Then reset all "added" flags for next scraping.
 def remove_deleted_offerings():
-	deleted_courses = Offering.query.filter_by(added = "").all()
+	deleted_offerings = Offering.query.filter_by(added = "").all()
 
-	for course in deleted_courses:
-		db.session.delete(course)
+	oldest_term = Term.query.filter_by(year = ARBITRARY_OLD_YEAR, season = ARBITRARY_SEASON).first()
+	latest_lock_term = Term.query.filter_by(year = TIMETABLE_LOCK_YEAR, season = TIMETABLE_LOCK_SEASON).first()
+
+	for offering in deleted_offerings:
+
+		# Ignore if ORC data from the higher-priority timetable
+		if not offering.get_term().in_range(oldest_term, latest_lock_term):
+			print_alert("DELETED: " + str(offering.get_term()) + " " + str(offering))
+			db.session.delete(offering)
 
 	db.session.commit()
 
 	remove_course_marks()
 
 # Add all possible combinations of terms and hours to course's offerings 
-def add_offerings(course, terms_offered, hours_offered):
+def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_start, lock_term_end):
 	print terms_offered
 	print hours_offered
 	print "\n"
 
 	# Loop through all combinations
 	for term in terms_offered:
+
+		# # Ignore if ORC data might conflit with the higher-priority timetable
+		# if term.in_range(lock_term_start, lock_term_end):
+		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
+		# 	continue
+
 		for hour in hours_offered:
 
 			# Check if offering already exists
@@ -364,13 +481,16 @@ def add_offerings(course, terms_offered, hours_offered):
 			
 			# Add offering if not already in database
 			if o1 is None:
-				o1 = Offering(course = course.id, term = term.id, hour = hour.id)
-				db.session.add(o1)		
+				o1 = Offering(course = course.id, term = term.id, hour = hour.id, desc = course_desc.prettify())
+
+				db.session.add(o1)
+				db.session.commit()
 				
-				print_alert(str(o1))
+				print_alert("ADDED: " + str(o1))
 			
-			# Mark offering as added to check for deleted offerings at end
-			o1.mark_added()
+			# Mark offering as "[T]emporarily" added to check for deleted 
+			# offerings at end
+			o1.mark("T")
 
 	db.session.commit()
 
