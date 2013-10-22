@@ -26,9 +26,9 @@ old_orcs_shortcut = ""
 store_hours()
 store_terms()
 
-# Add current timetable, usurping any previous new entries
-scrape_timetable()
+# # Add current timetable, usurping any previous new entries
+# scrape_timetable()
 
-# If course in database was not added by the latest scraping, then it has been changed by the registrar. So, delete.
-if (curr_orc_shortcut == "") and (old_orcs_shortcut == ""):
-	remove_deleted_offerings()
+# # If course in database was not added by the latest scraping, then it has been changed by the registrar. So, delete.
+# if (curr_orc_shortcut == "") and (old_orcs_shortcut == ""):
+# 	remove_deleted_offerings()
