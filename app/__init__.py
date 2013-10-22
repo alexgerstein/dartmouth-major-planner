@@ -16,4 +16,11 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 db = SQLAlchemy(app)
 
+if os.environ.get('HEROKU') is not None:
+    import logging
+    stream_handler = logging.StreamHandler()
+    app.logger.addHandler(stream_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('dplanner startup')
+
 from app import views, models

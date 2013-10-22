@@ -5,10 +5,9 @@ import urllib
 import requests
 from lxml import etree
 
-
-from config import CAS_URL, APP_NAME
-
 flask_cas = Blueprint('flask_cas', __name__, template_folder='templates')
+
+CAS_URL = 'https://login.dartmouth.edu/cas/'
 
 def recursive_dict(element):
     return element.tag, dict(map(recursive_dict, element)) or element.text

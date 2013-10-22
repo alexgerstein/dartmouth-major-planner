@@ -2,6 +2,7 @@
 *.db
 config.py
 
+flask
 db_repository/*
 
 # C extensions
