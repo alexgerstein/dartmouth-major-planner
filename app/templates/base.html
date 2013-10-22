@@ -7,7 +7,7 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
+    // <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
 
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,9 +22,8 @@
       <div class="container-fluid">
         <div class="navbar">
           <div class="navbar-inner">
-            <a class="brand" href="/">Dplanner</a>
+            <a class="brand" href="{{ url_for('index')}}">Dplanner</a>
               <ul class="nav">
-                <li><a href="{{ url_for('index') }}">Home</a></li>
                 {% if user %}
                 <li><a href="{{ url_for('planner') }}">My Course Plan</a></li>
                 <li><a href="{{ url_for('settings') }}">Settings</a></li>
