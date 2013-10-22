@@ -107,7 +107,7 @@ def parse_soup(soup):
             
             # If initial search for course fails, check if it's a topics course
             if not course:
-                course = Course.query.filter_by(department = dept, number = number + "." + section).first()
+                course = Course.query.filter_by(department = dept, number = str(number) + "." + str(section)).first()
 
             # Otherwise, add the course. It's not ideal to take these course 
             # names since they're often abbreviated, but it will have to do.

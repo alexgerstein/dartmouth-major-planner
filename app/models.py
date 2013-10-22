@@ -226,7 +226,7 @@ class Hour(db.Model):
 	__tablename__ = "hour"
 
 	id = db.Column(db.Integer, primary_key = True)
-	period = db.Column(db.String(40), index = True, unique = True)
+	period = db.Column(db.String(50), index = True, unique = True)
 	offerings = db.relationship('Offering', backref = 'hour')
 
 	def __init__(self, period):
