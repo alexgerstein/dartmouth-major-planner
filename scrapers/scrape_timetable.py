@@ -7,7 +7,7 @@ from scrape_functions import *
 import urllib2
 import bs4
 
-timetable_url = 'http://oracle-www.dartmouth.edu/dart/groucho/timetable.display_courses?subjectradio=allsubjects&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=General+Education+Requirements&termradio=allterms&terms=no_value&distribradio=alldistribs&hoursradio=allhours&sortorder=dept'
+timetable_url = 'winter 2013 tt.html'
 
 SEASON_MONTH = {"01": "W", "03": "S", "06": "X", "09": "F"}
 

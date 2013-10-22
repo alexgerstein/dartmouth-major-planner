@@ -30,7 +30,7 @@ SEASONS = ["W", "S", "X", "F"]
 # the registrar refused to give me an NW for my Japanese Cinema Course), keep
 # track of the terms I collected into the database so I don't delete them.
 TIMETABLE_START_YEAR = 2013
-TIMETABLE_START_SEASON = "S"
+TIMETABLE_START_SEASON = "W"
 
 TIMETABLE_LATEST_YEAR = 2014
 TIMETABLE_LATEST_SEASON = "W"
