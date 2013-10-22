@@ -68,7 +68,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			continue
 
 		# If course not in database, add it.
-		if (course is None) and len(name) < 300:
+		if (course is None) and len(course_name) < 300:
 			course = Course(number = course_number, name = course_name, department = dept.id)
 			db.session.add(course)
 			db.session.commit()
