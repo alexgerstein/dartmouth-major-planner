@@ -1,6 +1,5 @@
 *.py[cod]
 *.db
-config.py
 
 flask
 db_repository/*
