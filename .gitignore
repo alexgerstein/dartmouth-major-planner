@@ -2,7 +2,6 @@
 *.db
 
 flask
-db_repository/*
 
 # C extensions
 *.so
