@@ -137,7 +137,7 @@ class Course(db.Model):
 	__tablename__ = 'course'
 
 	id = db.Column(db.Integer, primary_key = True)
-	number = db.Column(db.String(5))
+	number = db.Column(db.String(10))
 	name = db.Column(db.String(300), index = True)
 
 	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
@@ -242,7 +242,7 @@ class Department(db.Model):
 	__tablename__ = "department"
 
 	id = db.Column(db.Integer, primary_key = True)
-	name = db.Column(db.String(50), index = True, unique = True)
+	name = db.Column(db.String(100), index = True, unique = True)
 	abbr = db.Column(db.String(10), index = True, unique = True)
 
 	courses = db.relationship('Course', backref = 'department')
