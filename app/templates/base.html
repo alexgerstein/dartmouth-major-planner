@@ -13,16 +13,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     {% if title %}
-    <title>{{title}} - Major Planner</title>
+    <title>{{title}} - Dplanner</title>
     {% else %}
-    <title>Welcome to Dartmouth Major Planner</title>
+    <title>Welcome to Dplanner</title>
     {% endif %}
   </head>
   <body style="cursor: auto">
       <div class="container-fluid">
         <div class="navbar">
           <div class="navbar-inner">
-            <a class="brand" href="/">Dartmouth Major Planner</a>
+            <a class="brand" href="/">Dplanner</a>
               <ul class="nav">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 {% if user %}
