@@ -5,7 +5,7 @@ from scrape_functions import *
 
 # List of all departments missed in scraping of the ORL
 # Format: URLs, Abbreviation, Name
-MISSED_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/LAT-Latin', 'LAT', 'Latin'], 
+MISSED_UG_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/LAT-Latin', 'LAT', 'Latin'], 
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/CLST-Classical-Studies', 'CLST', 'Classical Studies'], 
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/GRK-Greek', 'GRK', 'Greek'], 
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/ARAB-Arabic', "ARAB", "Arabic"],
@@ -17,7 +17,8 @@ MISSED_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/SPEE-Speech', 'SPEE', 'Speech'],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Humanities/HUM-Humanities', 'HUM', "Humanities"],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Physics-and-Astronomy/PHYS-Physics-Undergraduate', 'PHYS', "Physics"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Linguistics-and-Cognitive-Science/COGS-Cognitive-Science', 'COGS', "Cognitive Science"]
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Linguistics-and-Cognitive-Science/COGS-Cognitive-Science', 'COGS', "Cognitive Science"],
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Graduate/Microbiology-and-Immunology/MICR-Microbiology-and-Immunology', 'MICR', 'Microbiology and Immunology']
 ]
 
 # Return the section of the base url with the links to the departments
@@ -186,5 +187,5 @@ def scrape_curr_orc(lock_term_start, lock_term_end, start_dept_name = ""):
 	year = scrape_college_orc(GRAD_DEPT_URL, lock_term_start, lock_term_end, start_dept_name = "")
 
 	# Repeat for all missed departments
-	for listing in MISSED_LISTINGS:
+	for listing in MISSED_UG_LISTINGS:
 		search_courses(listing[0], listing[1], listing[2], year, lock_term_start, lock_term_end)
