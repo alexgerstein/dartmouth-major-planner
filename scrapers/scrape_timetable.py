@@ -33,7 +33,6 @@ def url_to_html_str(url):
 # Convert the html to parsable soup
 def html_to_soup(html):
     soup = BeautifulSoup(html.decode("utf-8"), features="html5lib")
-    print soup
     return soup
 
 # Import the courses to the database by row 
@@ -124,12 +123,9 @@ def parse_soup(soup):
             if not offering:
                 general_offering = Offering.query.filter_by(course = course, term = term).first()
 
-                print "PERIOD: " + str(period)
-
                 offering_desc = ""
                 if general_offering:
                     offering_desc = general_offering.desc
-                    print offering_desc
 
                 offering = Offering(course = course.id, term = term.id, hour = period.id, desc = offering_desc)
                 db.session.add(offering)

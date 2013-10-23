@@ -127,7 +127,7 @@ def planner():
 def getcourses():
 	qryresult = Course.query.filter_by(department_id = request.form['dept'])
 
-	j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('number')] })
+	j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('id', 'number')] })
 
 	return j
 

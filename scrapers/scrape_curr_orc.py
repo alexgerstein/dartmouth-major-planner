@@ -88,8 +88,12 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 		if (d1 is None):
 			
 			# Remove Undergrad/Grad distinctions in depts
-			dept_name = dept_name.strip("Undergraduate")
-			dept_name = dept_name.strip("Graduate")
+			if "Undergraduate" in dept_name:
+				dept_name = dept_name.strip("Undergraduate")
+			if "Graduate" in dept_name:
+				dept_name = dept_name.strip("Graduate")
+
+			print dept_name
 
 			d1 = Department(name = dept_name, abbr = dept_abbr)
 			db.session.add(d1)
