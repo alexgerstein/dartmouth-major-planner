@@ -44,7 +44,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 	info_soup = BeautifulSoup(r.content.decode("utf-8"), "lxml")
 	
 	# Search the main section of the page
-	info_soup = info_soup.find( 'div', {"id" : "rightpanel"})
+	info_soup = info_soup.find( 'div', {"id" : "rightpanel"}).find('div', {'id': 'main'})
 	if info_soup is not None:
 
 		# # Initialize Distribs
