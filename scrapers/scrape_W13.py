@@ -20,9 +20,8 @@ from scrape_timetable import *
 store_hours()
 store_terms()
 
-timetable_url = 'http://oracle-www.dartmouth.edu/dart/groucho/timetable.display_courses?subjectradio=allsubjects&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=General+Education+Requirements&termradio=allterms&terms=no_value&distribradio=alldistribs&hoursradio=allhours&sortorder=dept'
+timetable_url = 'https://raw.github.com/alexgerstein/dartmouth-major-planner/master/scrapers/W2013.html'
 
-def scrape_W13():
-    html = url_to_html_str(timetable_url)
-    soup = html_to_soup(html)
-    parse_soup(soup)
+html = url_to_html_str(timetable_url)
+soup = html_to_soup(html)
+parse_soup(soup)
