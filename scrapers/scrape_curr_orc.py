@@ -49,7 +49,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 		info_soup = info_soup.find('div', {'id': 'main'})
 		
 		# scripts can be executed from comments in some cases  
-    	comments = info_soup.findAll(text=lambda text:isinstance(text, Comment))  
+    	comments = info_soup.findAll(text=lambda text:isinstance(text, bs4.Comment))  
     	for comment in comments:  
        		comment.extract()  
 
