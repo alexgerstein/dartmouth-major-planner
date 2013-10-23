@@ -104,8 +104,8 @@ def scan_topics_offerings(course_soup, course, dept, year, lock_term_start, lock
 # Check each stripped offering for typos in the ORC's listing
 def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category):
 	
-	# "Asian and Middle Eastern Languages": Different formatting of language courses
-	if (d1.abbr == "ARAB") or (d1.abbr == "HEBR") or (d1.abbr == "CHIN") or (d1.abbr == "JAPN"):
+	# "Asian and Middle Eastern Languages" and "Russian": Different formatting of language courses
+	if (d1.abbr == "ARAB") or (d1.abbr == "HEBR") or (d1.abbr == "CHIN") or (d1.abbr == "JAPN") or (d1.abbr == "RUSS"):
 		if (len(stripped_offering) < 3) and (terms_offered == []):
 			c1 = Course.query.filter_by(department = d1, number = stripped_offering).first()
 			stripped_offering = ""
@@ -188,6 +188,9 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
 		stripped_offering = ""
 
 	elif (d1.abbr == 'ECS'):
+		stripped_offering = ""
+
+	elif "." in stripped_offering:
 		stripped_offering = ""
 
 	stripped_offering = check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category)
@@ -294,6 +297,8 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 			break
 		if "Field" in stripped_offering:
 			break
+		if "Identical" in stripped_offering:
+			break
 
 		# Similar to "Arrange", these FSP periods are not numbers, so check and
 		# add them early.
@@ -305,6 +310,8 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 				hours_offered.append(possible_hour)
 				old_category = new_category
 				new_category = "HOUR"
+
+
 
 		# If first digit of the offering is not a number, then it can no 
 		# longer be a term or a period

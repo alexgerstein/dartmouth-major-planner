@@ -8,6 +8,7 @@ import urllib2
 import bs4
 
 timetable_url = 'http://oracle-www.dartmouth.edu/dart/groucho/timetable.display_courses?subjectradio=allsubjects&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=General+Education+Requirements&termradio=allterms&terms=no_value&distribradio=alldistribs&hoursradio=allhours&sortorder=dept'
+w13timetable_url = 'https://raw.github.com/alexgerstein/dartmouth-major-planner/master/scrapers/W2013.html'
 
 SEASON_MONTH = {"01": "W", "03": "S", "06": "X", "09": "F"}
 
@@ -25,7 +26,7 @@ def url_to_html_str(url):
     txheaders =  {'User-agent' : 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'}
     
     # Get the request
-    req = urllib2.Request(timetable_url, None, txheaders)
+    req = urllib2.Request(url, None, txheaders)
     handle = urllib2.urlopen(req)
     html = handle.read() #returns the page
     return html
@@ -36,7 +37,8 @@ def html_to_soup(html):
     return soup
 
 # Import the courses to the database by row 
-def parse_soup(soup):
+def parse_soup(soup, search_term):
+
     # Narrow the page down to the table itself
     soup = soup.find('div', {'class': 'data-table'})
     soup = soup.find('tbody')
@@ -100,7 +102,7 @@ def parse_soup(soup):
                     db.session.add(period)
                     db.session.commit()
 
-        if term and dept and (number is not "") and (section is not "") and ( title is not "") and period:
+        if ((search_term == None) or (term == search_term)) and dept and (number is not "") and (section is not "") and ( title is not "") and period:
 
             course = Course.query.filter_by(department = dept, number = number).first()
             
@@ -130,7 +132,7 @@ def parse_soup(soup):
                 offering = Offering(course = course.id, term = term.id, hour = period.id, desc = offering_desc)
                 db.session.add(offering)
                 db.session.commit()
-                print_alert("OFFERING ADDED: " + str(offering))
+                print_alert("OFFERING ADDED: " + str(offering) + " in " + str(term))
             else:
                 print str(offering)
 
@@ -142,12 +144,20 @@ def parse_soup(soup):
             for old_offering in old_offerings:
                 if old_offering.added != "F":
                     db.session.delete(old_offering)
-                    print_alert("OFFERING DELETED: " + str(offering))
+                    print_alert("OFFERING DELETED: " + str(offering) + " in " + str(term))
             db.session.commit()
 
 
 
 def scrape_timetable():
+    # Scrape full timetable
     html = url_to_html_str(timetable_url)
     soup = html_to_soup(html)
-    parse_soup(soup)
+    parse_soup(soup, None)
+
+    # Scrape missing Winter (W13)
+    winter_term = Term.query.filter_by(year = 2013, season = "W").first()
+
+    html = url_to_html_str(w13timetable_url)
+    soup = html_to_soup(html)
+    parse_soup(soup, winter_term)

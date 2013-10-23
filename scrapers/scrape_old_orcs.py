@@ -39,9 +39,18 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 		split_title = title.text.strip(" ").split(" ")
 		course_number = split_title[0].strip(".")
 		course_name = " ".join(split_title[1:]).strip(" ")
+		offerings = ""
+
+		# Check if offerings were accidentally stored in the course title
+		if re.search('[0-9][0-9][WSXF]: [0-9]', title.text) or "Not" in title.text:
+			offerings = title
+			if title.findPrevious('p')['class'] != ['coursetitle']:
+				course_name = title.findNext('p').text
+				course_name = course_name.split('Dist:')[0]
+			else:
+				continue
 
 		abbreviation = dept.abbr
-
 		old_dept = dept
 
 		# Adjust for AMEL department
@@ -73,8 +82,11 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			db.session.add(course)
 			db.session.commit()
 
-		# Store the next section (usually the offerings)
-		offerings = title.findNext("p")
+		# Store the next section (usually the offerings), if
+		# offers are not already saved from being misplaced in the
+		# title of the course
+		if offerings == "":
+			offerings = title.findNext("p")
 
 		# If no next section, or next section is not a course, stop scraping the page
 		if offerings is None:
@@ -85,16 +97,26 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 		# Initialize concatenated offering description for info page
 		offering_html = title
 
+		# Check if offerings section was mislabeled as title and relabel
+		# so it can be run through the while loop
+		if (offerings['class'] !=  ["courseoffered"]):
+			if re.search('[0-9][0-9][WSXF]: [0-9]', offerings.text):
+				print "del CLASS"
+				del offerings['class']
+				offerings['class'] = 'courseoffered'
+				print offerings['class']
+
 		# For each list of offerings of the course, add to the database
-		while (offerings['class'] ==  ["courseoffered"]):
+		while ("courseoffered" in offerings['class']):
 			
 			# Split the offering into a list of each word
 			offering_split = offerings.text.split(" ")
 
 			print course
+			print offerings
 
 			# Concatenate listing from orc page
-			offering_html.append(offerings)
+			offering_html.append(str(offerings))
 			description = offerings.findNext('p', {'class': 'coursedescptnpar'})
 			while (description is not None) and (description['class'] == ['coursedescptnpar']):
 				
@@ -121,7 +143,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			# Reset info page html
 			offering_html = title
 
-			if 'class' in offerings:
+			if (offerings) and ('class' in offerings):
 				continue
 			else:
 				break
