@@ -2,6 +2,7 @@
 # Alex Gerstein
 
 from scrape_functions import *
+from bs4 import Comment
 
 # List of all departments missed in scraping of the ORL
 # Format: URLs, Abbreviation, Name
@@ -49,7 +50,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 		info_soup = info_soup.find('div', {'id': 'main'})
 		
 		# scripts can be executed from comments in some cases  
-    	comments = info_soup.findAll(text=lambda text:isinstance(text, BeautifulSoup.Comment))  
+    	comments = info_soup.findAll(text=lambda text:isinstance(text, Comment))  
     	for comment in comments:  
        		comment.extract()  
 
