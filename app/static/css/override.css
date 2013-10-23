@@ -54,6 +54,14 @@ li.term-name {
 	background-color: #3A5E36;
 }
 
+.available-user {
+	background-color: yellow;
+}
+
+.available-user-off {
+	background-color: yellow;
+}
+
 .btn-danger {
 	margin: 0px 6px;
 }

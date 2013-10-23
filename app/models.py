@@ -100,6 +100,7 @@ class Offering(db.Model):
 	# wc_id = db.Column(db.Integer, db.ForeignKey('wc.id'))
 
 	added = db.Column(db.String(2))
+	user_added = db.Column(db.string(2))
 
 	def __init__(self, course, term, hour, desc):
 		self.course_id = course
@@ -107,6 +108,8 @@ class Offering(db.Model):
 		self.hour_id = hour
 		self.desc = desc
 
+
+		self.user_added = ""
 		# self.wc_id = wc
 
 		# for distrib in distribs:
@@ -125,6 +128,9 @@ class Offering(db.Model):
 	def mark_empty(self):
 		self.added = ""
 		return self
+
+	def user_added(self):
+		self.user_added = "Y"
 
 	def __repr__(self):
 		course = Course.query.filter_by(id = self.course_id).first()

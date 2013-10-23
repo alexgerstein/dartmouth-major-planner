@@ -38,6 +38,15 @@ function showAvailableSlots(event, ui) {
                 $(term_id).addClass('available');
             }
         });
+
+        $.each(data['user-terms'], function(index, item) {
+            term_id = "#" + item['term'];
+            if ($(term_id).hasClass('off-term')) {
+                $(term_id).addClass('available-user-off');
+            } else {
+                $(term_id).addClass('available-user');
+            }
+        });
     });
 }
 
@@ -61,6 +70,14 @@ function saveCourse(event, ui) {
         alert("Maximum courses exceeded for this term.");
         return;
     }
+
+    if $(ext_term_id + " .available") == false {
+        if (confirm('Are you sure you want to put the course here? According to our records, it might not be offered this term. Please consult the latest registrar listing to verify.')) {
+            continue;
+        } else :
+            return;
+    }
+
 
     var posting = $.post('/savecourse', { course: text, term: term_id });
 

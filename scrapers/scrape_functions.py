@@ -23,7 +23,7 @@ GRAD_DEPT_URL = "/en/2013/orc/Departments-Programs-Graduate"
 # WCS = ["W", "NW", "CI"]
 
 # Hours and Seasons
-HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "8AM-9:50AM", "7pm", "D.F.S.P", "D.L.S.A", "FSP", "FS", "LS", "1"]
+HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "Check", "8AM-9:50AM", "7pm", "D.F.S.P", "D.L.S.A", "FSP", "FS", "LS", "1"]
 
 SEASONS = ["W", "S", "X", "F"]
 
