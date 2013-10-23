@@ -136,7 +136,7 @@ class Course(db.Model):
 	__tablename__ = 'course'
 
 	id = db.Column(db.Integer, primary_key = True)
-	number = db.Column(db.String(10), db.convert_unicode = True)
+	number = db.Column(db.String(10, convert_unicode = True))
 	name = db.Column(db.String(300), index = True)
 
 	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
