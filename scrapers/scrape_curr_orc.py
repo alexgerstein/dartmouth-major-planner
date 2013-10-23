@@ -48,6 +48,11 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 	if (info_soup):
 		info_soup = info_soup.find('div', {'id': 'main'})
 		
+		# scripts can be executed from comments in some cases  
+    	comments = soup.findAll(text=lambda text:isinstance(text, Comment))  
+    	for comment in comments:  
+       		comment.extract()  
+
 	if info_soup is not None:
 
 		# # Initialize Distribs
