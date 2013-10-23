@@ -73,8 +73,13 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 		# 			course_wc = possible_wc
 
 		# Check for department in database
-		d1 = Department.query.filter_by(name = dept_name).first()
+		d1 = Department.query.filter_by(abbr = dept_abbr).first()
 		if (d1 is None):
+			
+			# Remove Undergrad/Grad distinctions in depts
+			dept_name = dept_name.strip("Undergraduate")
+			dept_name = dept_name.strip("Graduate")
+
 			d1 = Department(name = dept_name, abbr = dept_abbr)
 			db.session.add(d1)
 			db.session.commit()

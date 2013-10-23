@@ -5,7 +5,6 @@
 from flask import render_template, request, flash, redirect, url_for, session, g, jsonify
 from app import app, db
 from models import User, Offering, Course, Department, Term
-# from flask_cas import login_required
 from forms import EditForm, DeptPickerForm
 from functools import wraps
 
@@ -176,9 +175,6 @@ def removecourse():
 @app.route('/getCourseInfo', methods = ['POST'])
 @login_required
 def getCourseInfo():
-
-	print "Course: " + str(request.form['course'])
-	print "Term: " + str(request.form['term'])
 
 	offering = get_requested_offering(request.form)
 

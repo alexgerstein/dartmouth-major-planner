@@ -129,6 +129,7 @@ def parse_soup(soup):
                 offering_desc = ""
                 if general_offering:
                     offering_desc = general_offering.desc
+                    print offering_desc
 
                 offering = Offering(course = course.id, term = term.id, hour = period.id, desc = offering_desc)
                 db.session.add(offering)
@@ -136,6 +137,7 @@ def parse_soup(soup):
                 print_alert("OFFERING ADDED: " + str(offering))
             else:
                 print str(offering)
+
             offering.mark("F")
 
             # Delete all non-final offerings of the term. If they're still in 
