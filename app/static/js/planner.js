@@ -54,6 +54,8 @@ function clearAvailableSlots(event, ui) {
     $('.sortable2').each( function(index, item) {
         $(this).removeClass('available');
         $(this).removeClass('available-off');
+        $(this).removeClass('available-user');
+        $(this).removeClass('available-user-off');
     });
 }
 
@@ -71,11 +73,10 @@ function saveCourse(event, ui) {
         return;
     }
 
-    if $(ext_term_id + " .available") == false {
-        if (confirm('Are you sure you want to put the course here? According to our records, it might not be offered this term. Please consult the latest registrar listing to verify.')) {
-            continue;
-        } else :
+    if ($(this).hasClass('available') == false) {
+        if (confirm('Are you sure you want to put the course here? According to our records, it might not be offered this term. Please consult the latest registrar listing to verify.') != true) {
             return;
+        }
     }
 
 

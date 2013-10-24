@@ -129,7 +129,7 @@ def parse_soup(soup, search_term):
                 if general_offering:
                     offering_desc = general_offering.desc
 
-                offering = Offering(course = course.id, term = term.id, hour = period.id, desc = offering_desc)
+                offering = Offering(course = course.id, term = term.id, hour = period.id, desc = offering_desc, user_added = "N")
                 db.session.add(offering)
                 db.session.commit()
                 print_alert("OFFERING ADDED: " + str(offering) + " in " + str(term))
@@ -142,7 +142,7 @@ def parse_soup(soup, search_term):
             # the timetable, they'll be added back
             old_offerings = Offering.query.filter_by(course = course, term = term).all()
             for old_offering in old_offerings:
-                if old_offering.added != "F":
+                if old_offering.added != "F" and old_offerings.user_added == "N":
                     db.session.delete(old_offering)
                     print_alert("OFFERING DELETED: " + str(offering) + " in " + str(term))
             db.session.commit()

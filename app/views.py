@@ -4,7 +4,7 @@
 
 from flask import render_template, request, flash, redirect, url_for, session, g, jsonify
 from app import app, db
-from models import User, Offering, Course, Department, Term
+from models import User, Offering, Course, Department, Term, Hour
 from forms import EditForm, DeptPickerForm
 from functools import wraps
 
@@ -77,9 +77,11 @@ def get_requested_offering(form):
 	o1 = Offering.query.filter_by(course = c1, term = t).first()
 
 	if o1 is None:
-		o1 = Offering(course = c1, term = t, hour = Hour.query.filter_by(period = "Check").first(), desc = "User Added")
+
+		check_hour = Hour.query.filter_by(period = "?").first()
+
+		o1 = Offering(course = c1.id, term = t.id, hour = check_hour.id, desc = "User Added", user_added = "Y")
 		db.session.add(o1)
-		o1.user_added()
 
 		db.session.commit()
 
@@ -199,20 +201,21 @@ def findterms():
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 
-	available_actual_offerings = Offering.query.filter_by(course = c1, user_added = "")
 
-	# Save every term/hour offered in array
+	available_actual_offerings = Offering.query.filter_by(course = c1).all()
+
+	# Save every term/hour offered in either actual or user-added array
 	terms = []
-	for offering in available_actual_offerings:
-		if offering.term not in terms:
-			terms.append(offering.term)
-
-	# Save the user's terms
-	available_user_terms = Offering.query.filter_by(course = c1, user_added = "Y")
 	user_terms = []
-	for offering in available_user_terms:
+	for offering in available_actual_offerings:
 		if (offering.term not in terms) and (offering.term not in user_terms):
-			user_terms.append(offering.term)
+			print offering.user_added
+			if offering.user_added == "N":
+				print "Not: " + str(offering)
+				terms.append(offering.term)
+			elif offering.user_added == "Y":
+				print "IS: " + str(offering)
+				user_terms.append(offering.term)
 
 
 	# Send array of terms to client's view

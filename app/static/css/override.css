@@ -55,11 +55,11 @@ li.term-name {
 }
 
 .available-user {
-	background-color: yellow;
+	background-color: #FFFF99;
 }
 
 .available-user-off {
-	background-color: yellow;
+	background-color: #808066;
 }
 
 .btn-danger {
