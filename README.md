@@ -5,6 +5,7 @@ Webapp for Dartmouth students to plan their courses for their time at Dartmouth.
 
 Development environment currently at [dplanner.herokuapp.com](dplanner.herokuapp.com). DartmouthID required.
 
+![Dplanner](https://raw.github.com/alexgerstein/alexgerstein.github.io/master/images/dplan.jpg "Dplanner")
 
 ## Languages/Tools Learned
 
