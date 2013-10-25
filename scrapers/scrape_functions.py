@@ -489,6 +489,9 @@ def remove_deleted_offerings():
 
 	db.session.commit()
 
+	# Replace user added offerings if actual offerings now exist.
+	updated_courses = Course.query.join(Course.offerings).group_by(Course.id).having(Course.offerings.count > 1 & offerings.filter_by(user_added = )  )
+
 	remove_course_marks()
 
 # Add all possible combinations of terms and hours to course's offerings 
