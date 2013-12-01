@@ -74,13 +74,26 @@ def get_requested_offering(form):
 	year = "20" + request.form['term'][:2]
 	season = request.form['term'][2]
 	t = Term.query.filter_by(year = year, season = season).first()
-	o1 = Offering.query.filter_by(course = c1, term = t).first()
 
+	# Construct the requested hour if one exists
+	if 'hour' not in request.form:
+		offering = Offering.query.filter_by(course = c1, term = t).first()
+
+		if offering is None:
+			hour = Hour.query.filter_by(period = "?").first()
+		else:
+			hour = offering.get_hour() 
+	else:
+		hour_string = request.form['hour']
+		print hour_string
+		hour = Hour.query.filter_by(period = hour_string).first()
+
+	o1 = Offering.query.filter_by(course = c1, term = t, hour = hour).first()
 	if o1 is None:
 
 		check_hour = Hour.query.filter_by(period = "?").first()
 
-		o1 = Offering(course = c1.id, term = t.id, hour = check_hour.id, desc = "User Added", user_added = "Y")
+		o1 = Offering(course = c1.id, term = t.id, hour = check_hour.id, desc = "***User Added***<br>Consult registrar for more info", user_added = "Y")
 		db.session.add(o1)
 
 		db.session.commit()
@@ -126,7 +139,7 @@ def planner():
         title = 'My Plan',
         user = g.user,
         form = form,
-        courses = g.user.courses,
+        courses = g.user.courses.order_by('hour_id'),
         terms = g.user.terms,
         off_terms = g.user.off_terms)
 
@@ -156,7 +169,27 @@ def savecourse():
 		j = jsonify( { 'error' : "Course could not be added" } )
 		return j
 
-	j = jsonify( { 'name' : str(offering) } )
+	j = jsonify( { 'name' : str(offering), 'hour' : str(offering.get_hour()), 'possible_hours' : offering.get_possible_hours() } )
+
+	return j
+
+# If user selects new hour from dropdown, update database.
+@app.route('/swaphour', methods = ['POST'])
+@login_required
+def swaphour():
+	
+	offering = get_requested_offering(request.form)
+
+	hour = Hour.query.filter_by(period = request.form['new_hour']).first()
+	success = False
+	if offering is not None:
+		success = g.user.switch_hour(offering, hour)
+
+	if not success:
+		j = jsonify( { 'error' : "Course could not be swapped" } )
+		return j
+
+	j = jsonify( { 'name' : str(offering), 'hour' : str(hour), 'possible_hours' : offering.get_possible_hours() } )
 
 	return j
 
@@ -187,8 +220,6 @@ def getCourseInfo():
 
 	offering = get_requested_offering(request.form)
 
-	print offering.desc
-
 	return jsonify ( { "info" : offering.desc})
 
 # Callback to send all available terms of course so they can be highlighted on planner
@@ -209,12 +240,9 @@ def findterms():
 	user_terms = []
 	for offering in available_actual_offerings:
 		if (offering.term not in terms) and (offering.term not in user_terms):
-			print offering.user_added
 			if offering.user_added == "N":
-				print "Not: " + str(offering)
 				terms.append(offering.term)
 			elif offering.user_added == "Y":
-				print "IS: " + str(offering)
 				user_terms.append(offering.term)
 
 

@@ -1,29 +1,62 @@
 var MAX_COURSES = 4
 
-function addCourse(term, course, short_name) {
+function getHoursUl(possible_hours, hour) {
+    var hour_text = '<div class="btn-group"><button class="btn dropdown-toggle btn-mini" data-toggle="dropdown"><i class="selected-hour">' + hour + ' </i><span class="caret"></span></button><ul class="dropdown-menu">'
+    $.each(possible_hours, function(key, value) {
+        if (value != hour) {
+            hour_text = hour_text + '<li class="hour"><a>' + value + '</a></li>';
+        }
+    });
+
+    return hour_text + '</ul></div>'
+}
+
+function addCourse(term, hour, possible_hours, course, short_name) {
 
     var obj = ($(".termsBlock").find(term));
 
-    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + course + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<i class="btn btn-danger"><span class="icon-trash icon-white"></i> <i class="btn btn-info popover-trigger"><span class="icon-search"></i> </div> </div> </li> </div> </div>');
+    var hour_text = getHoursUl(possible_hours, hour);
+
+    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + course + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<i class="buttons">' + hour_text + '<i class="btn btn-danger btn-small"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-search"></i></i> </div> </div> </li> </div> </div>');
 
     $('i.btn-danger').click(removeCourse);
 
-    $('.popover-trigger').click( function(e) {
-        el = $(this);
-        $.post("/getCourseInfo", 
-            {
-                course: el.parents("li").attr("id"),
-                term: el.parents('ul').attr('id')
-            }, 
-            function(response) {
-                el.unbind('click').popover({
-                    content: response['info'],
-                    title: 'Course Info',
-                    html: true,
-                    delay: {show:500, hide: 100}
-            })
-        }).popover('toggle');
-    });
+    var course_desc = null;
+
+    $.post("/getCourseInfo", 
+        {
+            course: course,
+            term: obj.attr('id')
+        }, 
+        function(response) {
+            var split_id = course.split(" ")
+            var course_id = obj.find('li:contains(' + short_name + ')');
+
+            $(course_id.find('.popover-trigger')).popover(  {
+                content: response['info'],
+                title: 'Course Info',
+                html: true,
+                placement:function (context, source) {
+                    var position = $(source).position();
+
+                    if (position.left > 515) {
+                        return "left";
+                    }
+
+                    if (position.left < 515) {
+                        return "right";
+                    }
+
+                    if (position.top < 110){
+                        return "bottom";
+                    }
+
+                    return "top";
+                },
+                delay: {show:500, hide: 100}
+            });
+        }
+    )
 };
 
 function showAvailableSlots(event, ui) {
@@ -61,6 +94,8 @@ function clearAvailableSlots(event, ui) {
 
 function saveCourse(event, ui) {
     
+
+
     var selectVal = $('#dept_name').find(":selected").val();
 
     var text = ui.item.attr('id');
@@ -68,8 +103,13 @@ function saveCourse(event, ui) {
     var term_id = ($( this ).attr("id"));
     var ext_term_id = "#" + term_id;
 
-    if ($(ext_term_id + " li").length > MAX_COURSES + 1) {
+    if ($(ext_term_id + " li:not(.hour)").length > MAX_COURSES + 1) {
         alert("Maximum courses exceeded for this term.");
+        return;
+    }
+
+    if ($(this).hasClass('off-term')) {
+        alert("You cannot add courses to off terms.");
         return;
     }
 
@@ -90,7 +130,8 @@ function saveCourse(event, ui) {
         }
 
         if (senderclass.indexOf('sortable2') >= 0) {
-        	var postremove = $.post('/removecourse', { course: text, term: ui.sender.attr('id')})
+            var course_hour = ui.sender.find('li:contains(' + data['name'] + ')').find('.selected-hour').text();
+        	var postremove = $.post('/removecourse', { course: text, term: ui.sender.attr('id'), hour: course_hour.split(' ')[0] })
 
     		$("#" + ui.sender.attr('id') + " li").each(function(index, li) {
     			var course = $(li);
@@ -99,33 +140,45 @@ function saveCourse(event, ui) {
     			};
     		});
         }
+        var hours = data['possible_hours'].split(" ");
         
-        addCourse(ext_term_id, text, data['name']);
+        addCourse(ext_term_id, data['hour'], hours, text, data['name']);
 
     });
         
 }
 
+$(document).on('click', '.dropdown-menu li a', function () {
+    var course_item = $(this).parents('.draggable');
+    var new_hour = $(this).text();
+    var term = $(this).parents('.sortable2').attr('id');
+    var course = course_item.attr('id');
+    
+    var posting = $.post('/swaphour', { course: course, term: term, new_hour: new_hour, hour: course_item.find(".dropdown-toggle").text().split(" ")[0] });
+
+    posting.done(function (data) {
+
+        if (data['error']) {
+            return;
+        }
+
+        var hoursUl = course_item.find('.btn-group').remove();
+        var possibleHourArray = data['possible_hours'].split(' ');
+
+        var newHoursUl = getHoursUl(possibleHourArray, new_hour);
+
+        course_item.find('.buttons').prepend(newHoursUl);
+
+    });
+
+});
+
 function removeCourse(event){
     var term_id = $( this ).parents('ul').attr('id');
 
-    var posting = $.post('/removecourse', { course: $(this).parents("li").attr("id"), term: term_id });
+    var posting = $.post('/removecourse', { course: $(this).parents("li").attr("id"), term: term_id, hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] });
 
     $(this).parents('li').parent().remove();
-
-}
-
-function getCourseInfo(event){
-
-    var term_id = $( this ).parent();
-
-    var posting = $.post('/courseinfo', { course: "Test", term: term_id });
-
-    var button = $(this)
-
-    posting.done(function (data) {
-        return data['info']
-    }) 
 
 }
 
@@ -136,11 +189,9 @@ function swap_term(term){
     // Mark term as off
     if ($(term_id).hasClass('off-term')) {
         $(term_id).removeClass('off-term');
-        $(term_id).addClass('droptrue');
         $(term_id).find('i').text('Off?');
     } else {
         $(term_id).addClass('off-term');
-        $(term_id).removeClass('droptrue');
         $(term_id).find('i').text('On?');
     }
 
@@ -151,7 +202,7 @@ function swap_term(term){
     $(term_id + " li:not(.pin)").each(function(index, item) {
         var course = $(item);
 
-        var posting = $.post('/removecourse', { course: course.attr("id"), term: term });
+        var posting = $.post('/removecourse', { course: course.attr("id"), term: term, hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] });
 
         course.parent().remove();
     })
@@ -159,7 +210,10 @@ function swap_term(term){
 }
 
 
-function showCourses(dept){
+function showCourses(){
+    $('.sortable1').scrollTop(0);
+    var dept = $('#dept_name').find(":selected").val();
+
     var posting = $.post('/getcourses', { dept: dept });
     
     posting.done(function (data) {

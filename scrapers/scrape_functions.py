@@ -23,7 +23,7 @@ GRAD_DEPT_URL = "/en/2013/orc/Departments-Programs-Graduate"
 # WCS = ["W", "NW", "CI"]
 
 # Hours and Seasons
-HOURS = ["8", "9", "9L", "9S", "10", "10A", "11", "12", "2", "2A", "3A", "3B", "Arrange", "Check", "8AM-9:50AM", "7pm", "D.F.S.P", "D.L.S.A", "FSP", "FS", "LS", "1"]
+HOURS = ["?", "8", "9", "9L", "9S", "10",  "11", "12", "2", "10A", "2A", "3A", "3B", "Arrange", "Check", "8AM-9:50AM", "7pm", "D.F.S.P", "D.L.S.A", "FSP", "FS", "LS", "1"]
 
 SEASONS = ["W", "S", "X", "F"]
 
@@ -99,7 +99,7 @@ def scan_topics_offerings(course_soup, course, dept, year, lock_term_start, lock
 	# Regex search for all instances of "[TERM] at [HOUR]"
 	for offering in course_soup.find_all(text=re.compile('[0-9][0-9][FWSX] at [0-9A-Z]{1,2}')):
 		split_offering = offering.split(" ")
-		store_offerings(split_offering, course, dept, course_soup, year, course_soup, lock_term_start, lock_term_end)
+		store_offerings(split_offering, course, dept, course_soup, year, course_soup.prettify(), lock_term_start, lock_term_end)
 
 # Check each stripped offering for typos in the ORC's listing
 def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category):
@@ -488,10 +488,6 @@ def remove_deleted_offerings():
 			db.session.delete(offering)
 
 	db.session.commit()
-
-	# Replace user added offerings if actual offerings now exist.
-	updated_courses = Course.query.join(Course.offerings).group_by(Course.id).having(Course.offerings.count > 1 & offerings.filter_by(user_added = )  )
-
 	remove_course_marks()
 
 # Add all possible combinations of terms and hours to course's offerings 
@@ -510,12 +506,21 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 
 		for hour in hours_offered:
 
+			# Check if user-added offering exists. If so, overwrite with hour
+			unknown_hour = Hour.query.filter_by(period = "?").first()
+			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
+			if o1 is not None:
+				o1.change_period(hour)
+				print_alert("Updated user_added: " + str(o1))
+				o1.mark("T")
+				continue
+
 			# Check if offering already exists
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = hour.id).first()
-			
+
 			# Add offering if not already in database
 			if o1 is None:
-				o1 = Offering(course = course.id, term = term.id, hour = hour.id, desc = course_desc.prettify(), user_added = "N")
+				o1 = Offering(course = course.id, term = term.id, hour = hour.id, desc = course_desc, user_added = "N")
 
 				db.session.add(o1)
 				db.session.commit()

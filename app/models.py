@@ -23,7 +23,6 @@ class User(db.Model):
 
 	courses = db.relationship('Offering', 
 		secondary=user_course,
-		backref=db.backref('users', lazy = 'dynamic'),
 		lazy = 'dynamic')
 
 	def __init__(self, full_name, netid):
@@ -39,7 +38,6 @@ class User(db.Model):
 			self.courses.append(offering)
 			db.session.commit()
 			return self
-
 		return None
 
 	def drop(self, offering):
@@ -49,6 +47,20 @@ class User(db.Model):
 			return self
 
 		return None
+
+	def switch_hour(self, offering, hour):
+		term = offering.get_term()
+		course = offering.get_course()
+
+		self.drop(offering)
+
+		o1 = Offering.query.filter_by(course = course, term = term, hour = hour).first()
+		if o1 is not None:
+			self.take(o1)
+			return True
+
+		return False
+
 
 	def is_enrolled(self, term):
 		return term in self.terms
@@ -72,7 +84,8 @@ class User(db.Model):
 
 
 	def is_taking(self, offering):
-		return self.courses.filter(user_course.c.offering_id == offering.id).count() > 0
+		taking = offering in self.courses.all()
+		return taking
 
 	def is_on(self, term):
 		for off_term in self.off_terms:
@@ -119,6 +132,23 @@ class Offering(db.Model):
 	def get_term(self):
 		return Term.query.filter_by(id = self.term_id).first()
 
+	def get_hour(self):
+		return Hour.query.filter_by(id = self.hour_id).first()
+
+	def get_course(self):
+		return Course.query.filter_by(id = self.course_id).first()
+
+	def get_possible_hours(self):
+		possible_hours = ""
+		for offering in Offering.query.filter_by(course_id = self.course_id, term_id = self.term_id).all():
+			possible_hours += str(offering.get_hour()) + " "
+		return possible_hours[:-1]
+
+	def change_period(self, hour):
+		self.hour_id = hour.id
+		db.session.commit()
+		return self
+
 	def mark(self, str):
 		self.added = str
 		return self
@@ -133,9 +163,9 @@ class Offering(db.Model):
 
 	def __repr__(self):
 		course = Course.query.filter_by(id = self.course_id).first()
-		hour = Hour.query.filter_by(id = self.hour_id).first()
+		offerings = Offering.query.filter_by(course_id = course.id, term_id = self.term_id).all()
 
-		return "%s %s (%s)" % (course.department.abbr, course.number, hour)
+		return "%s %s" % (course.department.abbr, course.number)
 
 class Course(db.Model):
 	__tablename__ = 'course'

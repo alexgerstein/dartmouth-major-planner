@@ -13,9 +13,6 @@
                 <form action="" method="post" name="add">
                     {{form.hidden_tag()}}
                     {{form.dept_name}}
-                    {% for error in form.errors.dept_name %}
-                    <br><span style="color: red;">[{{error}}]</span>
-                    {% endfor %}
                 </form>
                 
                 <div class="classesBlock">
@@ -48,7 +45,8 @@
                                     {% for course in courses %}
                                     {% if course.term == term %}
                                         <script>
-                                            addCourse("#{{term}}", "{{ course.get_full_name() }}", "{{ course }}");
+                                            var possible_hours = "{{course.get_possible_hours()}}".split(" ")
+                                            addCourse("#{{term}}", "{{ course.get_hour() }}", possible_hours, "{{ course.get_full_name() }}", "{{ course }}");
                                         </script>
                                     {% endif %}
                                     {% endfor %}
@@ -89,9 +87,15 @@
             });
 
     $("#dept_name").change(function () {
-        $('.sortable1').scrollTop(0);
-        var selectVal = $('#dept_name').find(":selected").val();
-        showCourses(selectVal)
+        showCourses();
+    });
+
+    $("#hour_name").change(function () {
+        showCourses();
+    });
+
+    $("#term_name").change(function () {
+        showCourses();
     });
 
     $(".sortable1, .sortable2").sortable({
@@ -119,6 +123,16 @@
     });
 
     $(".sortable1, .sortable2").disableSelection();
+
+    $('body').on('click', function (e) {
+        $('[data-toggle=popover]').each(function () {
+            //the 'is' for buttons that trigger popups
+            //the 'has' for icons within a button that triggers a popup
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                $(this).popover('hide');
+            }
+        });
+    });
 
 
 </script>

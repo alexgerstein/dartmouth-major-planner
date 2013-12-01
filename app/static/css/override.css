@@ -22,11 +22,19 @@
 	background-color: white; 
 	border: 1px solid black;
 	vertical-align: middle;
-	z-index: 1000;
+	z-index: 10000;
 }
 
 .sortable1 li {
 	font-size: 1em;
+}
+
+.btn-group {
+	margin: 0px 4px;
+}
+
+.dropdown-menu {
+	min-width: 0px;
 }
 
 .off-term {
@@ -63,10 +71,17 @@ li.term-name {
 }
 
 .btn-danger {
-	margin: 0px 6px;
+	font-size: .5em;
+	line-height: normal;
+}
+
+button {
+	margin: 0px 4px;
+	font-size: 1em;
 }
 
 .btn.off {
+	margin: 0px 4px;
 	font-size: .5em;
 	line-height: normal;
 }

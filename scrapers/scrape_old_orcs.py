@@ -70,6 +70,14 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 		print "Name: " + course_name
 		print "Dept: " + str(dept)
 
+		if '-' in course_number:
+			print_alert("Wrong Number")
+			continue
+
+		if re.search('[0-9].', course_name.split(" ")[0]):
+			print_alert("Wrong Name")
+			continue
+
 		# Look for the course in the database by department
 		course = Course.query.filter_by(number = str(course_number), department_id = dept.id).first()
 		if not (is_number(course_number[0])) and (course is None):
@@ -95,7 +103,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			break
 
 		# Initialize concatenated offering description for info page
-		offering_html = title
+		offering_html = "<h1>" + title.text + "</h1>"
 
 		# Check if offerings section was mislabeled as title and relabel
 		# so it can be run through the while loop
@@ -116,12 +124,12 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			print offerings
 
 			# Concatenate listing from orc page
-			offering_html.append(str(offerings))
+			offering_html += offerings.text + "<br>"
 			description = offerings.findNext('p', {'class': 'coursedescptnpar'})
 			while (description is not None) and (description['class'] == ['coursedescptnpar']):
 				
 				# Append description and look for another
-				offering_html.append(description)
+				offering_html += description.text + "<br>"
 				description = description.findNext("p")
 
 				# Check if tag was incorrectly assigned to title
@@ -141,7 +149,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			offerings = offerings.findNext("p")
 
 			# Reset info page html
-			offering_html = title
+			offering_html = "<h1>" + title.text + "</h1>"
 
 			if (offerings) and ('class' in offerings):
 				continue
