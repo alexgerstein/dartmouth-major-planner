@@ -107,7 +107,7 @@ class Offering(db.Model):
 	course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
 	term_id = db.Column(db.Integer, db.ForeignKey('term.id'))
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
-	desc = db.Column(db.String(25000), convert_unicode=True)
+	desc = db.Column(db.String(25000, convert_unicode=True))
 
 	# distributives = db.relationship("Distrib", backref="offering")
 	# wc_id = db.Column(db.Integer, db.ForeignKey('wc.id'))
