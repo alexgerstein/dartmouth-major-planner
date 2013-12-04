@@ -484,7 +484,7 @@ def remove_deleted_offerings():
 
 		# Ignore if ORC data from the higher-priority timetable
 		if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
-			print_alert(u"DELETED: " + unicode(offering.get_term(), errors='replace') + u" " + unicode(offering, errors='replace'))
+			print_alert(u"DELETED: " + unicode(repr(offering.get_term()), errors='replace') + u" " + unicode(repr(offering), errors='replace'))
 			db.session.delete(offering)
 
 	db.session.commit()
@@ -511,7 +511,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
 				o1.change_period(hour)
-				print_alert(u"Updated user_added: " + unicode(o1, errors='replace'))
+				print_alert(u"Updated user_added: " + unicode(repr(o1), errors='replace'))
 				o1.mark("T")
 				continue
 
@@ -525,7 +525,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 				db.session.add(o1)
 				db.session.commit()
 				
-				print_alert(u"ADDED: " + unicode(o1, errors='replace'))
+				print_alert(u"ADDED: " + unicode(repr(o1), errors='replace'))
 			
 			# Mark offering as "[T]emporarily" added to check for deleted 
 			# offerings at end
