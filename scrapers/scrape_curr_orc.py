@@ -150,7 +150,7 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 
 		print "Department: " + dept_name
 		print "Number: " + course_number
-		print "Name: " + " ".join(course_name)
+		print u"Name: " + u" ".join(course_name)
 
 		# Store the course in the database 
 		store_course_info(BASE_URL + course['href'], course_number, u" ".join(course_name).encode('utf-8'), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
