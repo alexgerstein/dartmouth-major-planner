@@ -172,7 +172,7 @@ class Course(db.Model):
 
 	id = db.Column(db.Integer, primary_key = True)
 	number = db.Column(db.String(10, convert_unicode = True))
-	name = db.Column(db.String(300), index = True, convert_unicode=True)
+	name = db.Column(db.String(300, convert_unicode=True), index = True)
 
 	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
 
