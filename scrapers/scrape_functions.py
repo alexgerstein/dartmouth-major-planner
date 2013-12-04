@@ -511,7 +511,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
 				o1.change_period(hour)
-				print_alert("Updated user_added: " + str(o1))
+				print "Updated user_added: ", o1
 				o1.mark("T")
 				continue
 
@@ -525,7 +525,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 				db.session.add(o1)
 				db.session.commit()
 				
-				print_alert("ADDED: " + str(o1))
+				print "ADDED: ", o1
 			
 			# Mark offering as "[T]emporarily" added to check for deleted 
 			# offerings at end
