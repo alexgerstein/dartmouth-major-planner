@@ -169,7 +169,7 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
 
 	# "Economics": Missing F for fall in term listed
 	elif (c1.name == "International Finance and Open-Economy Macroeconomics"):
-		if (str(stripped_offering) == "14"):
+		if (stripped_offering == "14"):
 			stripped_offering = "14F"
 
 	# "Spanish LSA": Missing X for summer
