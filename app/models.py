@@ -165,7 +165,7 @@ class Offering(db.Model):
 		course = Course.query.filter_by(id = self.course_id).first()
 		offerings = Offering.query.filter_by(course_id = course.id, term_id = self.term_id).all()
 
-		return "%s %s" % (course.department.abbr, course.number)
+		return u"%s %s" % (course.department.abbr, course.number)
 
 class Course(db.Model):
 	__tablename__ = 'course'
