@@ -526,8 +526,9 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 
 				db.session.add(o1)
 				db.session.commit()
-				
-				print_alert(u"ADDED: " + unicode(repr(o1), errors='ignore'))
+				if isinstance(repr(o1), unicode):
+					print "yeESESTRANteiransteianst"
+				print_alert(u"ADDED: " + repr(o1).decode('utf-8', errors='ignore'))
 			
 			# Mark offering as "[T]emporarily" added to check for deleted 
 			# offerings at end
