@@ -1,5 +1,3 @@
-# -*- coding: utf_8 -*-
-
 # scrape_functions.py
 # Alex Gerstein
 # 'Header' functions required for all scrapers
@@ -47,7 +45,7 @@ ARBITRARY_SEASON = "W"
 # Alert function that makes a message stand out when running hte scraper
 def print_alert(message):
 	print ('\n\n')
-	print '*******' + message + '*******\n'
+	print u'*******' + message + u'*******\n'
 
 # Helper to check if string is a number
 def is_number(s):
@@ -486,7 +484,7 @@ def remove_deleted_offerings():
 
 		# Ignore if ORC data from the higher-priority timetable
 		if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
-			print_alert("DELETED: " + str(offering.get_term()) + " " + str(offering))
+			print_alert(u"DELETED: " + unicode(offering.get_term()) + u" " + unicode(offering))
 			db.session.delete(offering)
 
 	db.session.commit()
@@ -513,7 +511,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
 				o1.change_period(hour)
-				print "Updated user_added: ", str(o1).decode("utf-8", "replace")
+				print_alert(u"Updated user_added: " + unicode(o1))
 				o1.mark("T")
 				continue
 
@@ -527,7 +525,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 				db.session.add(o1)
 				db.session.commit()
 				
-				print "ADDED: ", str(o1).decode("utf-8", "replace")
+				print_alert(u"ADDED: " + unicode(o1))
 			
 			# Mark offering as "[T]emporarily" added to check for deleted 
 			# offerings at end
