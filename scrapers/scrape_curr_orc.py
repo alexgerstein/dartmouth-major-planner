@@ -120,7 +120,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 			offering_info = offering_info.text[7:]
 			offerings = offering_info.split(" ")
 
-			store_offerings(offerings, c1, d1, info_soup, year, unicode(info_soup, errors='replace'), lock_term_start, lock_term_end)
+			store_offerings(offerings, c1, d1, info_soup, year, unicode(info_soup.prettify(), errors='replace'), lock_term_start, lock_term_end)
 
 
 # Seach through the course page for each listing on the department's course listing page
