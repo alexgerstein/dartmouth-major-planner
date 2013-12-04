@@ -150,10 +150,10 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 
 		print "Department: " + dept_name
 		print "Number: " + course_number
-		print u"Name: " + u" ".join(course_name)
+		print "Name: " + " ".join(course_name)
 
 		# Store the course in the database 
-		store_course_info(BASE_URL + course['href'], course_number, u" ".join(course_name).encode('utf-8'), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
+		store_course_info(BASE_URL + course['href'], course_number, " ".join(course_name), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
 
 # Search through the courses in each department's listing
 def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):
@@ -172,7 +172,7 @@ def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):
 				and 'Major' not in last_link[-2] 
 				and 'Neuroscience' not in last_link[-1]):
 
-				search_courses(BASE_URL + link['href'], last_link[0], u" ".join(last_link[1:]).encode('utf-8'), year, lock_term_start, lock_term_end)
+				search_courses(BASE_URL + link['href'], last_link[0], " ".join(last_link[1:]), year, lock_term_start, lock_term_end)
 
 # Main function for scraping the current ORC
 def scrape_college_orc(url_ext, lock_term_start, lock_term_end, start_dept_name = ""):
