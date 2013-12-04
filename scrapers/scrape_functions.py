@@ -511,7 +511,9 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
 				o1.change_period(hour)
-				print_alert(u"Updated user_added: " + unicode(repr(o1), errors='ignore'))
+				if isinstance(repr(o1), unicode):
+					print "yeESESTRANteiransteianst"
+				print_alert(u"Updated user_added: " + repr(o1).decode('utf-8', errors='ignore'))
 				o1.mark("T")
 				continue
 
