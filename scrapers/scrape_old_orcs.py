@@ -67,7 +67,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			dept = Department.query.filter_by(abbr = abbreviation).first()
 
 		print "Number: " + str(course_number)
-		print "Name: " + course_name
+		print "Name: " + unicodedata.normalize('NFKD', course_name).encode('ascii', 'ignore')
 		print "Dept: " + str(dept)
 
 		if '-' in course_number:

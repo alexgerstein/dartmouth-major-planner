@@ -236,7 +236,7 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 
 		# If offering starts with "All," assume that it continues "All Terms."
 		# Then add All Terms in the current ORC using the year from the url
-		if stripped_offering == "All":
+		if stripped_offering == "All" or stripped_offering == "Every":
 			add_all_terms(year, terms_offered)
 			
 			# Switch categories to mark TERM as just having been checked
