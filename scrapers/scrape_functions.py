@@ -457,8 +457,8 @@ def find_starting_abbr(links, start=""):
 
 	if (start != ""):
 		for s in links:
-			print s
-			if start in s:
+			print s['href']
+			if start in s['href']:
 				abbr_index = links.index(s)
 				break
 

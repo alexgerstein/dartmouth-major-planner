@@ -150,7 +150,7 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 
 		print "Department: " + dept_name
 		print "Number: " + course_number
-		print "Name: " + " ".join(course_name).decode("utf-8", errors='replace')
+		print "Name: " + " ".join(course_name)
 
 		# Store the course in the database 
 		store_course_info(BASE_URL + course['href'], course_number, " ".join(course_name), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
@@ -175,7 +175,7 @@ def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):
 				search_courses(BASE_URL + link['href'], last_link[0], " ".join(last_link[1:]), year, lock_term_start, lock_term_end)
 
 # Main function for scraping the current ORC
-def scrape_college_orc(url_ext, lock_term_start, lock_term_end, start_dept_name = ""):
+def scrape_college_orc(url_ext, lock_term_start, lock_term_end, start_dept_name):
 	
 	# Use CSS formatting to find each department's link
 	department_list = get_link_rightpanel(BASE_URL + url_ext)
@@ -197,8 +197,8 @@ def scrape_college_orc(url_ext, lock_term_start, lock_term_end, start_dept_name 
 	
 
 def scrape_curr_orc(lock_term_start, lock_term_end, start_dept_name = ""):
-	scrape_college_orc(UG_DEPT_URL, lock_term_start, lock_term_end, start_dept_name = "")
-	year = scrape_college_orc(GRAD_DEPT_URL, lock_term_start, lock_term_end, start_dept_name = "")
+	scrape_college_orc(UG_DEPT_URL, lock_term_start, lock_term_end, start_dept_name)
+	year = scrape_college_orc(GRAD_DEPT_URL, lock_term_start, lock_term_end, start_dept_name)
 
 	# Repeat for all missed departments
 	for listing in MISSED_UG_LISTINGS:
