@@ -223,7 +223,7 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 		
 		# Remove any non-alphanumeric characters on each end
 		stripped_offering = re.sub('(^[\W_]*)|([\W_]*$)', '', offer)
-		print stripped_offering
+		print unicodedata.normalize('NFKD', stripped_offering).encode('ascii', 'ignore')
 
 		# Move to next component if blank
 		if stripped_offering == "":
