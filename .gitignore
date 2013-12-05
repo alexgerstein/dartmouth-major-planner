@@ -1,6 +1,8 @@
 *.py[cod]
 *.db
 
+config.py
+
 flask
 
 # C extensions
