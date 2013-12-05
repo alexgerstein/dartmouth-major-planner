@@ -17,7 +17,7 @@ function addCourse(term, hour, possible_hours, course, short_name) {
 
     var hour_text = getHoursUl(possible_hours, hour);
 
-    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + course + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<i class="buttons">' + hour_text + '<i class="btn btn-danger btn-small"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-search"></i></i> </div> </div> </li> </div> </div>');
+    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + course + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons">' + hour_text + '<i class="btn btn-danger btn-small"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-search"></i></span> </div> </div> </li> </div> </div>');
 
     $('i.btn-danger').click(removeCourse);
 

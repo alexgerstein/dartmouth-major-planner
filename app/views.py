@@ -140,7 +140,7 @@ def planner():
         user = g.user,
         form = form,
         courses = g.user.courses.order_by('hour_id'),
-        terms = g.user.terms,
+        terms = g.user.terms.order_by('id'),
         off_terms = g.user.off_terms)
 
 # After change in dept form, send courses in that dept to user's view
