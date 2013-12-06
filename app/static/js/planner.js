@@ -218,7 +218,9 @@ function showCourses(){
 
     var posting = $.post('/getcourses', { dept: dept, term: term, hour: hour });
     
-    $(".classesBlock").append("<li class='loading'>Loading...</li>");
+    if (dept != "-1") || (term != "-1") || (hour != "-1") { 
+        $(".classesBlock ul.sortable1").append("<li class='loading'>Loading...</li>");
+    }
 
     posting.done(function (data) {
         $(".classesBlock ul.sortable1").empty();
