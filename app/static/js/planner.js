@@ -218,11 +218,15 @@ function showCourses(){
 
     var posting = $.post('/getcourses', { dept: dept, term: term, hour: hour });
     
+    $(".classesBlock").append("<li class='loading'>Loading...</li>");
+
     posting.done(function (data) {
         $(".classesBlock ul.sortable1").empty();
         $.each(data['courses'], function(index, item) {
             $(".classesBlock ul.sortable1").append("<div='row-fluid'> <div='span12'> <li class='ui-state-default draggable' id='" + item['full_name'] + "' >" + item['full_name'] + "</li> </div> </div>");
         });
+
+        $(".classesBlock ul.sortable1").remove(".loading");
 
     });
 }
