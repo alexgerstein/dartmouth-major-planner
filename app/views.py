@@ -181,7 +181,7 @@ def getcourses():
 	j = jsonify( { } )
 	if offerings and request.form['dept'] != "-1":
 		print offerings.first().course
-		j = jsonify( { 'courses' : [i.serialize for i in offerings if i.course.department_id == int(request.form['dept'])] })
+		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('course') if i.course.department_id == int(request.form['dept'])] })
 
 	elif offerings:
 		j = jsonify( { 'courses' : [i.serialize for i in offerings] })
