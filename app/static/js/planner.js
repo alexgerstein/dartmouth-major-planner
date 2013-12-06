@@ -218,7 +218,7 @@ function showCourses(){
 
     var posting = $.post('/getcourses', { dept: dept, term: term, hour: hour });
     
-    if (dept != "-1") || (term != "-1") || (hour != "-1") { 
+    if (dept != "-1" || term != "-1" || hour != "-1") { 
         $(".classesBlock ul.sortable1").append("<li class='loading'>Loading...</li>");
     }
 
