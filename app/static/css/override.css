@@ -91,7 +91,12 @@ button {
     overflow-y: auto;
 }
 
-/*.ui-draggable-helper {
-	width: 300px;
-	height: 200px;
-}*/
+@media (max-width: 1050px) {
+	.span3.edit {
+		display: none;
+	}
+	.btn-danger {
+		display: none;
+	}
+
+}
