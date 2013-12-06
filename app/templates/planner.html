@@ -31,24 +31,24 @@
                                 <ul id="{{ term }}" class="sortable2 droptrue ui-sortable" unselectable="on">
                                     <li class="term-name pin">{{term}}<i class="btn off" style="float: right">Off?</i></li>
                                     {% for off_term in off_terms %}
-                                    {{ term.to_str }}
-                                    {{ off_term.to_str }}
-                                    {% if term|string == off_term %}
-                                        <script>
-                                            $("#{{term}}").addClass('off-term');
-                                            $("#{{term}}").removeClass('droptrue');
-                                            $("#{{term}} i").text('On?');
-                                        </script>
-                                        {% break %}
-                                    {% endif %}
+                                        {{ term.to_str }}
+                                        {{ off_term.to_str }}
+                                        {% if term|string == off_term %}
+                                            <script>
+                                                $("#{{term}}").addClass('off-term');
+                                                $("#{{term}}").removeClass('droptrue');
+                                                $("#{{term}} i").text('On?');
+                                            </script>
+                                            {% break %}
+                                        {% endif %}
                                     {% endfor %}
                                     {% for course in courses %}
-                                    {% if course.term == term %}
-                                        <script>
-                                            var possible_hours = "{{course.get_possible_hours()}}".split(" ")
-                                            addCourse("#{{term}}", "{{ course.get_hour() }}", possible_hours, "{{ course.get_full_name() }}", "{{ course }}");
-                                        </script>
-                                    {% endif %}
+                                        {% if course.term == term %}
+                                            <script>
+                                                var possible_hours = "{{course.get_possible_hours()}}".split(" ")
+                                                addCourse("#{{term}}", "{{ course.get_hour() }}", possible_hours, "{{ course.get_full_name() }}", "{{ course }}");
+                                            </script>
+                                        {% endif %}
                                     {% endfor %}
                                 </ul>
                             {% if loop.index + 3 % 4 == 0 %}

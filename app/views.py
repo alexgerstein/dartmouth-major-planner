@@ -58,7 +58,6 @@ def add_terms(grad_year):
 	# Remove extra Fall
 	db.session.expunge(t)
 	g.user.remove_term(t)
-
 	
 	db.session.commit()
 
@@ -296,13 +295,14 @@ def edit():
 	form = EditForm(g.user.nickname)
 	
 	if form.validate_on_submit():
-		add_terms(int(form.grad_year.data))
-
 		g.user.nickname = form.nickname.data
 		g.user.grad_year = form.grad_year.data
 		
 		db.session.add(g.user)
 		db.session.commit()
+
+		add_terms(int(form.grad_year.data))
+
 
 		return redirect(url_for('planner'))
 	else:
