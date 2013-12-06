@@ -137,7 +137,7 @@ def planner():
 
 	# Initialize the hour selection form
 	hour_form = HourPickerForm()
-	hour_form.hour_name.choices = [(a.id, a.period) for a in Hour.query.order_by('id')]
+	hour_form.hour_name.choices = [(a.id, a.period) for a in g.user.terms]
 	hour_form.hour_name.choices.insert(0, (-1,"Choose an Hour"))
 
 	# Initialize the term selection form
