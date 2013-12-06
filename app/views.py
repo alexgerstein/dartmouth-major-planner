@@ -301,6 +301,7 @@ def swapterm():
 	t1 = Term.query.filter_by(year = year, season = season).first()
 
 	g.user.swap_onterm(t1)
+	db.session.add(g.user)
 	db.session.commit()
 
 	j = jsonify( {} )
