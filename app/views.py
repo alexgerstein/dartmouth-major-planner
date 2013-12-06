@@ -58,7 +58,7 @@ def add_terms(grad_year):
 			db.session.commit()
 	
 	# Remove extra Fall
-	db.session.expunge(t)
+	db.session.delete(t)
 	g.user.remove_term(t)
 	
 	db.session.commit()
