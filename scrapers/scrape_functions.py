@@ -483,9 +483,10 @@ def remove_deleted_offerings():
 	for offering in deleted_offerings:
 
 		# Ignore if ORC data from the higher-priority timetable
-		if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
-			print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
-			db.session.delete(offering)
+		if offering.get_term() is not None:
+			if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
+				print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
+				db.session.delete(offering)
 
 	db.session.commit()
 	remove_course_marks()
