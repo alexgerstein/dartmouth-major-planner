@@ -142,7 +142,7 @@ def planner():
 
 	# Initialize the term selection form
 	term_form = TermPickerForm()
-	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms.order_by('id')]
+	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms.order_by('id', 'year')]
 	term_form.term_name.choices.insert(0, (-1,"Choose a Term"))
 
 	return render_template("planner.html",
@@ -152,7 +152,7 @@ def planner():
         hour_form = hour_form,
         term_form = term_form,
         courses = g.user.courses.order_by('hour_id'),
-        terms = g.user.terms.order_by('id'),
+        terms = g.user.terms.order_by('id', 'year'),
         off_terms = g.user.off_terms)
 
 # After change in dept form, send courses in that dept to user's view
