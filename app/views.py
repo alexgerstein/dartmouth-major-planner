@@ -142,7 +142,7 @@ def planner():
 
 	# Initialize the term selection form
 	term_form = TermPickerForm()
-	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms]
+	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms.order_by('id')]
 	term_form.term_name.choices.insert(0, (-1,"Choose a Term"))
 
 	return render_template("planner.html",
