@@ -5,7 +5,7 @@
 from flask import render_template, request, flash, redirect, url_for, session, g, jsonify
 from app import app, db
 from models import User, Offering, Course, Department, Term, Hour
-from forms import EditForm, DeptPickerForm
+from forms import EditForm, DeptPickerForm, HourPickerForm, TermPickerForm
 from functools import wraps
 
 SEASONS = ["W", "S", "X", "F"]
@@ -84,7 +84,6 @@ def get_requested_offering(form):
 			hour = offering.get_hour() 
 	else:
 		hour_string = request.form['hour']
-		print hour_string
 		hour = Hour.query.filter_by(period = hour_string).first()
 
 	o1 = Offering.query.filter_by(course = c1, term = t, hour = hour).first()
@@ -130,14 +129,26 @@ def index():
 def planner():
 
 	# Initialize the department selection form
-	form = DeptPickerForm()
-	form.dept_name.choices = [(a.id, a.abbr + " - " + a.name) for a in Department.query.order_by('abbr')]
-	form.dept_name.choices.insert(0, (-1,"Choose a Department"))
+	dept_form = DeptPickerForm()
+	dept_form.dept_name.choices = [(a.id, a.abbr + " - " + a.name) for a in Department.query.order_by('abbr')]
+	dept_form.dept_name.choices.insert(0, (-1,"Choose a Department"))
+
+	# Initialize the hour selection form
+	hour_form = HourPickerForm()
+	hour_form.hour_name.choices = [(a.id, a.period) for a in Hour.query.order_by('id')]
+	hour_form.hour_name.choices.insert(0, (-1,"Choose an Hour"))
+
+	# Initialize the term selection form
+	term_form = TermPickerForm()
+	term_form.term_name.choices = [(a.id, str(a)) for a in Term.query.order_by('id')]
+	term_form.term_name.choices.insert(0, (-1,"Choose a Term"))
 
 	return render_template("planner.html",
         title = 'My Plan',
         user = g.user,
-        form = form,
+        dept_form = dept_form,
+        hour_form = hour_form,
+        term_form = term_form,
         courses = g.user.courses.order_by('hour_id'),
         terms = g.user.terms.order_by('id'),
         off_terms = g.user.off_terms)
@@ -146,9 +157,38 @@ def planner():
 @app.route('/getcourses', methods = ['POST'])
 @login_required
 def getcourses():
-	qryresult = Course.query.filter_by(department_id = request.form['dept'])
 
-	j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('id', 'number')] })
+	offerings = None
+
+	print request.form['term']
+	print request.form['hour']
+	print request.form['dept']
+
+	if request.form['term'] != "-1" and request.form['hour'] != "-1":
+		offerings = Offering.query.filter_by(term_id = request.form['term'], hour_id = request.form['hour'])
+
+	elif request.form['term'] != "-1":
+		offerings = Offering.query.filter_by(term_id = request.form['term'])
+		
+	elif request.form['hour'] != "-1":
+		offerings = Offering.query.filter_by(hour_id = request.form['hour'])
+
+
+	# if request.form['dept'] != -1:
+	# 	department_index = request.form['dept']
+
+	
+	j = jsonify( { } )
+	if offerings and request.form['dept'] != "-1":
+		print offerings.first().course
+		j = jsonify( { 'courses' : [i.serialize for i in offerings if i.course.department_id == int(request.form['dept'])] })
+
+	elif offerings:
+		j = jsonify( { 'courses' : [i.serialize for i in offerings] })
+
+	else:
+		qryresult = Course.query.filter_by(department_id = request.form['dept'])
+		j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('department_id')] })
 
 	return j
 

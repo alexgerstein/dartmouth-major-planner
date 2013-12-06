@@ -162,10 +162,22 @@ class Offering(db.Model):
 		return self
 
 	def __repr__(self):
-		course = Course.query.filter_by(id = self.course_id).first()
+		course = self.get_course()
 		offerings = Offering.query.filter_by(course_id = course.id, term_id = self.term_id).all()
 
 		return "%s %s" % (course.department.abbr, course.number)
+
+	@property
+	def serialize(self):
+
+		course = self.get_course()
+
+		return {
+		'full_name' :	repr(course).encode('ascii', 'ignore'),
+		'id'		:	self.course.id,
+		'number' 	:	self.course.number,
+		'name'		:	self.course.name
+		}
 
 class Course(db.Model):
 	__tablename__ = 'course'

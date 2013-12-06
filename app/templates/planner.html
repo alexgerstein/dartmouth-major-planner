@@ -11,10 +11,20 @@
             <div class="span3">
                 Dept:
                 <form action="" method="post" name="add">
-                    {{form.hidden_tag()}}
-                    {{form.dept_name}}
+                    {{dept_form.hidden_tag()}}
+                    {{dept_form.dept_name}}
                 </form>
-                
+                Term:
+                <form action="" method="post" name="add">
+                    {{term_form.hidden_tag()}}
+                    {{term_form.term_name}}
+                </form>
+                Hour:
+                <form action="" method="post" name="add">
+                    {{hour_form.hidden_tag()}}
+                    {{hour_form.hour_name}}
+                </form>
+
                 <div class="classesBlock">
                     <ul id="" class="sortable1 dropfalse" unselectable="on"></ul>
                 </div>

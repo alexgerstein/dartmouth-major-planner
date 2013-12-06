@@ -213,8 +213,10 @@ function swap_term(term){
 function showCourses(){
     $('.sortable1').scrollTop(0);
     var dept = $('#dept_name').find(":selected").val();
+    var term = $('#term_name').find(":selected").val();
+    var hour = $('#hour_name').find(":selected").val();
 
-    var posting = $.post('/getcourses', { dept: dept });
+    var posting = $.post('/getcourses', { dept: dept, term: term, hour: hour });
     
     posting.done(function (data) {
         $(".classesBlock ul.sortable1").empty();
