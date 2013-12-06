@@ -37,7 +37,7 @@ def add_terms(grad_year):
 	# Clear all terms, start clean
 	for term in g.user.terms:
 		g.user.remove_term(term)
-	db.session.commit()
+		db.session.commit()
 
 	# Add Freshman Fall
 	t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
@@ -45,6 +45,7 @@ def add_terms(grad_year):
 		t = Term(grad_year - 4, SEASONS[3])
 		db.session.add(t)
 	g.user.add_term(t)
+	db.session.commit()
 
 	# Add all following terms
 	for year_diff in reversed(range(4)):
@@ -54,6 +55,7 @@ def add_terms(grad_year):
 				t = Term(grad_year - year_diff, season)
 				db.session.add(t)
 			g.user.add_term(t)
+			db.session.commit()
 	
 	# Remove extra Fall
 	db.session.expunge(t)
@@ -160,10 +162,6 @@ def getcourses():
 
 	offerings = None
 
-	print request.form['term']
-	print request.form['hour']
-	print request.form['dept']
-
 	if request.form['term'] != "-1" and request.form['hour'] != "-1":
 		offerings = Offering.query.filter_by(term_id = request.form['term'], hour_id = request.form['hour'])
 
@@ -180,7 +178,6 @@ def getcourses():
 	
 	j = jsonify( { } )
 	if offerings and request.form['dept'] != "-1":
-		print offerings.first().course
 		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('id') if i.course.department_id == int(request.form['dept'])] })
 
 	elif offerings:
@@ -342,6 +339,8 @@ def edit():
 		db.session.commit()
 
 		add_terms(int(form.grad_year.data))
+		db.session.add(g.user)
+		db.session.commit()
 
 
 		return redirect(url_for('planner'))
