@@ -185,7 +185,7 @@ def getcourses():
 
 	else:
 		qryresult = Course.query.filter_by(department_id = request.form['dept'])
-		j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('department_id', 'number')] })
+		j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('id', 'number')] })
 
 	return j
 
