@@ -335,12 +335,8 @@ def edit():
 	if form.validate_on_submit():
 		g.user.nickname = form.nickname.data
 		g.user.grad_year = form.grad_year.data
-		
-		db.session.add(g.user)
-		db.session.commit()
 
 		add_terms(int(form.grad_year.data))
-		db.session.add(g.user)
 		db.session.commit()
 
 
