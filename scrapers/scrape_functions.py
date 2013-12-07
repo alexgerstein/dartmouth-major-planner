@@ -42,7 +42,7 @@ TIMETABLE_LOCK_SEASON = "F"
 ARBITRARY_OLD_YEAR = 2005
 ARBITRARY_SEASON = "W"
 
-# Alert function that makes a message stand out when running hte scraper
+# Alert function that makes a message stand out when running the scraper
 def print_alert(message):
 	print ('\n\n')
 	print u'*******' + message + u'*******\n'
