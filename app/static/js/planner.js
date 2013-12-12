@@ -60,7 +60,7 @@ function addCourse(term, hour, possible_hours, course, short_name) {
 };
 
 function showAvailableSlots(event, ui) {
-    var posting = $.post('/findterms', { course_item: ui.item.attr('id') });
+    var posting = $.post('/findterms', { course: ui.item.attr('id') });
 
     posting.done(function (data) {
         $.each(data['terms'], function(index, item) {

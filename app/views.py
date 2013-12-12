@@ -269,11 +269,12 @@ def getCourseInfo():
 def findterms():
 	
 	# Get Course
-	offering = get_requested_offering(request.form)
-	print "Offering" + str(offering)
+	split_course = request.form['course'].strip().split(" ")
+	d1 = Department.query.filter_by(abbr = split_course[0]).first()
+	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+
 
 	available_actual_offerings = Offering.query.filter_by(course = c1).all()
-	print "Offering" + str(available_actual_offerings)
 
 	# Save every term/hour offered in either actual or user-added array
 	terms = []
