@@ -17,5 +17,3 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 db = SQLAlchemy(app)
 
 from app import views, models
-
-app.run(debug = True)
