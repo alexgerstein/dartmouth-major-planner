@@ -8,7 +8,6 @@ from flask_cas import flask_cas
 # Initialize the Flask app according to config, views, and models
 
 app = Flask(__name__)
-app.debug = True
 app.config.from_object('config')
 
 app.register_blueprint(flask_cas)
