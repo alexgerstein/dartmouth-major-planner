@@ -276,24 +276,13 @@ def findterms():
 	app.logger.info("Find Terms: d1 = %s, c1 = %s", d1, c1)
 
 
-	available_actual_offerings = Offering.query.filter_by(course = c1).all()
-
-	# Save every term/hour offered in either actual or user-added array
-	terms = []
-	user_terms = []
-	for offering in available_actual_offerings:
-		if (offering.term not in terms) and (offering.term not in user_terms):
-			if offering.user_added == "N":
-				terms.append(offering.term)
-			elif offering.user_added == "Y":
-				user_terms.append(offering.term)
-
-	app.logger.info("Terms: %s, User Terms = %s", terms, user_terms)
+	available_user_offerings = Offering.query.filter_by(course = c1, user_added = "Y").all()
+	available_registrar_offerings = Offering.query.filter_by(course = c1, user_added = "N").all()
 
 	# Send array of terms to client's view
 	j = jsonify ( {} )
 	if (terms != []):
-		j = jsonify( { 'terms' : [i.serialize for i in terms], 'user-terms': [i.serialize for i in user_terms] })
+		j = jsonify( { 'terms' : [i.term for i in available_registrar_offerings], 'user-terms': [i.term for i in available_user_offerings] })
 
 	return j
 
