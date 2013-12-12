@@ -288,6 +288,7 @@ def findterms():
 			elif offering.user_added == "Y":
 				user_terms.append(offering.term)
 
+	app.logger.info("Terms: %s, User Terms = %s", terms, user_terms)
 
 	# Send array of terms to client's view
 	j = jsonify ( {} )
