@@ -69,7 +69,7 @@ function showAvailableSlots(event, ui) {
         $(".progress").addClass("hide");
         
         $.each(data['terms'], function(index, item) {
-            term_id = "#" + item['term'];
+            term_id = "#" + item;
             if ($(term_id).hasClass('off-term')) {
                 $(term_id).addClass('available-off');
             } else {
@@ -78,7 +78,7 @@ function showAvailableSlots(event, ui) {
         });
 
         $.each(data['user-terms'], function(index, item) {
-            term_id = "#" + item['term'];
+            term_id = "#" + item;
             if ($(term_id).hasClass('off-term')) {
                 $(term_id).addClass('available-user-off');
             } else {
