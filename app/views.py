@@ -273,9 +273,6 @@ def findterms():
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 
-	app.logger.info("Find Terms: d1 = %s, c1 = %s", d1, c1)
-
-
 	available_user_offerings = Offering.query.filter_by(course = c1, user_added = "Y").all()
 	available_registrar_offerings = Offering.query.filter_by(course = c1, user_added = "N").all()
 
