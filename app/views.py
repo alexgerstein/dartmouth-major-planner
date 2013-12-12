@@ -352,3 +352,7 @@ def edit():
 		form.grad_year.data = g.user.grad_year
 	return render_template('edit.html',
 		form = form, user = g.user)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'), 404
