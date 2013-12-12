@@ -62,11 +62,11 @@ function addCourse(term, hour, possible_hours, course, short_name) {
 function showAvailableSlots(event, ui) {
     var posting = $.post('/findterms', { course: ui.item.attr('id') });
 
-    $(".classesBlock").append("<li class='loading'>Loading offerings...</li>");
+    $(".progress").removeClass("hide");
 
     posting.done(function (data) {
 
-        $(".loading").remove();
+        $(".progress").addClass("hide");
         
         $.each(data['terms'], function(index, item) {
             term_id = "#" + item['term'];
