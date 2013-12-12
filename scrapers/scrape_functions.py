@@ -500,12 +500,18 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 	# Loop through all combinations
 	for term in terms_offered:
 
+		if term is None:
+			continue
+			
 		# # Ignore if ORC data might conflit with the higher-priority timetable
 		# if term.in_range(lock_term_start, lock_term_end):
 		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
 		# 	continue
 
 		for hour in hours_offered:
+
+			if hour is None:
+				continue 
 
 			# Check if user-added offering exists. If so, overwrite with hour
 			unknown_hour = Hour.query.filter_by(period = "?").first()
