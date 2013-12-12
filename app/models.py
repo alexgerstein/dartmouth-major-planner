@@ -149,6 +149,12 @@ class Offering(db.Model):
 		db.session.commit()
 		return self
 
+	def change_desc(self, course_desc):
+		self.desc = ""
+		self.desc = course_desc
+		db.session.commit()
+		return self
+
 	def mark(self, str):
 		self.added = str
 		return self

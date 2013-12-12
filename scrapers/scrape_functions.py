@@ -514,6 +514,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 				o1.change_period(hour)
 				print_alert("Updated user_added: " + repr(o1))
 				o1.mark("T")
+				o1.change_desc(course_desc)
 				continue
 
 			# Check if offering already exists

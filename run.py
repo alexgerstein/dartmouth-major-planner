@@ -5,4 +5,4 @@
 # Script to start running the server
 
 from app import app
-app.run(debug = True)
+app.run(debug = False)
