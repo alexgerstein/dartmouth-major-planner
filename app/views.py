@@ -280,7 +280,7 @@ def findterms():
 	available_registrar_offerings = Offering.query.filter_by(course = c1, user_added = "N").all()
 
 	# Send array of terms to client's view
-	j = jsonify( { 'terms' : [i.term for i in available_registrar_offerings], 'user-terms': [i.term for i in available_user_offerings] })
+	j = jsonify( { 'terms' : [i.term.serialize() for i in available_registrar_offerings], 'user-terms': [i.term.serialize() for i in available_user_offerings] })
 
 	return j
 
