@@ -34,7 +34,9 @@
             <div class="span9">
                 <div class="termsBlock">
                     {% if not terms %}
-                        ERROR: Please re-enter graduation year in settings.
+                        <div class="row-fluid">
+                            ERROR: Please re-enter graduation year in settings.
+                        </div>
                     {% endif %}
 
                     {% for term in terms %}
