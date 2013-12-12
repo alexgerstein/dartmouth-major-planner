@@ -436,7 +436,7 @@ def add_all_terms(year, terms_offered):
 	for year_after in years:
 		for season in SEASONS:
 			possible_term = Term.query.filter_by(year = year_after, season = season).first()
-			if (possible_term):
+			if str(possible_term) != "None":
 				terms_offered.append(possible_term)
 
 def remove_all_summer_terms(year, terms_offered):
@@ -500,9 +500,9 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 	# Loop through all combinations
 	for term in terms_offered:
 
-		if term is None:
+		if term is None or str(term) == "None":
 			continue
-			
+
 		# # Ignore if ORC data might conflit with the higher-priority timetable
 		# if term.in_range(lock_term_start, lock_term_end):
 		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
@@ -510,7 +510,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 
 		for hour in hours_offered:
 
-			if hour is None:
+			if hour is None or str(hour) == "None":
 				continue 
 
 			# Check if user-added offering exists. If so, overwrite with hour
