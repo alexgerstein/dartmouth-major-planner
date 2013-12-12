@@ -33,6 +33,10 @@
 
             <div class="span9">
                 <div class="termsBlock">
+                    {% if terms %}
+                        Error: Please re-enter graduation year in settings.
+                    {% endif %}
+
                     {% for term in terms %}
                         {% if (loop.index + 3) % 4 == 0 %}
                             <div class="row-fluid">

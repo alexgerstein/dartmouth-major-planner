@@ -145,6 +145,11 @@ def planner():
 	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms.order_by('year', 'id')]
 	term_form.term_name.choices.insert(0, (-1,"Choose a Term"))
 
+	# Check if terms aren't in the session
+	if g.user.terms is None:
+		add_terms(int(g.user.grad_year))
+		db.session.commit()
+
 	return render_template("planner.html",
         title = 'My Plan',
         user = g.user,
