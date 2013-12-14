@@ -1,0 +1,922 @@
+/* CSS Document for FlatDuplex */
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  padding: 0 0 0 0;
+}
+a {
+  color: #009530;
+  text-decoration: none !important;
+}
+h1 {
+  font-size: 34px;
+}
+h2 {
+  font-size: 34px;
+}
+h1,
+h2,
+h3 {
+  line-height: 35px;
+}
+.validation-error {
+  background-color: #ffd4e1 !important;
+}
+.animation-delay {
+  -webkit-animation-delay: 1s;
+  -moz-animation-delay: 1s;
+  -ms-animation-delay: 1s;
+  -o-animation-delay: 1s;
+  animation-delay: 1s;
+}
+.buttons-delay {
+  -webkit-animation-delay: 2s;
+  -moz-animation-delay: 2s;
+  -ms-animation-delay: 2s;
+  -o-animation-delay: 2s;
+  animation-delay: 2s;
+}
+.download-shake {
+  -webkit-animation-delay: 5s;
+  -moz-animation-delay: 5s;
+  -ms-animation-delay: 5s;
+  -o-animation-delay: 5s;
+  animation-delay: 5s;
+}
+/* Header Navbar
+----------------------------------- */
+.navbar-inner {
+  border-bottom: none;
+  box-shadow: none !important;
+  background-image: none;
+  background-color: #3d3d3c;
+  min-height: 45px;
+}
+.navbar .nav {
+  margin: 3px 10px 0 0;
+}
+.navbar .brand {
+  color: #fff;
+  text-shadow: none;
+  padding-top: 12px;
+}
+.navbar .nav > li > a {
+  float: none;
+  padding: 10px 15px 10px;
+  color: #fff;
+  text-decoration: none;
+  text-shadow: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+.navbar .nav > li > a:hover {
+  color: #fff;
+}
+.navbar .nav > .active > a,
+.navbar .nav > .active > a:hover,
+.navbar .nav > .active > a:focus {
+  color: #fff;
+  background-color: #3d3d3c;
+  box-shadow: none;
+}
+/* Header 
+----------------------------------- */
+header {
+  margin-top: 50px;
+  text-align: right;
+}
+header h1 {
+  color: #009530;
+  text-transform: uppercase;
+  margin: 0 0 24px 0;
+}
+header .subtitle {
+  color: #3d3d3c;
+  font-size: 27px;
+}
+header p {
+  line-height: 1.7;
+}
+header .button {
+  color: #ffffff;
+  background-color: #009530;
+  padding: 11px 30px;
+  font-weight: 800;
+  display: inline-block;
+  margin-top: 19px;
+  border: 7px solid #009530;
+  text-decoration: none;
+  text-align: center;
+}
+header .button:hover {
+  color: #009530;
+  background-color: #ffffff;
+  border: 7px solid #009530;
+}
+header .store-buttons {
+  margin-top: 10px;
+}
+header .store-buttons a {
+  width: 105px;
+}
+header .store-buttons a {
+  margin-left: 2px;
+  display: inline-block;
+}
+header .notebookslider {
+  background: #ffffff url('/static/img/header-notebook-bg.jpg') no-repeat;
+  background-size: contain;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  height: 358px;
+}
+header .slides {
+  padding: 4.3% 14.5% 23%;
+}
+header .flex-control-nav {
+  bottom: 27.5%;
+}
+/* Counter 
+----------------------------------- */
+#counter {
+  background-color: #009530;
+  padding: 10px 0;
+}
+#counter h2 {
+  text-align: center;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+#counter h2 i {
+  margin-right: 10px;
+  font-size: 25px;
+}
+
+/* Information 
+----------------------------------- */
+#information .infoslider {
+  box-shadow: none;
+  padding: 0;
+  margin: 100px 0;
+  border: none;
+}
+#information h2 {
+  color: #009530;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+#information p {
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+#information .flex-direction-nav a {
+  width: 52px;
+  height: 93px;
+}
+#information .flex-next {
+  right: 0px;
+}
+#information .flex-prev {
+  left: 0px;
+}
+#information .flex-control-paging li a {
+  width: 15px;
+  height: 15px;
+  border-radius: 0;
+}
+/* About Us 
+----------------------------------- */
+#about {
+  background: #eff2f5 url('static/img/about-bg.jpg') no-repeat center top;
+  padding: 55px 0 75px 0;
+}
+#about h2 {
+  color: #009530;
+}
+#about p {
+  line-height: 1.7;
+}
+#about .profiles {
+  margin-top: 40px;
+}
+#about .profile-image {
+  border: 12px solid #3d3d3c;
+}
+#about .profile-image-hover {
+  border: 12px solid #009530;
+}
+#about .profile-image img {
+  width: 100%;
+}
+#about .profile-border-arrow {
+  text-align: center;
+  margin-top: -18px;
+  width: 25px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#about .profile-border-arrow i {
+  color: #3d3d3c;
+  font-size: 44px;
+  width: 25px;
+}
+#about .profile-border-arrow-hover i {
+  color: #009530;
+}
+#about h3 {
+  color: #009530;
+  font-weight: bold;
+  margin: 0;
+}
+#about .profiles p {
+  color: #3d3d3c;
+  line-height: 1;
+}
+#about .profiles .social-icons {
+  list-style: none;
+  margin: 20px 0 0 0;
+  text-align: center;
+}
+#about .profiles .social-icons li {
+  display: inline;
+}
+#about .profiles .social-icons li a {
+  margin: 0 10px;
+  background-color: #3d3d3c;
+  color: #ffffff;
+  width: 40px;
+  display: inline-block;
+  text-align: center;
+  line-height: 40px;
+  font-size: 21px;
+}
+#about .profiles .social-icons .twitter:hover {
+  background-color: #5dd7fc;
+}
+#about .profiles .social-icons .facebook:hover {
+  background-color: #3b5a9b;
+}
+#about .profiles .social-icons .googleplus:hover {
+  background-color: #cf3d2e;
+}
+/* Testimonials 
+----------------------------------- */
+#testimonials {
+  margin-top: 85px;
+}
+#testimonials .stars {
+  text-align: center;
+  color: #7f7f7f;
+  font-size: 30px;
+  margin-bottom: 25px;
+}
+#testimonials .star-big {
+  font-size: 36px;
+}
+#testimonials .testimonialslider {
+  box-shadow: none;
+  padding: 0;
+  margin: 0 0 85px 0;
+  border: none;
+}
+#testimonials .testimonial {
+  font-size: 24px;
+  color: #009530;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+#testimonials .client {
+  color: #7f7f7f;
+  font-weight: 800;
+}
+#testimonials .client-img {
+  border: 3px solid #bbbbbb;
+}
+/* Pricing 
+----------------------------------- */
+#pricing {
+  margin-top: 85px;
+  margin-bottom: 85px;
+}
+#pricing h2 {
+  color: #7f7f7f;
+}
+#pricing p {
+  color: #7f7f7f;
+}
+#pricing .pricing-table {
+  margin: 40px auto;
+}
+#pricing .pricing-column-left {
+  margin-right: 0;
+  padding-top: 35px;
+}
+#pricing .pricing-column-center {
+  margin-left: 0;
+  margin-right: 0;
+}
+#pricing .pricing-column-right {
+  margin-left: 0;
+  padding-top: 35px;
+}
+#pricing .pricing-table .column {
+  border: 1px solid #c5c5c5;
+  min-height: 400px;
+}
+#pricing .pricing-table .column-hover {
+  background-color: #eaeaea;
+}
+#pricing .pricing-table .standard {
+  border-right: none;
+}
+#pricing .pricing-table .premium {
+  min-height: 450px;
+}
+#pricing .pricing-table .business {
+  border-left: none;
+}
+#pricing .column-header {
+  background-color: #7f7f7f;
+  margin: 10px;
+  padding: 20px 0;
+}
+#pricing .bestprice-header {
+  background-color: #009530;
+}
+#pricing .column-header .package {
+  color: #ffffff;
+  margin: 0 0 0 0;
+  line-height: 30px;
+}
+#pricing .column-header .package-comment {
+  color: #bcbcbc;
+  margin: 0 0 28px 0;
+}
+#pricing .column-header .price {
+  color: #ffffff;
+  font-size: 48px;
+  font-weight: 800;
+}
+#pricing .column-header .payment-method {
+  color: #ffffff;
+  font-size: 16px;
+}
+#pricing .benefits {
+  color: #3d3d3c;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 20px 10px 35px 10px;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+#pricing .bestprice-benefits {
+  margin: 53px 10px 60px 10px;
+}
+#pricing .benefits li {
+  border-bottom: 1px dashed #7f7f7f;
+  padding: 10px 0;
+}
+#pricing .select-package-button {
+  margin: 10px;
+  background-color: #009530;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  display: block;
+  text-align: center;
+  padding: 15px 0;
+}
+/* Gallery 
+----------------------------------- */
+#gallery {
+  background-color: #e2e2e2;
+  padding: 50px 0 67px 0;
+}
+#gallery h2 {
+  color: #009530;
+}
+#gallery .galleryslider {
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 30px 0;
+  border: none;
+}
+#gallery .gallery-img {
+  position: relative;
+}
+#gallery .gallery-img a {
+  padding: 9px;
+  background-color: #ffffff;
+  display: block;
+  border: 1px solid #ffffff;
+}
+#gallery .gallery-img a:hover {
+  border: 1px solid #009530;
+}
+#gallery .img-overlay {
+  background: #009530 url('static/img/gallery-overlay.png') no-repeat center center;
+  background: rgba(0, 149, 48, 0.5) url('static/img/gallery-overlay.png') no-repeat center center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 100%;
+  left: 0px;
+}
+#gallery .flex-direction-nav a {
+  margin: 0px;
+  opacity: 100;
+  top: -75px;
+  width: 37px;
+  height: 38px;
+  background-image: url('static/img/gallery_bg_direction_nav.png');
+}
+#gallery .flex-next {
+  right: 0px;
+}
+#gallery .flex-prev {
+  right: 50px;
+  left: auto;
+}
+#gallery .flex-control-nav {
+  text-align: left;
+  padding-left: 2%;
+}
+#gallery .flex-control-paging li a {
+  width: 37px;
+  height: 3px;
+  border-radius: none;
+}
+#gallery .flex-control-paging li a.flex-active {
+  background: #009530;
+}
+/* Contact 
+----------------------------------- */
+#contact {
+  margin-top: 85px;
+}
+#contact h2 {
+  color: #009530;
+  vertical-align: bottom;
+  margin-bottom: 30px;
+}
+#contact h2 i {
+  font-size: 60px;
+  margin-right: 10px;
+}
+#contact p {
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+#contact p .highlight {
+  color: #009530;
+  font-weight: 800;
+}
+#contact .gmap {
+  height: 350px;
+  margin-bottom: 25px;
+}
+#contact .gmap .gmnoprint {
+  display: none;
+}
+#contact label {
+  font-weight: 800;
+}
+#contact input {
+  border-radius: 0;
+  padding: 9px;
+  box-shadow: none;
+  margin-bottom: 18px;
+  height: 46px;
+  line-height: 17px;
+}
+#contact textarea {
+  border-radius: 0;
+  padding: 9px 9px 15px 9px;
+  box-shadow: none;
+  height: 145px;
+  margin-bottom: 20px;
+}
+#contact button {
+  font-size: 18px;
+  font-weight: 800;
+  background-color: #009530;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+}
+#contact .form-info {
+  font-size: 13px;
+  padding-top: 11px;
+  color: #7f7f7f;
+}
+/* Footer 
+----------------------------------- */
+footer {
+  background-color: #7f7f7f;
+  color: #ffffff;
+  font-size: 14px;
+  margin-top: 95px;
+  padding-bottom: 20px;
+}
+footer .scroll-top {
+  background-color: #ffffff;
+  height: 21px;
+  text-align: center;
+}
+footer .scroll-top a {
+  background: #7f7f7f url('static/img/scroll-top-button.png') no-repeat 0 0;
+  height: 21px;
+  width: 58px;
+  display: block;
+  margin: 0 auto;
+}
+footer .address {
+  font-weight: 800;
+  margin: 30px 0 10px 0;
+}
+/* Large desktop */
+@media (min-width: 1200px) {
+  body {
+    font-size: 18px;
+  }
+  h1 {
+    font-size: 41px;
+  }
+  h2 {
+    font-size: 36px;
+  }
+  h1,
+  h2,
+  h3 {
+    line-height: 40px;
+  }
+  /* Header 
+  	----------------------------------- */
+  header {
+    margin-top: 100px;
+  }
+  header h1 {
+    margin: 0 0 25px 0;
+  }
+  header .subtitle {
+    font-size: 33px;
+  }
+  header .store-buttons a {
+    width: auto;
+  }
+  header .button {
+    margin-top: 28px;
+  }
+  header .flex-control-nav {
+    bottom: 28%;
+  }
+  header .notebookslider {
+    height: 445px;
+  }
+  /* Newsletter 
+  	----------------------------------- */
+  #newsletter {
+    padding: 50px 0;
+  }
+  #newsletter h2 {
+    font-size: 24px;
+  }
+  #newsletter h2 i {
+    font-size: 25px;
+  }
+  #newsletter .email {
+    font-size: 19px;
+  }
+  #newsletter .submit {
+    font-size: 18px;
+  }
+  /* Information 
+  	----------------------------------- */
+  #information h2 {
+    margin-bottom: 25px;
+  }
+  #information p {
+    margin-bottom: 15px;
+  }
+  /* Pricing 
+  	----------------------------------- */
+  #pricing .benefits {
+    font-size: 16px;
+  }
+  #pricing .select-package-button {
+    font-size: 24px;
+  }
+  /* Contact 
+  	----------------------------------- */
+  #contact input {
+    padding: 12px;
+  }
+  #contact textarea {
+    padding: 12px 12px 11px 12px;
+  }
+  #contact button {
+    font-size: 18px;
+    padding: 10px 25px;
+  }
+  #contact .form-info {
+    font-size: 14px;
+  }
+}
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) {
+  body {
+    font-size: 11px;
+  }
+  h1,
+  h2,
+  h3 {
+    line-height: 29px;
+  }
+  h2 {
+    font-size: 26px;
+  }
+
+  /* Header 
+  	----------------------------------- */
+  header h1 {
+    margin: 0 0 16px 0;
+    font-size: 28px;
+  }
+  header .subtitle {
+    font-size: 21px;
+  }
+  header .button {
+    padding: 4px 45px;
+    margin-top: 8px;
+  }
+  header .flex-control-nav {
+    bottom: 26.7%;
+  }
+  .flex-control-paging li a {
+    width: 9px;
+    height: 9px;
+  }
+  header .notebookslider {
+    height: 275px;
+  }
+  #information h2 {
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  /* Newsletter 
+  	----------------------------------- */
+  #newsletter h2 {
+    font-size: 18px;
+  }
+  #newsletter h2 i {
+    font-size: 20px;
+  }
+  /* About Us 
+  	----------------------------------- */
+  #about .profile-image {
+    border-width: 8px;
+  }
+  #about h3 {
+    font-size: 18px;
+  }
+  #about .profiles .social-icons li a {
+    margin: 0 5px;
+    width: 33px;
+    line-height: 33px;
+    font-size: 14px;
+  }
+  /* Testimonials 
+  	----------------------------------- */
+  #testimonials .testimonial {
+    font-size: 20px;
+  }
+  /* Contact 
+  	----------------------------------- */
+  #contact input {
+    padding: 8px;
+    font-size: 12px;
+  }
+  #contact textarea {
+    padding: 8px 8px 13px 8px;
+    font-size: 12px;
+  }
+  #contact button {
+    font-size: 14px;
+    padding: 10px 13px;
+  }
+  #contact .form-info {
+    font-size: 9px;
+  }
+  #contact label {
+    font-size: 12px;
+  }
+}
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+  body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .container {
+    padding: 0 40px;
+  }
+
+  .navbar-fixed-top {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+  /* Header 
+  	----------------------------------- */
+  header {
+    text-align: center;
+  }
+  header .subtitle {
+    display: block;
+  }
+  header .notebookslider {
+    margin-top: 50px;
+  }
+  header .notebookslider {
+    height: auto;
+  }
+  /* Newsletter 
+  	----------------------------------- */
+  #newsletter h2 {
+    font-size: 18px;
+  }
+  #newsletter h2 i {
+    font-size: 20px;
+  }
+  #newsletter .email {
+    width: 60%;
+  }
+  /* Information 
+  	----------------------------------- */
+  #information {
+    text-align: center;
+  }
+  #information .infoslider {
+    margin: 120px 0 80px 0;
+  }
+  #information .infoslider img {
+    margin-bottom: 25px;
+  }
+  #information .flex-direction-nav a {
+    width: 37px;
+    height: 37px;
+  }
+  #information .flex-next {
+    background-position: -66px -28px;
+    right: 40%;
+    top: -40px;
+  }
+  #information .flex-prev {
+    background-position: -7px -28px;
+    left: 40%;
+    top: -40px;
+  }
+  /* About Us 
+  	----------------------------------- */
+  #about {
+    background-image: none;
+    background-color: #f3f3f3;
+    padding: 63px 0 20px 0;
+  }
+  #about .profile {
+    margin-bottom: 60px;
+  }
+  /* Testimonials 
+  	----------------------------------- */
+  #testimonials .testimonial {
+    font-size: 20px;
+  }
+  #testimonials .client-img {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  /* Pricing 
+  	----------------------------------- */
+  #pricing .pricing-column-left {
+    padding-top: 0;
+  }
+  #pricing .pricing-column-right {
+    padding-top: 0;
+  }
+  #pricing .pricing-table .column {
+    margin-bottom: 30px;
+  }
+  #pricing .pricing-table .standard {
+    border-right: 1px solid #c5c5c5;
+  }
+  #pricing .pricing-table .premium {
+    min-height: 1px solid #c5c5c5;
+  }
+  #pricing .pricing-table .business {
+    border-left: 1px solid #c5c5c5;
+    margin-bottom: 0;
+  }
+  /* Gallery 
+  	----------------------------------- */
+  #gallery {
+    text-align: center;
+  }
+  #gallery .galleryslider {
+    margin: 30px 0 80px 0;
+  }
+  #gallery .flex-direction-nav a {
+    top: 103%;
+  }
+  #gallery .flex-next {
+    right: 0px;
+  }
+  #gallery .flex-prev {
+    right: auto;
+  }
+  #gallery .flex-control-nav {
+    text-align: center;
+    padding-left: 0;
+    bottom: -55px;
+  }
+  #gallery .flex-control-paging li a {
+    height: 10px;
+  }
+  /* Contact 
+  	----------------------------------- */
+  #contact {
+    margin-top: 65px;
+  }
+  #contact h2 {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  #contact h2 i {
+    font-size: 60px;
+    margin-right: 10px;
+    display: block;
+  }
+  #contact p {
+    text-align: center;
+  }
+  #contact .form-submit {
+    text-align: center;
+  }
+}
+/* Landscape phones and down */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 24px;
+  }
+
+  .navbar-fixed-top {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+  /* Header 
+  	----------------------------------- */
+  header h1 {
+    font-size: 30px;
+  }
+  header .subtitle {
+    font-size: 22px;
+  }
+  header .flex-control-nav {
+    bottom: 27%;
+  }
+  .flex-control-paging li a {
+    width: 9px;
+    height: 9px;
+  }
+  /* Newsletter 
+  	----------------------------------- */
+  #newsletter h2 {
+    font-size: 14px;
+  }
+  #newsletter h2 i {
+    font-size: 16px;
+  }
+  #newsletter .email {
+    font-size: 14px;
+    width: 50%;
+    margin-left: 3px;
+  }
+  #newsletter .submit {
+    font-size: 14px;
+    padding: 0 25px;
+  }
+  /* Information 
+  	----------------------------------- */
+  #information .infoslider {
+    margin: 120px 0 60px 0;
+  }
+  /* Contact 
+  	----------------------------------- */
+  #contact p {
+    font-size: 13px;
+  }
+}
