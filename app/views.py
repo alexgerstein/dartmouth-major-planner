@@ -116,15 +116,17 @@ def fetch_user():
 	else:
 		g.user = None
 
+@app.route('/')
 @app.route('/index')
 def index():
+	print User.query.count()
 	return render_template("index.html",
         title = 'Home',
-        user = g.user)
+        user = g.user,
+        user_count = User.query.count())
 
 # Planner page for signed in users
 # Landing Page for All Users, most will be redirected to login form
-@app.route('/')
 @app.route('/planner', methods = ['GET'])
 @login_required
 @year_required

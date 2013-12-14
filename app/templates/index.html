@@ -2,4 +2,40 @@
 
 {% block content %}
 
+<header class="container-fluid home-anchor">
+	<div class="row">
+		<div class="span5">
+			<h1 class="animated fadeInLeftBig animation-delay">Find the courses that fit.</h1>
+			<p class="animated fadeInLeftBig animation-delay">Say goodbye to the ORC! DartPlan allows you to find where courses fit into your schedule with a simple click-and-drag.
+			<a href="#" class="scroll" id="infoslider">Need more infos »</a></p>
+			<div class="animated fadeInUp buttons-delay"><a id="download-button" class="button hover animated" href="/planner">SIGN IN <br><i> using your</i> <br> Dartmouth ID</a></div>
+		</div>
+		<div class="span7 animated fadeInRightBig animation-delay">
+			<div class="notebookslider flexslider">
+			  <ul class="slides">
+			    <li style="width: 100%; float:left; margin-right:-100%; position:relative; display: list-item;" class>
+			      <img src="static/img/slide1.jpg" />
+			    </li>
+			    <li style="width: 100%; float:left; margin-right:-100%; position:relative; display: list-item;" class>
+			      <img src="static/img/slide2.jpg" />
+			    </li>
+			    <li style="width: 100%; float:left; margin-right:-100%; position:relative; display: list-item;" class>
+			      <img src="static/img/slide3.jpg" />
+			    </li>
+			  </ul>
+			</div>
+		</div>
+	</div>
+
+	<section id="counter">
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span8 offset2">
+				<h2>So far, {{ user_count }} people are using DartPlan to plan their courses.</h2>
+			</div>
+		</div>
+	</section>
+
+</header>	
+
 {% endblock %}
