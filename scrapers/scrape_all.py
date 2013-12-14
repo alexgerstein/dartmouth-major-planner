@@ -24,9 +24,10 @@ old_orcs_shortcut = ""
 store_hours()
 store_terms()
 
-# Set range of timetable, using defined variables in header
-starting_timetable_term = Term.query.filter_by(year = TIMETABLE_START_YEAR, season = TIMETABLE_START_SEASON).first()
-ending_timetable_term = Term.query.filter_by(year = TIMETABLE_LATEST_YEAR, season = TIMETABLE_LATEST_SEASON).first()
+# Set current range of timetable
+timetable_globals = Timetable()
+starting_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_START_YEAR, season = timetable_globals.TIMETABLE_START_SEASON).first()
+ending_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LATEST_YEAR, season = timetable_globals.TIMETABLE_LATEST_SEASON).first()
 
 # Add current ORC
 scrape_curr_orc(starting_timetable_term, ending_timetable_term, curr_orc_shortcut)
@@ -39,4 +40,4 @@ scrape_timetable()
 
 # If course in database was not added by the latest scraping, then it has been changed by the registrar. So, delete.
 if (curr_orc_shortcut == "") and (old_orcs_shortcut == ""):
-	remove_deleted_offerings()
+	remove_deleted_offerings(timetable_globals)

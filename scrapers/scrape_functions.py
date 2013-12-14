@@ -18,6 +18,10 @@ BASE_URL = "http://dartmouth.smartcatalogiq.com"
 UG_DEPT_URL = "/en/2013/orc/Departments-Programs-Undergraduate"
 GRAD_DEPT_URL = "/en/2013/orc/Departments-Programs-Graduate"
 
+# Timetable Setup
+TIMETABLE_BASE = "http://oracle-www.dartmouth.edu/dart/groucho/timetable.subject_search?distribradio=alldistribs&subjectradio=allsubjects&termradio=selectterms&hoursradio=allhours&terms=no_value&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&sortorder=dept&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=Subject+Area(s)"
+SEASON_MONTH = {"01": "W", "03": "S", "06": "X", "09": "F"}
+
 # # Distributives and World Culture Abbreviations
 # DISTRIBS = ["ART", "LIT", "TMV", "INT", "SOC", "QDS", "SCI", "SLA", "TAS", "TLA"]
 # WCS = ["W", "NW", "CI"]
@@ -30,17 +34,28 @@ SEASONS = ["W", "S", "X", "F"]
 # Since the timetable is the authority on course offerings (as I learned when 
 # the registrar refused to give me an NW for my Japanese Cinema Course), keep
 # track of the terms I collected into the database so I don't delete them.
-TIMETABLE_START_YEAR = 2013
-TIMETABLE_START_SEASON = "W"
+class Timetable(object):
 
-TIMETABLE_LATEST_YEAR = 2014
-TIMETABLE_LATEST_SEASON = "W"
+	def __init__(self):
+		r = requests.get(TIMETABLE_BASE)
+		orig_soup = BeautifulSoup(r.content)
+		
+		# Store latest term on the timetable
+		latest_term = orig_soup.find(id="term1")['value']
+		self.TIMETABLE_LATEST_YEAR = int(latest_term[:4])
+		self.TIMETABLE_LATEST_SEASON = SEASON_MONTH[latest_term[4:]]
 
-TIMETABLE_LOCK_YEAR = 2013
-TIMETABLE_LOCK_SEASON = "F"
+		# Store last in-progress term
+		last_finalized_term = orig_soup.find(id="term2")['value']
+		self.TIMETABLE_LOCK_YEAR = int(last_finalized_term[:4])
+		self.TIMETABLE_LOCK_SEASON = SEASON_MONTH[last_finalized_term[4:]]
 
-ARBITRARY_OLD_YEAR = 2005
-ARBITRARY_SEASON = "W"
+		self.TIMETABLE_START_YEAR = 2013
+		self.TIMETABLE_START_SEASON = "W"
+
+		self.ARBITRARY_OLD_YEAR = 2005
+		self.ARBITRARY_SEASON = "W"
+		
 
 # Alert function that makes a message stand out when running the scraper
 def print_alert(message):
@@ -474,11 +489,11 @@ def remove_course_marks():
 
 # Delete all terms not marked as added, because they were not found in the 
 # latest scraping. Then reset all "added" flags for next scraping.
-def remove_deleted_offerings():
+def remove_deleted_offerings(timetable_globals):
 	deleted_offerings = Offering.query.filter_by(added = "").all()
 
-	oldest_term = Term.query.filter_by(year = ARBITRARY_OLD_YEAR, season = ARBITRARY_SEASON).first()
-	latest_lock_term = Term.query.filter_by(year = TIMETABLE_LOCK_YEAR, season = TIMETABLE_LOCK_SEASON).first()
+	oldest_term = Term.query.filter_by(year = timetable_globals.ARBITRARY_OLD_YEAR, season = timetable_globals.ARBITRARY_SEASON).first()
+	latest_lock_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LOCK_YEAR, season = timetable_globals.TIMETABLE_LOCK_SEASON).first()
 
 	for offering in deleted_offerings:
 
