@@ -3,6 +3,8 @@
 # Client-side Forms:
 # 1) Edit username/year
 # 2) Select department in planner
+# 3) Select hour in planner
+# 4) Select term in planner
 
 from flask.ext.wtf import Form, TextField, IntegerField
 from wtforms import TextField, IntegerField, SelectField
