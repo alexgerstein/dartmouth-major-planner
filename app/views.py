@@ -303,20 +303,10 @@ def swapterm():
 	return j
 
 # Settings redirect's to user's own profile page
+# TODO: Have profile show current plan
 @app.route('/settings')
 @login_required
 def settings():
-	return redirect(url_for('user', netid = g.user.netid))
-
-# Profile Pages
-# TODO: Have profile show current plan
-@app.route('/user/<netid>')
-@login_required
-def user(netid):
-	user = User.query.filter_by(netid = netid).first()
-	if user == None:
-		flash('User ' + netid + ' not found.')
-		return redirect(url_for('index'))
 	return render_template('user.html',
 		user = user)
 
