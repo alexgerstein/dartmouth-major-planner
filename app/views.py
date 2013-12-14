@@ -308,7 +308,7 @@ def swapterm():
 @login_required
 def settings():
 	return render_template('user.html',
-		user = user)
+		user = g.user)
 
 # Edit Page to change Name and Graduation Year
 @app.route('/edit', methods = ['GET', 'POST'])
