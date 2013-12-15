@@ -29,11 +29,11 @@ timetable_globals = Timetable()
 starting_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_START_YEAR, season = timetable_globals.TIMETABLE_START_SEASON).first()
 ending_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LATEST_YEAR, season = timetable_globals.TIMETABLE_LATEST_SEASON).first()
 
-# # Add current ORC
-# scrape_curr_orc(starting_timetable_term, ending_timetable_term, curr_orc_shortcut)
+# Add current ORC
+scrape_curr_orc(starting_timetable_term, ending_timetable_term, curr_orc_shortcut)
 
-# # Add all old classes
-# scrape_old_orcs(starting_timetable_term, ending_timetable_term, old_orcs_shortcut)
+# Add all old classes
+scrape_old_orcs(starting_timetable_term, ending_timetable_term, old_orcs_shortcut)
 
 # Add current timetable, usurping any previous new entries
 scrape_timetable()
