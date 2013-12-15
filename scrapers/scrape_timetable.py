@@ -122,7 +122,7 @@ def parse_soup(soup, search_term):
 
                 print "HOUR: " + str(period)
 
-        if ((search_term == None) or (term == search_term)) and dept and (number is not None) and (section is not "") and ( title is not "") and period:
+        if ((search_term == None) or (term == search_term)) and dept and (number is not None) and (section is not "") and title and ( title is not "") and period:
 
             course = Course.query.filter_by(department = dept, number = float(number)).first()
             
