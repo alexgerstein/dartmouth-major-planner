@@ -175,7 +175,7 @@ def getcourses():
 	courses = None
 	if request.form['dept'] != "-1":
 		courses = Course.query.filter_by(department_id = request.form['dept']).join(Offering)
-	else:
+	elif request.form['term'] != "-1" or request.form['hour'] != "-1":
 		courses = Course.query
 
 	if request.form['term'] != "-1":
@@ -184,7 +184,12 @@ def getcourses():
 	if request.form['hour'] != "-1":
 		courses = courses.filter_by(hour_id = request.form['hour'])
 
-	return jsonify( { 'courses' : [i.serialize for i in courses.order_by('number')] })
+	if courses is None:
+		j = jsonify ( {} )
+	else:
+		j = jsonify( { 'courses' : [i.serialize for i in courses.order_by('number')] })
+
+	return j
 
 # If new course dragged into a box, store it in the user's courses
 # Send the hour of the offering to the user
