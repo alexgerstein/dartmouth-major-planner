@@ -48,6 +48,13 @@ def parse_soup(soup, search_term):
     # Look up each row's course and offering in the database.
     # Add if not in database, but all values are present
     for row in rows:
+        term = None
+        dept = None
+        section = None
+        number = None
+        title = None
+        hour = None
+
         for index, value in enumerate(row.findAll('td')):
 
             # Store the term of offering
@@ -87,8 +94,7 @@ def parse_soup(soup, search_term):
                     section = number_split[1].lstrip("0")
 
                 print "NUM: " + str(number)
-                if (section):
-                    print "SECT: " + str(section)
+                print "SECT: " + str(section)
 
                 if number == "":
                     number = None
