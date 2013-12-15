@@ -165,34 +165,19 @@ def planner():
 @login_required
 def getcourses():
 
-	offerings = None
-
-	if request.form['term'] != "-1" and request.form['hour'] != "-1":
-		offerings = Offering.query.filter_by(term_id = request.form['term'], hour_id = request.form['hour'])
-
-	elif request.form['term'] != "-1":
-		offerings = Offering.query.filter_by(term_id = request.form['term'])
-		
-	elif request.form['hour'] != "-1":
-		offerings = Offering.query.filter_by(hour_id = request.form['hour'])
-
-
-	# if request.form['dept'] != -1:
-	# 	department_index = request.form['dept']
-
-	
-	j = jsonify( { } )
-	if offerings and request.form['dept'] != "-1":
-		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('number') if i.course.department_id == int(request.form['dept'])] })
-
-	elif offerings:
-		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('number')] })
-
+	courses = None
+	if request.form['dept'] != "-1":
+		courses = Course.query.filter_by(department_id = request.form['dept']).join(Offering)
 	else:
-		qryresult = Course.query.filter_by(department_id = request.form['dept'])
-		j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('number')] })
+		courses = Course.query.all()
 
-	return j
+	if request.form['term'] != "-1":
+		courses = courses.filter_by(term_id = request.form['term'])
+
+	if request.form['hour'] != "-1":
+		courses = courses.filter_by(hour_id = request.form['hour'])
+
+	return jsonify( { 'courses' : [i.serialize for i in courses.order_by('number')] })
 
 # If new course dragged into a box, store it in the user's courses
 # Send the hour of the offering to the user
