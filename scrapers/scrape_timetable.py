@@ -155,12 +155,12 @@ def parse_soup(soup, search_term):
 def scrape_timetable():
     # Scrape missing Winter (W13)
     winter_term = Term.query.filter_by(year = 2013, season = "W").first()
-
     html = url_to_html_str(w13timetable_url)
     soup = html_to_soup(html)
     parse_soup(soup, winter_term)
 
     # Scrape full timetable
     html = url_to_html_str(timetable_url)
+    print html
     soup = html_to_soup(html)
     parse_soup(soup, None)
