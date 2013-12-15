@@ -18,7 +18,7 @@ class User(db.Model):
 	nickname = db.Column(db.String(64))
 	grad_year = db.Column(db.SmallInteger)
 
-	terms = db.relationship("Term", backref = "user", lazy='dynamic')
+	terms = db.relationship("Term", lazy='dynamic')
 
 	courses = db.relationship('Offering', 
 		secondary=user_course,
@@ -71,8 +71,10 @@ class User(db.Model):
 			return self
 	
 	def remove_term(self, term):
-		self.terms.remove(term)
-		return self
+		if self.is_enrolled(term):
+			self.terms.remove(term)
+			db.session.commit()
+			return self
 
 	def swap_onterm(self, term):
 		if self.is_enrolled(term):
