@@ -51,9 +51,9 @@
                         {% endif %}
                             <div class="span3 term">
                                 <ul id="{{ term }}" class="sortable2 droptrue ui-sortable off-term" unselectable="on">
-                                    <li class="term-name pin">{{term}}<i class="btn off" style="float: right">On?</i></li>
+                                    <li class="term-name pin">{{term}}<i class="btn on" style="float: right">On?</i></li>
                                     {% for on_term in on_terms %}
-                                        {% if term == on_term %}
+                                        {% if term.year == on_term.year and term.season == on_term.season %}
                                             <script>
                                                 $("#{{term}}").removeClass('off-term');
                                                 $("#{{term}} i").text('Off?');
@@ -91,7 +91,7 @@
     }
 
     $(document).ready(function() {
-        $('.off').click(function() {
+        $('.on').click(function() {
             if (confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
                 var btn_id = $(this).parents('ul').attr('id');
                 swap_term(btn_id);
