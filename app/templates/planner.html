@@ -50,13 +50,12 @@
                             <div class="row-fluid">
                         {% endif %}
                             <div class="span3 term">
-                                <ul id="{{ term }}" class="sortable2 ui-sortable off-term" unselectable="on">
+                                <ul id="{{ term }}" class="sortable2 droptrue ui-sortable off-term" unselectable="on">
                                     <li class="term-name pin">{{term}}<i class="btn off" style="float: right">On?</i></li>
                                     {% for on_term in on_terms %}
                                         {% if term == on_term %}
                                             <script>
                                                 $("#{{term}}").removeClass('off-term');
-                                                $("#{{term}}").addClass('droptrue');
                                                 $("#{{term}} i").text('Off?');
                                             </script>
                                             {% break %}
