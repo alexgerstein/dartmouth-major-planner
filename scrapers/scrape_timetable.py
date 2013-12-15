@@ -66,14 +66,7 @@ def parse_soup(soup, search_term):
                 if dept is None:
                     break
 
-            # Store the number of course
-            elif index == NUM_COL:
-                number = value.text.lstrip("0")
-
-                if number == "":
-                    number = None
-                    break
-
+            # Store the section of the course
             elif index == SEC_COL:
                 section = value.text.lstrip("0")
 
@@ -81,6 +74,18 @@ def parse_soup(soup, search_term):
                     section = None
                     break
 
+            # Store the number of course
+            elif index == NUM_COL:
+                number_split = value.text.lstrip("0").strip(".")
+                number = number_split[0]
+
+                # Protect for section being in course number
+                if len(number_split) > 1:
+                    section = number_split[1].lstrip("0")
+
+                if number == "":
+                    number = None
+                    break
 
             elif index == TITLE_COL:
                 title = value.text

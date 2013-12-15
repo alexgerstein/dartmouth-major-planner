@@ -305,7 +305,7 @@ def swapterm():
 @app.route('/settings')
 @login_required
 def settings():
-	return render_template('user.html',
+	return render_template('user.html', title = 'Settings', 
 		user = g.user)
 
 # Edit Page to change Name and Graduation Year
@@ -328,7 +328,7 @@ def edit():
 		form.nickname.data = g.user.nickname
 		form.grad_year.data = g.user.grad_year
 	return render_template('edit.html',
-		form = form, user = g.user)
+		form = form, title = 'Settings', user = g.user)
 
 @app.errorhandler(404)
 def page_not_found(error):
