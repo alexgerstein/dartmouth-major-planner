@@ -37,11 +37,16 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 
 		# Split the course heading into its number and name
 		split_title = title.text.strip(" ").split(" ")
-		course_number = re.match('[0-9]*\.?([0-9]+$)?', course_split[1])
+		course_number = re.match('[0-9]*(\.[0-9]+$)?', split_title[0])
 		course_name = " ".join(split_title[1:]).strip(" ")
 		offerings = ""
 
-		if not course_number:
+		# In the event of an extra space, fix.
+		if str(course_number.group(0)) == "":
+			course_number = re.match('[0-9]*(\.[0-9]+$)?', split_title[1])
+			course_name = " ".join(split_title[2:]).strip(" ")
+
+		if not course_number or str(course_number.group(0)) == "":
 			continue
 
 		# Check if offerings were accidentally stored in the course title

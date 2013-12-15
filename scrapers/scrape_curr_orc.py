@@ -144,7 +144,7 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 		course_name = course_split[2:]
 
 		if course_split[1] == "":
-			course_number = re.match('[0-9]*\.?([0-9]+$)?', course_split[2])
+			course_number = re.match('[0-9]*(\.[0-9]+$)?', course_split[2])
 			course_name = course_split[3:]
 
 		# Fix leading space

@@ -119,10 +119,8 @@ def fetch_user():
 @app.route('/')
 @app.route('/index')
 def index():
-	print User.query.count()
 	return render_template("index.html",
         title = 'Home',
-        user = g.user,
         user_count = User.query.count())
 
 # Planner page for signed in users
