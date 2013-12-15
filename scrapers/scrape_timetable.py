@@ -68,9 +68,9 @@ def parse_soup(soup, search_term):
 
             # Store the number of course
             elif index == NUM_COL:
-                number = value.text.lstrip("0")
+                number = float(value.text.lstrip("0"))
 
-                if number == "":
+                if number == 0:
                     number = None
                     break
 
@@ -100,13 +100,13 @@ def parse_soup(soup, search_term):
                     db.session.add(period)
                     db.session.commit()
 
-        if ((search_term == None) or (term == search_term)) and dept and (number is not "") and (section is not "") and ( title is not "") and period:
+        if ((search_term == None) or (term == search_term)) and dept and (number is not None) and (section is not "") and ( title is not "") and period:
 
             course = Course.query.filter_by(department = dept, number = number).first()
             
             # If initial search for course fails, check if it's a topics course
             if not course:
-                course = Course.query.filter_by(department = dept, number = str(number) + "." + str(section)).first()
+                course = Course.query.filter_by(department = dept, number = number + "." + str(section)).first()
 
             # Otherwise, add the course. It's not ideal to take these course 
             # names since they're often abbreviated, but it will have to do.

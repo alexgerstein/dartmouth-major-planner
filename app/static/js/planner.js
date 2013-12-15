@@ -145,7 +145,7 @@ function saveCourse(event, ui) {
     			};
     		});
         }
-        var hours = data['possible_hours'].split(" ");
+        var hours = data['possible_hours'].split("; ");
         
         addCourse(ext_term_id, data['hour'], hours, text, data['name']);
 
@@ -168,7 +168,7 @@ $(document).on('click', '.dropdown-menu li a', function () {
         }
 
         var hoursUl = course_item.find('.btn-group').remove();
-        var possibleHourArray = data['possible_hours'].split(' ');
+        var possibleHourArray = data['possible_hours'].split('; ');
 
         var newHoursUl = getHoursUl(possibleHourArray, new_hour);
 

@@ -141,8 +141,8 @@ class Offering(db.Model):
 	def get_possible_hours(self):
 		possible_hours = ""
 		for offering in Offering.query.filter_by(course_id = self.course_id, term_id = self.term_id).all():
-			possible_hours += str(offering.get_hour()) + " "
-		return possible_hours[:-1]
+			possible_hours += str(offering.get_hour()) + "; "
+		return possible_hours[:-2]
 
 	def change_period(self, hour):
 		self.hour_id = hour.id
@@ -168,10 +168,8 @@ class Offering(db.Model):
 		return self
 
 	def __repr__(self):
-		course = self.get_course()
-		offerings = Offering.query.filter_by(course_id = course.id, term_id = self.term_id).all()
-
-		return "%s %s" % (course.department.abbr, course.number)
+		course_str = str(self.get_course())
+		return course_str.split(" -")[0]
 
 	@property
 	def serialize(self):
@@ -189,7 +187,7 @@ class Course(db.Model):
 	__tablename__ = 'course'
 
 	id = db.Column(db.Integer, primary_key = True)
-	number = db.Column(db.String(10))
+	number = db.Column(db.Float)
 	name = db.Column(db.String(300), index = True)
 
 	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
@@ -215,14 +213,20 @@ class Course(db.Model):
 		return {
 		'full_name' :	repr(self).encode('ascii', 'ignore'),
 		'id'		:	self.id,
-		'number' 	:	self.number,
+		'number' 	:	str(self.number),
 		'name'		:	self.name
 		}
 
 	def __repr__(self):
-		department = Department.query.filter_by(id = self.department_id).first()
+		department = Department.query.filter_by(id = self.department_id).first()	
 
-		return '%s %s - %s' % (department.abbr, self.number, self.name.encode('ascii', 'ignore'))
+		# Fix number repr if there are no sections (i.e. CS 1.0 should be CS 1)
+		returned_number = self.number
+		split_number = str(self.number).split(".")
+		if split_number[1] == "0":
+			returned_number = split_number[0]
+
+		return '%s %s - %s' % (department.abbr, returned_number, self.name.encode('ascii', 'ignore'))
 
 class Term(db.Model):
 	__tablename__ = 'term'

@@ -37,9 +37,12 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 
 		# Split the course heading into its number and name
 		split_title = title.text.strip(" ").split(" ")
-		course_number = split_title[0].strip(".")
+		course_number = re.match('[0-9]*\.?([0-9]+$)?', course_split[1])
 		course_name = " ".join(split_title[1:]).strip(" ")
 		offerings = ""
+
+		if not course_number:
+			continue
 
 		# Check if offerings were accidentally stored in the course title
 		if re.search('[0-9][0-9][WSXF]: [0-9]', title.text) or "Not" in title.text:
@@ -66,30 +69,26 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 
 			dept = Department.query.filter_by(abbr = abbreviation).first()
 
-		print "Number: " + str(course_number)
+		print "Number: " + str(course_number.group(0))
 		if isinstance(course_name, unicode):
 			print "Name: " + unicodedata.normalize('NFKD', course_name).encode('ascii', 'ignore')
 		else:
 			print "Name: " + course_name
 		print "Dept: " + str(dept)
 
-		if '-' in course_number:
-			print_alert("Wrong Number")
-			continue
-
 		if re.search('[0-9].', course_name.split(" ")[0]):
 			print_alert("Wrong Name")
 			continue
 
 		# Look for the course in the database by department
-		course = Course.query.filter_by(number = str(course_number), department_id = dept.id).first()
-		if not (is_number(course_number[0])) and (course is None):
+		course = Course.query.filter_by(number = float(course_number.group(0)), department_id = dept.id).first()
+		if not (is_number(course_number.group(0))) and (course is None):
 			dept = old_dept
 			continue
 
 		# If course not in database, add it.
 		if (course is None) and len(course_name) < 300:
-			course = Course(number = course_number, name = course_name, department = dept.id)
+			course = Course(number = float(course_number.group(0)), name = course_name, department = dept.id)
 			db.session.add(course)
 			db.session.commit()
 

@@ -86,7 +86,7 @@ header {
   text-align: right;
 }
 header h1 {
-  color: #009530;
+  color: green;
   text-transform: uppercase;
   margin: 0 0 24px 0;
 }
@@ -99,12 +99,12 @@ header p {
 }
 header .button {
   color: #ffffff;
-  background-color: #009530;
+  background-color: green;
   padding: 11px 30px;
   font-weight: 800;
   display: inline-block;
   margin-top: 19px;
-  border: 7px solid #009530;
+  border: 7px solid green;
   text-decoration: none;
   text-align: center;
 }
@@ -141,8 +141,7 @@ header .flex-control-nav {
 /* Counter 
 ----------------------------------- */
 #counter {
-  background-color: #009530;
-  padding: 10px 0;
+  background-color: green;
 }
 #counter h2 {
   text-align: center;
@@ -156,38 +155,13 @@ header .flex-control-nav {
   font-size: 25px;
 }
 
-/* Information 
+/* Info
 ----------------------------------- */
-#information .infoslider {
-  box-shadow: none;
-  padding: 0;
-  margin: 100px 0;
-  border: none;
+#info {
+  text-align: justify;
+  padding: 15px 20%;
 }
-#information h2 {
-  color: #009530;
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-#information p {
-  line-height: 1.7;
-  margin-bottom: 10px;
-}
-#information .flex-direction-nav a {
-  width: 52px;
-  height: 93px;
-}
-#information .flex-next {
-  right: 0px;
-}
-#information .flex-prev {
-  left: 0px;
-}
-#information .flex-control-paging li a {
-  width: 15px;
-  height: 15px;
-  border-radius: 0;
-}
+
 /* About Us 
 ----------------------------------- */
 #about {
@@ -559,7 +533,6 @@ footer .address {
   /* Header 
   	----------------------------------- */
   header {
-    margin-top: 100px;
   }
   header h1 {
     margin: 0 0 25px 0;

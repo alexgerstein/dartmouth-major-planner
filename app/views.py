@@ -185,14 +185,14 @@ def getcourses():
 	
 	j = jsonify( { } )
 	if offerings and request.form['dept'] != "-1":
-		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('id') if i.course.department_id == int(request.form['dept'])] })
+		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('number') if i.course.department_id == int(request.form['dept'])] })
 
 	elif offerings:
-		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('id')] })
+		j = jsonify( { 'courses' : [i.serialize for i in offerings.order_by('number')] })
 
 	else:
 		qryresult = Course.query.filter_by(department_id = request.form['dept'])
-		j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('id', 'number')] })
+		j = jsonify( { 'courses' : [i.serialize for i in qryresult.order_by('number')] })
 
 	return j
 

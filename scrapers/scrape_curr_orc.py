@@ -140,20 +140,23 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 		# Split link into name and number components
 		course_to_ascii = course.text.replace(u'\xa0', u' ')
 		course_split = course_to_ascii.split(' ')
-		course_number = course_split[1]
+		course_number = re.match('[0-9]*\.?([0-9]+$)?', course_split[1])
 		course_name = course_split[2:]
 
-		# Fix leading space
-		if course_number == '':
-			course_number = course_split[2]
+		if course_split[1] == "":
+			course_number = re.match('[0-9]*\.?([0-9]+$)?', course_split[2])
 			course_name = course_split[3:]
 
+		# Fix leading space
+		if not course_number:
+			continue
+
 		print "Department: " + dept_name
-		print "Number: " + course_number
+		print "Number: " + str(course_number.group(0))
 		print "Name: " + unicodedata.normalize('NFKD', u" ".join(course_name)).encode('ascii', 'ignore')
 
 		# Store the course in the database 
-		store_course_info(BASE_URL + course['href'], course_number, " ".join(course_name), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
+		store_course_info(BASE_URL + course['href'], float(course_number.group(0)), " ".join(course_name), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
 
 # Search through the courses in each department's listing
 def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):

@@ -3,14 +3,13 @@
 {% block content %}
 
 <header class="container-fluid home-anchor">
-	<div class="row">
-		<div class="span5">
+	<div class="row-fluid">
+		<div class="span6">
 			<h1 class="animated fadeInLeftBig animation-delay">Find the courses that fit.</h1>
-			<p class="animated fadeInLeftBig animation-delay">Say goodbye to the ORC! DartPlan allows you to find where courses fit into your schedule with a simple click-and-drag.
-			<a href="#" class="scroll" id="infoslider">Need more infos »</a></p>
+			<p class="animated fadeInLeftBig animation-delay">Say goodbye to the ORC! DartPlan allows you to find where courses work in your schedule with a simple click-and-drag.</p>
 			<div class="animated fadeInUp buttons-delay"><a id="download-button" class="button hover animated" href="/planner">SIGN IN <br><i> using your</i> <br> Dartmouth ID</a></div>
 		</div>
-		<div class="span7 animated fadeInRightBig animation-delay">
+		<div class="span6 animated fadeInRightBig animation-delay">
 			<div class="notebookslider flexslider">
 			  <ul class="slides">
 			    <li style="width: 100%; float:left; margin-right:-100%; position:relative; display: list-item;" class>
@@ -29,9 +28,26 @@
 
 	<section id="counter">
 		<div class="container-fluid">
-			<div class="row-fluid">
+			<a href="/planner"><div class="row-fluid">
 				<div class="span8 offset2">
-				<h2>So far, {{ user_count }} people are using DartPlan to plan their courses.</h2>
+				<h2>Join the {{ user_count }} students <br>already using DartPlan</h2>
+			</div></a>
+		</div>
+	</section>
+
+	<section id="info">
+		<div class="row-fluid">
+			<div class="span4">
+				<h3><i class="fa fa-filter"></i> Filter</h3>
+				Search through the course database by department, term and period.
+			</div>
+			<div class="span4">
+				<h3><i class="fa fa-plus"></i> Add</h3>
+				Drag a course into your course plan. Instantly see its offered, according to the latest ORC info.
+			</div>
+			<div class="span4">
+				<h3><i class="fa fa-refresh"></i> Update</h3>
+				Revise class sections and off-terms. If the class period changes, your plan will update automatically.
 			</div>
 		</div>
 	</section>

@@ -523,6 +523,13 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
 		# 	continue
 
+		# Add "ARR" as hour offered if offered 
+		# every term, but at an unspecified time
+		if len(terms_offered) > 5:
+			if len(hours_offered) == 0:
+				arrange_hour = Hour.query.filter_by(period = "Arrange").first()
+				hours_offered.append(arrange_hour)
+
 		for hour in hours_offered:
 
 			if hour is None or str(hour) == "None":
@@ -541,13 +548,15 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			# Check if offering already exists
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = hour.id).first()
 
-			# Add offering if not already in database
+			# Add offering if not already in database. Otherwise, update the description.
 			if o1 is None:
 				o1 = Offering(course = course.id, term = term.id, hour = hour.id, desc = course_desc, user_added = "N")
 
 				db.session.add(o1)
 				db.session.commit()
 				print_alert("ADDED: " + repr(o1))
+			else:
+				o1.change_desc(course_desc)
 			
 			# Mark offering as "[T]emporarily" added to check for deleted 
 			# offerings at end

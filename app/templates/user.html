@@ -3,6 +3,7 @@
 
 {% block content %}
 
+<div class="container-fluid">
 <div class="well well-large" style="height: 140px;">
     <h1>{{user.nickname}}</h1>
     {% if user.grad_year %}<p>{{user.grad_year}}</p>{% endif %}
@@ -11,5 +12,6 @@
         <a href="{{url_for('edit')}}">Edit your profile</a>
     {% endif %}
     </p>
+</div>
 </div>
 {% endblock %}
