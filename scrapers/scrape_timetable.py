@@ -87,7 +87,8 @@ def parse_soup(soup, search_term):
                     section = number_split[1].lstrip("0")
 
                 print "NUM: " + str(number)
-                print "SECT: " + str(section)
+                if (section):
+                    print "SECT: " + str(section)
 
                 if number == "":
                     number = None
