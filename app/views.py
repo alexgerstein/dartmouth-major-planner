@@ -243,7 +243,7 @@ def removecourse():
 		success = g.user.drop(offering)
 
 	if not success:
-		j = jsonify( { 'error' : "Course could not be added" } )
+		j = jsonify( { 'error' : "Course could not be dropped" } )
 		return j
 
 

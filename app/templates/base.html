@@ -16,9 +16,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     {% if title %}
-    <title>{{title}} - DartPlan</title>
+    <title>{{title}} - DARTPlan</title>
     {% else %}
-    <title>Welcome to DartPlan</title>
+    <title>Welcome to DARTPlan</title>
     {% endif %}
   </head>
   <body style="cursor: auto">
@@ -26,7 +26,7 @@
                 <div class="container-fluid">
 
           <div class="navbar-inner">
-            <a class="brand" href="{{ url_for('index')}}">DartPlan</a>
+            <a class="brand" href="{{ url_for('index')}}"><b>DART</b>Plan</a>
               <ul class="nav">
                 {% if user %}
                 <li><a href="{{ url_for('planner') }}">My Course Plan</a></li>
