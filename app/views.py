@@ -157,6 +157,9 @@ def planner():
 		add_terms(all_terms)
 		db.session.commit()
 
+	app.logger.info(all_terms)
+	app.logger.info(g.user.terms.order_by('year', 'id').all())
+
 	return render_template("planner.html",
         title = 'My Plan',
         user = g.user,
@@ -164,7 +167,7 @@ def planner():
         hour_form = hour_form,
         term_form = term_form,
         courses = g.user.courses.order_by('hour_id'),
-        on_terms = g.user.terms.order_by('year', 'id'),
+        on_terms = g.user.terms.order_by('year', 'id').all(),
         terms = all_terms)
 
 # After change in dept form, send courses in that dept to user's view
