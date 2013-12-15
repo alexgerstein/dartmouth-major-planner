@@ -169,7 +169,7 @@ def getcourses():
 	if request.form['dept'] != "-1":
 		courses = Course.query.filter_by(department_id = request.form['dept']).join(Offering)
 	else:
-		courses = Course.query.all()
+		courses = Course.query
 
 	if request.form['term'] != "-1":
 		courses = courses.filter_by(term_id = request.form['term'])
