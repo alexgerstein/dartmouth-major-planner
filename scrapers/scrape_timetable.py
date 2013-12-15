@@ -86,7 +86,7 @@ def parse_soup(soup, search_term):
 
             # Store the number of course
             elif index == NUM_COL:
-                number_split = value.text.lstrip("0").strip(".")
+                number_split = value.text.lstrip("0").split(".")
                 number = number_split[0]
 
                 # Protect for section being in course number
