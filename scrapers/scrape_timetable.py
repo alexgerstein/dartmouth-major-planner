@@ -56,12 +56,15 @@ def parse_soup(soup, search_term):
                 season = SEASON_MONTH.get(value.text[4:])
 
                 term = Term.query.filter_by(year = year, season = season).first()
+                print "TERM: " + str(term)
                 if term == None:
                     break
             
             # Store the department of course
             elif index == DEPT_COL:
                 dept = Department.query.filter_by(abbr = value.text.strip(" ")).first()
+
+                print "DEPT: " + str(dept)
 
                 if dept is None:
                     break
@@ -83,12 +86,17 @@ def parse_soup(soup, search_term):
                 if len(number_split) > 1:
                     section = number_split[1].lstrip("0")
 
+                print "NUM: " + str(number)
+                print "SECT: " + str(section)
+
                 if number == "":
                     number = None
                     break
 
             elif index == TITLE_COL:
                 title = value.text
+
+                print "TITLE: " + str(title)
 
                 if title == "":
                     break
@@ -104,6 +112,8 @@ def parse_soup(soup, search_term):
                     period = Hour(period = hour.strip(" "))
                     db.session.add(period)
                     db.session.commit()
+
+                print "HOUR: " + str(period)
 
         if ((search_term == None) or (term == search_term)) and dept and (number is not None) and (section is not "") and ( title is not "") and period:
 
