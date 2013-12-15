@@ -31,37 +31,42 @@ def year_required(fn):
     	return fn(*args, **kwargs)
     return wrapper
 
-# If graduation year changes for user, adjusts terms in planner
-def add_terms(grad_year):
-	
-	# Clear all terms, start clean
-	for term in g.user.terms:
-		g.user.remove_term(term)
-		db.session.commit()
+def generate_terms(grad_year):
+	all_terms = []
 
 	# Add Freshman Fall
 	t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
 	if t is None:
 		t = Term(grad_year - 4, SEASONS[3])
 		db.session.add(t)
-	g.user.add_term(t)
-	db.session.commit()
 
-	# Add all following terms
+	all_terms.append(t)
+
 	for year_diff in reversed(range(4)):
 		for season in SEASONS:
 			t = Term.query.filter_by(year=grad_year - year_diff, season=season).first()
 			if t is None:
 				t = Term(grad_year - year_diff, season)
 				db.session.add(t)
-			g.user.add_term(t)
-			db.session.commit()
+			
+			all_terms.append(t)
+
+	# Remove extra fall
+	all_terms.remove(t)
+
+	return all_terms
+
+# If graduation year changes for user, adjusts terms in planner
+def add_terms(terms):
 	
-	# Remove extra Fall
-	db.session.delete(t)
-	g.user.remove_term(t)
-	
-	db.session.commit()
+	# Clear all terms, start clean
+	for term in g.user.terms:
+		g.user.remove_term(term)
+		db.session.commit()
+
+	for term in terms:
+		g.user.add_term(term)
+		db.session.commit()
 
 # Helper method to get the offering a user is editing on the planner interface
 def get_requested_offering(form):
@@ -145,9 +150,11 @@ def planner():
 	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms.order_by('year', 'id')]
 	term_form.term_name.choices.insert(0, (-1,"Choose a Term"))
 
+	all_terms = generate_terms(g.user.grad_year)
+
 	# Check if terms aren't in the session
 	if g.user.terms is None:
-		add_terms(int(g.user.grad_year))
+		add_terms(all_terms)
 		db.session.commit()
 
 	return render_template("planner.html",
@@ -157,8 +164,8 @@ def planner():
         hour_form = hour_form,
         term_form = term_form,
         courses = g.user.courses.order_by('hour_id'),
-        terms = g.user.terms.order_by('year', 'id'),
-        off_terms = g.user.off_terms)
+        on_terms = g.user.terms.order_by('year', 'id'),
+        terms = all_terms)
 
 # After change in dept form, send courses in that dept to user's view
 @app.route('/getcourses', methods = ['POST'])
@@ -303,7 +310,7 @@ def edit():
 		g.user.nickname = form.nickname.data
 		g.user.grad_year = form.grad_year.data
 
-		add_terms(int(form.grad_year.data))
+		add_terms(generate_terms(form.grad_year.data))
 		db.session.commit()
 
 

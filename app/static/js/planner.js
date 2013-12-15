@@ -207,8 +207,6 @@ function swap_term(term){
     $(term_id + " li:not(.pin)").each(function(index, item) {
         var course = $(item);
 
-        var posting = $.post('/removecourse', { course: course.attr("id"), term: term, hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] });
-
         course.parent().remove();
     })
 

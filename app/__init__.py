@@ -14,7 +14,7 @@ if not app.debug:
     import logging
     stream_handler = logging.StreamHandler()
     app.logger.addHandler(stream_handler)
-    app.logger.setLevel(logging.INFO)
+    app.logger.setLevel(logging.ERROR)
     app.logger.info('DartPlan startup')
 
 app.register_blueprint(flask_cas)

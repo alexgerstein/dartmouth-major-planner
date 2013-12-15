@@ -19,7 +19,6 @@ class User(db.Model):
 	grad_year = db.Column(db.SmallInteger)
 
 	terms = db.relationship("Term", backref = "user", lazy='dynamic')
-	off_terms = []
 
 	courses = db.relationship('Offering', 
 		secondary=user_course,
@@ -68,6 +67,7 @@ class User(db.Model):
 	def add_term(self, term):
 		if not self.is_enrolled(term):
 			self.terms.append(term)
+			db.session.commit()
 			return self
 	
 	def remove_term(self, term):
@@ -76,23 +76,21 @@ class User(db.Model):
 
 	def swap_onterm(self, term):
 		if self.is_enrolled(term):
-			if self.is_on(term):
-				self.off_terms.append(str(term))
-			else:
-				self.off_terms.remove(str(term))
-			return self
+
+			# Remove all courses during new off-term
+			for course in self.courses:
+				if course.term is term:
+					self.drop(course)
+
+			self.terms.remove(term)
+		else:
+			self.add_term(term)
+		return self
 
 
 	def is_taking(self, offering):
 		taking = offering in self.courses.all()
 		return taking
-
-	def is_on(self, term):
-		for off_term in self.off_terms:
-			if str(term) == str(off_term):
-				return False
-
-		return True
 
 	def get_id(self):
 		return unicode(self.id)
@@ -236,6 +234,7 @@ class Term(db.Model):
 	season = db.Column(db.String(15))
 
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 	offerings = db.relationship('Offering', backref = 'term', lazy='dynamic')
 
 	def __init__(self, year, season):
