@@ -153,7 +153,7 @@ def planner():
 	all_terms = generate_terms(g.user.grad_year)
 
 	# Check if terms aren't in the session
-	if g.user.terms is []:
+	if g.user.terms.all() == []:
 		app.logger.info("NO TERMS IN SESS; ADDING")
 		add_terms(all_terms)
 		db.session.commit()
