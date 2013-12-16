@@ -154,12 +154,8 @@ def planner():
 
 	# Check if terms aren't in the session
 	if g.user.terms.all() == []:
-		app.logger.info("NO TERMS IN SESS; ADDING")
 		add_terms(all_terms)
 		db.session.commit()
-
-	app.logger.info(all_terms)
-	app.logger.info(g.user.terms.order_by('year', 'id').all())
 
 	return render_template("planner.html",
         title = 'My Plan',
