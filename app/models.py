@@ -10,6 +10,10 @@ user_course = db.Table('user_course',
 	db.Column('offering_id', db.Integer, db.ForeignKey('offering.id'))
 )
 
+user_terms = db.Table("user_terms",
+	db.Column('user_id', db.Integer, db.ForeignKey("user.id")),
+	db.Column("term_id", db.Integer, db.ForeignKey("term.id")))
+
 class User(db.Model):
 	__tablename__ = 'user'
 	id = db.Column(db.Integer, primary_key = True)
@@ -18,7 +22,9 @@ class User(db.Model):
 	nickname = db.Column(db.String(64))
 	grad_year = db.Column(db.SmallInteger)
 
-	terms = db.relationship("Term", lazy='dynamic')
+	terms = db.relationship("Term",
+		secondary=user_terms,
+		lazy='dynamic')
 
 	courses = db.relationship('Offering', 
 		secondary=user_course,
