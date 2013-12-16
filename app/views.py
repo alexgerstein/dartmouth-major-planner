@@ -154,6 +154,7 @@ def planner():
 
 	# Check if terms aren't in the session
 	if g.user.terms is []:
+		app.logger.info("NO TERMS IN SESS; ADDING")
 		add_terms(all_terms)
 		db.session.commit()
 
