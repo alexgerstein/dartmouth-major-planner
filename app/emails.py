@@ -19,7 +19,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
 def welcome_notification(user):
     send_email("%s, Welcome to DARTPlan!" % user.nickname.split(" ")[0],
         ADMINS[0],
-        [user.netid + "@dartmouth.edu"],
+        [user.email()],
         render_template("welcome_email.txt", 
             user = user),
         render_template("welcome_email.html", 
