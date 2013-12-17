@@ -242,8 +242,6 @@ class Term(db.Model):
 	year = db.Column(db.SmallInteger)
 	season = db.Column(db.String(15))
 
-	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
 	offerings = db.relationship('Offering', backref = 'term', lazy='dynamic')
 
 	def __init__(self, year, season):
