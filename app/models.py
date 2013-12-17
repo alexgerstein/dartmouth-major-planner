@@ -36,9 +36,6 @@ class User(db.Model):
 		self.netid = netid
 		self.nickname = full_name
 
-	def email(self):
-		return "%s@dartmouth.edu" % self.netid
-
 	def take(self, offering):
 		if not self.is_taking(offering):
 			self.courses.append(offering)
