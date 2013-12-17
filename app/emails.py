@@ -6,7 +6,6 @@ from config import ADMINS
 from decorators import async
 
 @async
-@copy_current_request_context
 def send_async_email(msg):
     mail.send(msg)
 
@@ -14,6 +13,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
     msg = Message(subject, sender = sender, recipients = recipients)
     msg.body = text_body
     msg.html = html_body
+    @copy_current_request_context
     send_async_email(msg)
 
 def welcome_notification(user):
