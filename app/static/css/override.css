@@ -74,7 +74,7 @@ li.term-name {
 	background-color: #808066;
 }
 
-.btn-danger {
+.buttons .btn-danger {
 	font-size: .5em;
 	line-height: normal;
 }
@@ -103,7 +103,7 @@ button {
 	.span3.edit {
 		display: none;
 	}
-	.btn-danger {
+	.buttons .btn-danger {
 		display: none;
 	}
 

@@ -13,3 +13,14 @@ else:
     SQLALCHEMY_NATIVE_UNICODE=False
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_RECORD_QUERIES = True
+
+# email server
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'gerstein.alex@gmail.com'
+MAIL_PASSWORD = 'N@mflog328'
+
+# administrator list
+ADMINS = ['support@dartplan.com']

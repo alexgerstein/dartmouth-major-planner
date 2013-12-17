@@ -37,7 +37,5 @@ def login():
 
 @flask_cas.route("/logout")
 def logout():
-    callback_url = request.url.split('?')[0]
     session.pop('user', None)
-    logout_url = CAS_URL + 'logout?' + urllib.urlencode( { 'service' : 'http://localhost:5000/' } )
-    return redirect(logout_url)
+    return redirect(url_for("index"))

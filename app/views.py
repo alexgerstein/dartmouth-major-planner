@@ -7,6 +7,7 @@ from app import app, db
 from models import User, Offering, Course, Department, Term, Hour
 from forms import EditForm, DeptPickerForm, HourPickerForm, TermPickerForm
 from functools import wraps
+from emails import *
 
 SEASONS = ["W", "S", "X", "F"]
 
@@ -117,6 +118,7 @@ def fetch_user():
 			g.user = User(session['user']['name'], session['user']['netid'])
 			db.session.add(g.user)
 			db.session.commit()
+
 			return (redirect(url_for('edit')))
 	else:
 		g.user = None
@@ -312,6 +314,11 @@ def edit():
 	form = EditForm(g.user.nickname)
 	
 	if form.validate_on_submit():
+
+		# Send welcome email if new user
+		if g.user.grad_year is None:
+			welcome_notification(g.user)
+
 		g.user.nickname = form.nickname.data
 		g.user.grad_year = form.grad_year.data
 
@@ -326,6 +333,14 @@ def edit():
 		form.grad_year.data = g.user.grad_year
 	return render_template('edit.html',
 		form = form, title = 'Settings', user = g.user)
+
+@app.route('/edit/delete', methods=['GET', 'POST'])
+@login_required
+def delete_profile():
+	db.session.delete(g.user)
+	db.session.commit()
+	session.pop('user', None)
+	return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def page_not_found(error):

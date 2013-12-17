@@ -2,6 +2,7 @@ import os
 from flask import Flask, Blueprint
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_cas import flask_cas
+from flask.ext.mail import Mail
 
 # __init__.py
 # Alex Gerstein
@@ -16,6 +17,8 @@ if not app.debug:
     app.logger.addHandler(stream_handler)
     app.logger.setLevel(logging.INFO)
     app.logger.info('DartPlan startup')
+
+mail = Mail(app)
 
 app.register_blueprint(flask_cas)
 
