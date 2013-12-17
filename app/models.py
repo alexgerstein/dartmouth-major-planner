@@ -23,11 +23,13 @@ class User(db.Model):
 	grad_year = db.Column(db.SmallInteger)
 
 	terms = db.relationship("Term",
+		backref="user",
 		secondary=user_terms,
 		cascade="all, delete",
 		lazy='dynamic')
 
 	courses = db.relationship('Offering',
+		backref="user",
 		secondary=user_course, 
 		cascade="all, delete",
 		lazy = 'dynamic')
