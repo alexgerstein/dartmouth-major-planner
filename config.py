@@ -23,4 +23,4 @@ MAIL_USERNAME = 'support@dartplan.com'
 MAIL_PASSWORD = 'N@mflog328'
 
 # administrator list
-ADMINS = [("Dartplan", 'support@dartplan.com')]
+ADMINS = ['support@dartplan.com']
