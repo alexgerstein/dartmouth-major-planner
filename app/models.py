@@ -23,15 +23,13 @@ class User(db.Model):
 	grad_year = db.Column(db.SmallInteger)
 
 	terms = db.relationship("Term",
-		backref="user",
 		secondary=user_terms,
-		cascade="all, delete",
+		backref="users",
 		lazy='dynamic')
 
-	courses = db.relationship('Offering',
-		backref="user",
-		secondary=user_course, 
-		cascade="all, delete",
+	courses = db.relationship('Offering', 
+		secondary=user_course,
+		backref="users",
 		lazy = 'dynamic')
 
 	def __init__(self, full_name, netid):
