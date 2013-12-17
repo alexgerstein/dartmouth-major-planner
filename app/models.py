@@ -24,10 +24,12 @@ class User(db.Model):
 
 	terms = db.relationship("Term",
 		secondary=user_terms,
+		cascade="all, delete-orphan",
 		lazy='dynamic')
 
 	courses = db.relationship('Offering', 
-		secondary=user_course,
+		secondary=user_course, 
+		cascade="all, delete-orphan",
 		lazy = 'dynamic')
 
 	def __init__(self, full_name, netid):
