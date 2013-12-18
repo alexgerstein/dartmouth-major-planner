@@ -12,7 +12,7 @@ user_course = db.Table('user_course',
 
 user_terms = db.Table("user_terms",
 	db.Column('user_id', db.Integer, db.ForeignKey("user.id", ondelete="CASCADE")),
-	db.Column("term_id", db.Integer, db.ForeignKey("term.id"))
+	db.Column("term_id", db.Integer, db.ForeignKey("term.id", ondelete="CASCADE"))
 )
 
 class User(db.Model):
@@ -168,8 +168,8 @@ class Offering(db.Model):
 		db.session.commit()
 		return self
 
-	def mark(self, str):
-		self.added = str
+	def mark(self, string):
+		self.added = string
 		return self
 
 	def mark_empty(self):

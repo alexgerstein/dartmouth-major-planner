@@ -149,13 +149,12 @@ def parse_soup(soup, search_term):
 
             offering.mark("F")
 
-            # Delete all non-final offerings of the term. If they're still in 
-            # the timetable, they'll be added back
+            # Mark for removal all non-final offerings of the term. If they're still in 
+            # the timetable, they'll be marked as F again
             old_offerings = Offering.query.filter_by(course = course, term = term).all()
             for old_offering in old_offerings:
                 if old_offering.added != "F":
-                    db.session.delete(old_offering)
-                    print_alert("OFFERING DELETED: " + str(offering) + " in " + str(term))
+                    old_offering.mark("")
             db.session.commit()
 
 
