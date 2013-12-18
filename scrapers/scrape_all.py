@@ -24,7 +24,7 @@ store_terms()
 
 # Set current range of timetable
 timetable_globals = Timetable()
-lock_term_start = Term.query.filter_by(year = timetable_globals.ARBITRARY_OLD_YEAR, season = timetable_globals.ARBITRARY_OLD_SEASON).first()
+lock_term_start = Term.query.filter_by(year = timetable_globals.ARBITRARY_OLD_YEAR, season = timetable_globals.ARBITRARY_SEASON).first()
 lock_term_end = Term.query.filter_by(year = timetable_globals.TIMETABLE_LOCK_YEAR, season = timetable_globals.TIMETABLE_LOCK_SEASON).first()
 
 # Remove all "user added" that no user actually has anymore
