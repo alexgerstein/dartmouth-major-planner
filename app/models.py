@@ -45,8 +45,17 @@ class User(db.Model):
 
 	def drop(self, offering):
 		if self.is_taking(offering):
+
 			self.courses.remove(offering)
 			db.session.commit()
+
+			# Delete user-added offerings from db 
+			# if no users take the course anymore
+			if offering.user_added == "Y":
+				if User.query.filter(User.courses.contains(offering)).count() == 0:
+					db.session.delete(offering)
+					db.session.commit()
+
 			return self
 
 		return None
