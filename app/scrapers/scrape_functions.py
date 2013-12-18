@@ -552,13 +552,14 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			unknown_hour = Hour.query.filter_by(period = "?").first()
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
-				emails.updated_hour_notification(o1, hour)
-
 				o1.change_period(hour)
 				print_alert("Updated user_added: " + repr(o1))
 				o1.user_added = "N"
 				o1.mark("T")
 				o1.change_desc(course_desc)
+
+				emails.updated_hour_notification(o1, hour)
+
 				continue
 
 			# Check if offering already exists
