@@ -74,6 +74,10 @@ li.term-name {
 	background-color: #808066;
 }
 
+.buttons {
+	float: right;
+}
+
 .buttons .btn-danger {
 	font-size: .5em;
 	line-height: normal;

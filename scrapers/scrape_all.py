@@ -1,12 +1,10 @@
-#!../../flask/bin/python
-
 # scrape_all.py
 # Alex Gerstein
 # Main file to scrape all sources of course info.
 
 # Add app directory to path
 import sys
-app_path = "../../"
+app_path = "../"
 sys.path.insert(0, app_path)
 
 from app import app

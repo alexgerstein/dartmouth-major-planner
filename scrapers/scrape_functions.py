@@ -5,14 +5,18 @@
 import os
 import imp
 
+# Add app directory to path
+import sys
+app_path = "../"
+sys.path.insert(0, app_path)
+
 from html5lib import HTMLParser, treebuilders
 import unicodedata
 from bs4 import BeautifulSoup
 import requests
 import re
 
-emails = imp.load_source('emails', '../emails.py')
-
+from app import emails
 
 from app import db
 from app.models import User, Offering, Course, Department, Hour, Term
@@ -528,9 +532,6 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 	# Loop through all combinations
 	for term in terms_offered:
 
-		if term is None or str(term) == "None":
-			continue
-
 		# # Ignore if ORC data might conflit with the higher-priority timetable
 		# if term.in_range(lock_term_start, lock_term_end):
 		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
@@ -544,9 +545,6 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 				hours_offered.append(arrange_hour)
 
 		for hour in hours_offered:
-
-			if hour is None or str(hour) == "None":
-				continue 
 
 			# Check if user-added offering exists. If so, overwrite with hour
 			unknown_hour = Hour.query.filter_by(period = "?").first()
