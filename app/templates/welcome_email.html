@@ -1,4 +1,4 @@
-<h1><b>DART</b>Plan</p></h1>
+<h1><img src="{{ url_for('static', filename='favicon.ico', _external = True) }}" style="width: 25px; height: 25px;"><b>DART</b>Plan</p></h1>
 
 <p>Dear {{user.nickname.split(" ")[0]}},</p>
 
@@ -11,13 +11,17 @@
 </p>
 
 <p>
-	Our mission is to lighten the burden that the Registrar places on students to plan out their classes. We strive to make selecting courses a breeze. To this end, we have a lot of exciting new features in store for the terms ahead!
+	Our mission is to lighten the burden that the Registrar places on students to plan out their classes. I strive to make selecting courses a breeze. To this end, I have a lot of exciting new features in store for the terms ahead!
 </p>
 
+<p>
+	If you have any ideas for ways to improve the site or other features you'd like to see, let me know at <a href="mailto:support@DARTPlan.com" target="_top">support@DARTPlan.com!</a>
 <p>
 	Now, it's time to <a href="{{url_for('planner', _external = True)}}">find the courses that fit!</a>
 </p>
 
 <p>Regards,</p>
 
-<p>The DARTPlan Team</p>
+<p>Alex Gerstein</p>
+<p>Founder | DARTPlan</p>
+<p><a href="www.dartplan.com">dartplan.com</a></p>

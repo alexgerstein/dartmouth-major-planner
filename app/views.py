@@ -315,11 +315,12 @@ def edit():
 	
 	if form.validate_on_submit():
 
+		g.user.nickname = form.nickname.data
+
 		# Send welcome email if new user
 		if g.user.grad_year is None:
 			welcome_notification(g.user)
 
-		g.user.nickname = form.nickname.data
 		g.user.grad_year = form.grad_year.data
 
 		add_terms(generate_terms(form.grad_year.data))

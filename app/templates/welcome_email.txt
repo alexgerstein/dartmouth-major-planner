@@ -4,13 +4,14 @@ Your course planning experience is about to get a whole lot better!
 
 Say goodbye to the ORC and hello to DARTPlan. No more manually tracking what courses fit into your schedule with Excel documents and unnavigable webpages. DARTPlan helps you find the courses that work in your schedule with a simple drag-and-drop!
 
-Our mission is to lighten the burden that the Registrar places on students to plan out their classes. We strive to make selecting courses a breeze. To this end, we have a lot of exciting new features in store for the terms ahead!
+Our mission is to lighten the burden that the Registrar places on students to plan out their classes. I strive to make selecting courses a breeze. To this end, I have a lot of exciting new features in store for the terms ahead!
 
-Now, it's time to find the courses that fit! Click on the following link to visit your course plan:
+If you have any ideas for ways to improve the site or other features you'd like to see, let me know at support@DARTPlan.com!
 
-{{url_for('planner', _external = True)}}
-
+Now, it's time to find the courses that fit at dartplan.com!
 
 Regards,
 
-The DARTPlan Team
+Alex Gerstein
+Founder | DARTPlan
+dartplan.com
