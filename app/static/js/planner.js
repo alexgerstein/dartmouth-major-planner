@@ -37,7 +37,15 @@ function addCourse(term, hour, possible_hours, course, short_name) {
                 title: 'Course Info',
                 html: true,
                 placement:function (context, source) {
-                    var position = $(source).position();
+                    var position = $(source).offset();
+
+                    if (position.top < 250){
+                        return "bottom";
+                    }
+
+                    if (position.top > 450){
+                        return "top";
+                    }
 
                     if (position.left > 800) {
                         return "left";
@@ -47,11 +55,7 @@ function addCourse(term, hour, possible_hours, course, short_name) {
                         return "right";
                     }
 
-                    if (position.top < 110){
-                        return "bottom";
-                    }
-
-                    return "top";
+                    return "left";
                 },
                 delay: {show:500, hide: 100}
             });
