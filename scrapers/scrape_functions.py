@@ -517,6 +517,10 @@ def remove_deleted_offerings(timetable_globals):
 		# Ignore if ORC data from the higher-priority timetable
 		if offering.get_term() is not None:
 			if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
+				users = User.query.filter(User.courses.contains(offering)).all()
+
+				emails.deleted_offering_notification(users, offering, offering.get_term(), offering.hour())
+
 				print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
 				db.session.delete(offering)
 
@@ -550,13 +554,17 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			unknown_hour = Hour.query.filter_by(period = "?").first()
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
+				users = User.query.filter(User.courses.contains(offering)).all()
+
 				o1.change_period(hour)
 				print_alert("Updated user_added: " + repr(o1))
 				o1.user_added = "N"
 				o1.mark("T")
 				o1.change_desc(course_desc)
 
-				emails.updated_hour_notification(o1, hour)
+				db.session.commit()
+
+				emails.updated_hour_notification(users, o1, hour)
 
 				continue
 

@@ -37,11 +37,9 @@ def welcome_notification(user):
         render_template("welcome_email.html", 
             user = user))
 
-def updated_hour_notification(offering, new_hour):
+def updated_hour_notification(users, offering, new_hour):
     with app.test_request_context('http://dartplan.com/'):
-
-        users = User.query.filter(User.courses.contains(offering)).all()
-
+        
         for user in users:
 
             send_email("Nice call! %s (%s) now has an actual time." % (str(offering), str(offering.get_term())),
@@ -51,3 +49,16 @@ def updated_hour_notification(offering, new_hour):
                     user = user, offering = offering, new_hour = new_hour),
                 render_template("updated_hour_email.html",
                     user = user, offering = offering, new_hour = new_hour))
+
+def deleted_offering_notification(users, offering, term, hour):
+    with app.test_request_context('http://dartplan.com/'):
+        
+        for user in users:
+
+            send_email("Oh no! %s is no longer offered when you thought it would be." % (str(offering)),
+                ADMINS[0],
+                [user.netid + "@dartmouth.edu"],
+                render_template("deleted_email.txt",
+                    user = user, offering = offering, term = term, hour = hour),
+                render_template("deleted_email.html",
+                    user = user, offering = offering, term = term, hour = hour))
