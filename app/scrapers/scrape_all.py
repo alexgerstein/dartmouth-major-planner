@@ -1,4 +1,4 @@
-#!../flask/bin/python
+#!../../flask/bin/python
 
 # scrape_all.py
 # Alex Gerstein
@@ -6,7 +6,7 @@
 
 # Add app directory to path
 import sys
-app_path = "../"
+app_path = "../../"
 sys.path.insert(0, app_path)
 
 from app import app
@@ -28,6 +28,10 @@ store_terms()
 timetable_globals = Timetable()
 starting_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_START_YEAR, season = timetable_globals.TIMETABLE_START_SEASON).first()
 ending_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LATEST_YEAR, season = timetable_globals.TIMETABLE_LATEST_SEASON).first()
+
+# Remove all "user added" that no user actually has anymore
+# i.e. fix user error
+remove_erroneous_user_adds()
 
 # Add current ORC
 scrape_curr_orc(starting_timetable_term, ending_timetable_term, curr_orc_shortcut)

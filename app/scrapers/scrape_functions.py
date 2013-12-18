@@ -3,12 +3,16 @@
 # 'Header' functions required for all scrapers
 
 import os
+import imp
 
 from html5lib import HTMLParser, treebuilders
 import unicodedata
 from bs4 import BeautifulSoup
 import requests
 import re
+
+emails = imp.load_source('emails', '../emails.py')
+
 
 from app import db
 from app.models import User, Offering, Course, Department, Hour, Term
@@ -69,6 +73,15 @@ def is_number(s):
         return True
     except ValueError:
         return False
+
+# Fix user adds that might have been mistakes
+def remove_erroneous_user_adds():
+	offerings = Offering.query.filter_by(user_added = "Y").all()
+	for offering in offerings:
+		if User.query.filter(User.courses.contains(offering)).count() == 0:
+			db.session.delete(offering)
+			db.session.commit()
+
 
 # Add all missing distribs and World Cultures to the database
 def store_distribs():
@@ -539,8 +552,11 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			unknown_hour = Hour.query.filter_by(period = "?").first()
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
+				emails.updated_hour_notification(o1, hour)
+
 				o1.change_period(hour)
 				print_alert("Updated user_added: " + repr(o1))
+				o1.user_added = "N"
 				o1.mark("T")
 				o1.change_desc(course_desc)
 				continue

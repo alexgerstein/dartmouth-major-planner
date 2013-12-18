@@ -1,0 +1,15 @@
+<h1><img src="http://dartplan.com/static/favicon.ico" style="width: 25px; height: 25px;"><b>DART</b>Plan</p></h1>
+
+<p>Hey {{user.nickname.split(" ")[0]}},</p>
+
+<p>Remember how you planned to take {{offering}} during {{offering.get_term()}}?</p>
+
+<p>Well...according to the registrar, it's now going to be offered as a {{new_hour}}. You told them!</p>
+
+<p>See if the course is offered at any other times and make other changes at<a href="{{url_for('planner', _external = True)}}">DARTPlan.com!</a></p>
+
+<p>Regards,</p>
+
+<p>Alex Gerstein<br/>
+Founder | DARTPlan<br/>
+<a href="www.dartplan.com">dartplan.com</a></p>

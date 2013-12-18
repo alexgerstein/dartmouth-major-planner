@@ -7,7 +7,7 @@ from app import app, db
 from models import User, Offering, Course, Department, Term, Hour
 from forms import EditForm, DeptPickerForm, HourPickerForm, TermPickerForm
 from functools import wraps
-from emails import *
+from emails import welcome_notification
 
 SEASONS = ["W", "S", "X", "F"]
 
