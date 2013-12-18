@@ -24,18 +24,18 @@ store_terms()
 
 # Set current range of timetable
 timetable_globals = Timetable()
-starting_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_START_YEAR, season = timetable_globals.TIMETABLE_START_SEASON).first()
-ending_timetable_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LATEST_YEAR, season = timetable_globals.TIMETABLE_LATEST_SEASON).first()
+lock_term_start = Term.query.filter_by(year = timetable_globals.ARBITRARY_OLD_YEAR, season = timetable_globals.ARBITRARY_OLD_SEASON).first()
+lock_term_end = Term.query.filter_by(year = timetable_globals.TIMETABLE_LOCK_YEAR, season = timetable_globals.TIMETABLE_LOCK_SEASON).first()
 
 # Remove all "user added" that no user actually has anymore
 # i.e. fix user error
 remove_erroneous_user_adds()
 
 # Add current ORC
-scrape_curr_orc(starting_timetable_term, ending_timetable_term, curr_orc_shortcut)
+scrape_curr_orc(lock_term_start, lock_term_end, curr_orc_shortcut)
 
 # Add all old classes
-scrape_old_orcs(starting_timetable_term, ending_timetable_term, old_orcs_shortcut)
+scrape_old_orcs(lock_term_start, lock_term_end, old_orcs_shortcut)
 
 # Add current timetable, usurping any previous new entries
 scrape_timetable()
