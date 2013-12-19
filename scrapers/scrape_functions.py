@@ -517,7 +517,7 @@ def remove_deleted_offerings(timetable_globals):
 		# Ignore if ORC data from the higher-priority timetable
 		if offering.get_term() is not None:
 			if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
-				users = User.query.filter(User.courses.contains(offering), email_course_updates == True).all()
+				users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
 
 				emails.deleted_offering_notification(users, offering, offering.get_term(), offering.hour())
 
