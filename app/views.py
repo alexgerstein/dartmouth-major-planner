@@ -77,10 +77,14 @@ def get_requested_offering(form):
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 	
+	print c1
+
 	# Construct the requested offering based on where dropped
 	year = "20" + request.form['term'][:2]
 	season = request.form['term'][2]
 	t = Term.query.filter_by(year = year, season = season).first()
+
+	print t
 
 	# Construct the requested hour if one exists
 	if 'hour' not in request.form:
@@ -92,9 +96,15 @@ def get_requested_offering(form):
 			hour = offering.get_hour() 
 	else:
 		hour_string = request.form['hour']
+
+		if hour_string == "Arr":
+			hour_string = "Arrange"
 		hour = Hour.query.filter_by(period = hour_string).first()
 
+	print hour
+
 	o1 = Offering.query.filter_by(course = c1, term = t, hour = hour).first()
+	print o1
 	if o1 is None:
 
 		check_hour = Hour.query.filter_by(period = "?").first()
@@ -178,7 +188,7 @@ def getcourses():
 	if request.form['dept'] != "-1":
 		courses = Course.query.filter_by(department_id = request.form['dept']).join(Offering)
 	elif request.form['term'] != "-1" or request.form['hour'] != "-1":
-		courses = Course.query
+		courses = Course.query.join(Offering)
 
 	if request.form['term'] != "-1":
 		courses = courses.filter_by(term_id = request.form['term'])
@@ -189,7 +199,7 @@ def getcourses():
 	if courses is None:
 		j = jsonify ( {} )
 	else:
-		j = jsonify( { 'courses' : [i.serialize for i in courses.order_by('number')] })
+		j = jsonify( { 'courses' : [i.serialize for i in courses.join(Department).order_by('abbr', 'number')] })
 
 	return j
 

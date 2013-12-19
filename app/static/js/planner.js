@@ -39,16 +39,16 @@ function addCourse(term, hour, possible_hours, course, short_name) {
                 placement:function (context, source) {
                     var position = $(source).offset();
 
+                    if (position.left > 900) {
+                        return "left";
+                    }
+
                     if (position.top < 250){
                         return "bottom";
                     }
 
-                    if (position.top > 450){
+                    if (position.top > 600){
                         return "top";
-                    }
-
-                    if (position.left > 800) {
-                        return "left";
                     }
 
                     if (position.left < 800) {
