@@ -22,7 +22,6 @@ class EditForm(Form):
 	def __init__(self, original_nickname, *args, **kwargs):
 		Form.__init__(self, *args, **kwargs)
 		self.original_nickname = original_nickname
-		self.dartplan_updates = True
 		
 
 class DeptPickerForm(Form):
