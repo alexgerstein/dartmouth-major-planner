@@ -322,6 +322,8 @@ def edit():
 			welcome_notification(g.user)
 
 		g.user.grad_year = form.grad_year.data
+		g.user.email_course_updates = form.course_updates.data
+		g.user.email_Dartplan_updates = form.dartplan_updates.data
 
 		add_terms(generate_terms(form.grad_year.data))
 		db.session.commit()
@@ -332,6 +334,8 @@ def edit():
 		# Reset form to current entries
 		form.nickname.data = g.user.nickname
 		form.grad_year.data = g.user.grad_year
+		form.course_updates.data = g.user.email_course_updates
+		form.dartplan_updates.data = g.user.email_Dartplan_updates
 	return render_template('edit.html',
 		form = form, title = 'Settings', user = g.user)
 

@@ -23,6 +23,9 @@ class User(db.Model):
 	nickname = db.Column(db.String(64))
 	grad_year = db.Column(db.SmallInteger)
 
+	email_course_updates = db.Column(db.Boolean)
+	email_Dartplan_updates = db.Column(db.Boolean)
+
 	terms = db.relationship("Term",
 		secondary=user_terms,
 		lazy='dynamic')
@@ -35,6 +38,8 @@ class User(db.Model):
 		self.full_name = full_name
 		self.netid = netid
 		self.nickname = full_name
+		self.email_Dartplan_updates = True
+		self.email_course_updates = True
 
 	def take(self, offering):
 		if not self.is_taking(offering):

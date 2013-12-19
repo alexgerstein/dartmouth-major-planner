@@ -168,6 +168,5 @@ def scrape_timetable():
 
     # Scrape full timetable
     html = url_to_html_str(timetable_url)
-    print html
     soup = html_to_soup(html)
     parse_soup(soup, None)

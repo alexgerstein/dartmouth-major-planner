@@ -2,12 +2,11 @@ Hey {{user.nickname.split(" ")[0]}},
 
 Remember how you planned to take {{offering}} during {{offering.get_term()}}?
 
-Well...according to the registrar, it's now going to be offered as a {{new_hour}}. You told them!
+Well...according to the registrar, it's now going to be offered as a {{new_hour}}. You told them.
 
 See if the course is offered at any other times and make other changes at dartplan.com!
 
 Regards,
 
 Alex Gerstein
-Founder | DARTPlan
 dartplan.com

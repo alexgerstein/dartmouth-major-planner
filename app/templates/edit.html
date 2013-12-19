@@ -28,6 +28,14 @@
                 {% endfor %}
             </div>
         </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="dartplan_updates">Email Preferences: </br>(Receive an email when...)</label>
+            <div class="controls">
+                 {{ form.course_updates() }} The registrar updates a course you plan on taking<br/>
+                
+                {{ form.dartplan_updates() }} DARTPlan releases a new feature 
+            </div>
+        </div>
         <div class="control-group">
             <div class="controls">
                 <input class="btn btn-primary" type="submit" value="Save Changes">
