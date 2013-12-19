@@ -76,15 +76,11 @@ def get_requested_offering(form):
 	split_course = request.form["course"].strip().split(" ")
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
-	
-	print c1
 
 	# Construct the requested offering based on where dropped
 	year = "20" + request.form['term'][:2]
 	season = request.form['term'][2]
 	t = Term.query.filter_by(year = year, season = season).first()
-
-	print t
 
 	# Construct the requested hour if one exists
 	if 'hour' not in request.form:
@@ -101,10 +97,7 @@ def get_requested_offering(form):
 			hour_string = "Arrange"
 		hour = Hour.query.filter_by(period = hour_string).first()
 
-	print hour
-
 	o1 = Offering.query.filter_by(course = c1, term = t, hour = hour).first()
-	print o1
 	if o1 is None:
 
 		check_hour = Hour.query.filter_by(period = "?").first()
