@@ -519,7 +519,7 @@ def remove_deleted_offerings(timetable_globals):
 			if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
 				users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
 
-				emails.deleted_offering_notification(users, offering, offering.get_term(), offering.hour())
+				emails.deleted_offering_notification(users, offering, offering.get_term(), offering.get_hour())
 
 				print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
 				db.session.delete(offering)
