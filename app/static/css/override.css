@@ -102,13 +102,3 @@ button {
 .popover-content h1 {
 	font-size: 22px;
 }
-
-@media (max-width: 1050px) {
-	.span3.edit {
-		display: none;
-	}
-	.buttons .btn-danger {
-		display: none;
-	}
-
-}
