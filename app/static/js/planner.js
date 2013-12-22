@@ -37,25 +37,26 @@ function addCourse(term, hour, possible_hours, course, short_name) {
                 title: 'Course Info',
                 html: true,
                 placement:function (context, source) {
-                    var position = $(source).position();
+                    // var position = $(source).position();
 
-                    if (position.left > 900) {
-                        return "left";
-                    }
+                    // if (position.left > 900) {
+                    //     return "left";
+                    // }
 
-                    if (position.top < 250){
-                        return "bottom";
-                    }
+                    // if (position.top < 250){
+                    //     return "bottom";
+                    // }
 
-                    if (position.top > 600){
-                        return "top";
-                    }
+                    // if (position.top > 600){
+                    //     return "top";
+                    // }
 
-                    if (position.left < 800) {
-                        return "right";
-                    }
+                    // if (position.left < 800) {
+                    //     return "right";
+                    // }
 
-                    return "left";
+                    // return "left";
+                    return "auto";
                 },
                 delay: {show:500, hide: 100}
             });
