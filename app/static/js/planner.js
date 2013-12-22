@@ -56,7 +56,7 @@ function addCourse(term, hour, possible_hours, course, short_name) {
                     // }
 
                     // return "left";
-                    return "left auto";
+                    return "auto left";
                 },
                 delay: {show:500, hide: 100}
             });
