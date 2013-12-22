@@ -38,6 +38,11 @@ function addCourse(term, hour, possible_hours, course, short_name) {
                 html: true,
                 placement:function (context, source) {
                     var position = $(source).position();
+                    var width = window.innerWidth;
+
+                    if (width < 768) {
+                        return "left";
+                    }
 
                     if (position.left > 900) {
                         return "left";
