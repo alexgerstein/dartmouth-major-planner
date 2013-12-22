@@ -8,36 +8,37 @@
     <div class="row-fluid">
 
         <div class="row-fluid">
-            <div class="span3 visible-phone">
-                <h2>DARTPlan works best in a larger window. If you're on a mobile device, please switch to a desktop. If you're already on your desktop, please expand your browser. </h2>
-            </div>
-            <div class="edit span3 hidden-phone">
-                Dept:
-                <form action="" method="post" name="add">
-                    {{dept_form.hidden_tag()}}
-                    {{dept_form.dept_name}}
-                </form>
-                Term:
-                <form action="" method="post" name="add">
-                    {{term_form.hidden_tag()}}
-                    {{term_form.term_name}}
-                </form>
-                Hour:
-                <form action="" method="post" name="add">
-                    {{hour_form.hidden_tag()}}
-                    {{hour_form.hour_name}}
-                </form>
+            <div class="span3">
+                <span class="visible-phone">
+                    <h2>DARTPlan works best in a larger window. If you're on a mobile device, please switch to a desktop. If you're already on your desktop, please expand your browser. </h2>
+                </span>
+                <span class="edit hidden-phone">
+                    Dept:
+                    <form action="" method="post" name="add">
+                        {{dept_form.hidden_tag()}}
+                        {{dept_form.dept_name}}
+                    </form>
+                    Term:
+                    <form action="" method="post" name="add">
+                        {{term_form.hidden_tag()}}
+                        {{term_form.term_name}}
+                    </form>
+                    Hour:
+                    <form action="" method="post" name="add">
+                        {{hour_form.hidden_tag()}}
+                        {{hour_form.hour_name}}
+                    </form>
 
-                <div class="classesBlock">
-                    <ul id="" class="sortable1 dropfalse" unselectable="on"></ul>
+                    <div class="classesBlock">
+                        <ul id="" class="sortable1 dropfalse" unselectable="on"></ul>
+                    </div>
+
+                    <div class="progress progress-striped active hide">
+                      <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Searching for terms offered...</span>
+                      </div>
+                    </div>
                 </div>
-
-                <div class="progress progress-striped active hide">
-                  <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                    <span class="sr-only">Searching for terms offered...</span>
-                  </div>
-                </div>
-
             </div>
 
             <div class="span9">
