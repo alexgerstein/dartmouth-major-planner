@@ -23,7 +23,7 @@ function addCourse(term, hour, possible_hours, course, short_name) {
 
     var course_desc = null;
 
-    $.post("/getCourseInfo", 
+    $.get("/getCourseInfo", 
         {
             course: course,
             term: obj.attr('id')
@@ -69,7 +69,7 @@ function addCourse(term, hour, possible_hours, course, short_name) {
 };
 
 function showAvailableSlots(event, ui) {
-    var posting = $.post('/findterms', { course: ui.item.attr('id') });
+    var posting = $.get('/findterms', { course: ui.item.attr('id') });
 
     $(".progress").removeClass("hide");
 
@@ -188,11 +188,16 @@ $(document).on('click', '.dropdown-menu li a', function () {
 });
 
 function removeCourse(event){
-    var term_id = $( this ).parents('ul').attr('id');
+    var that = $ (this)
+    var term_id = that.parents('ul').attr('id');
 
-    var posting = $.post('/removecourse', { course: $(this).parents("li").attr("id"), term: term_id, hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] });
-
-    $(this).parents('li').parent().remove();
+    var posting = $.post('/removecourse', 
+        { course: $(this).parents("li").attr("id"), 
+        term: term_id, 
+        hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] }, 
+        function (data) {
+            that.parents('li').parent().remove();
+        });
 
 }
 

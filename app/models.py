@@ -195,10 +195,10 @@ class Offering(db.Model):
 		course = self.get_course()
 
 		return {
-		'full_name' :	repr(course).encode('ascii', 'ignore'),
 		'id'		:	self.course.id,
 		'number' 	:	self.course.number,
-		'name'		:	self.course.name
+		'name'		:	self.course.name,
+		'full_name' :	repr(course).encode('ascii', 'ignore')
 		}
 
 class Course(db.Model):
@@ -229,10 +229,10 @@ class Course(db.Model):
 	def serialize(self):
 
 		return {
-		'full_name' :	repr(self).encode('ascii', 'ignore'),
 		'id'		:	self.id,
 		'number' 	:	str(self.number),
-		'name'		:	self.name
+		'name'		:	self.name,
+		'full_name' :	repr(self).encode('ascii', 'ignore')
 		}
 
 	def __repr__(self):

@@ -70,16 +70,16 @@ def add_terms(terms):
 		db.session.commit()
 
 # Helper method to get the offering a user is editing on the planner interface
-def get_requested_offering(form):
+def get_requested_offering(request):
 	
 	# Deconstruct the dragged item's id to get the course from the database
-	split_course = request.form["course"].strip().split(" ")
+	split_course = request.values.get("course").strip().split(" ")
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 
 	# Construct the requested offering based on where dropped
-	year = "20" + request.form['term'][:2]
-	season = request.form['term'][2]
+	year = "20" + request.values.get('term')[:2]
+	season = request.values.get('term')[2]
 	t = Term.query.filter_by(year = year, season = season).first()
 
 	# Construct the requested hour if one exists
@@ -91,7 +91,7 @@ def get_requested_offering(form):
 		else:
 			hour = offering.get_hour() 
 	else:
-		hour_string = request.form['hour']
+		hour_string = request.values.get('hour')
 
 		if hour_string == "Arr":
 			hour_string = "Arrange"
@@ -178,16 +178,16 @@ def planner():
 def getcourses():
 
 	courses = None
-	if request.args.get('dept') != "-1":
-		courses = Course.query.filter_by(department_id = request.args.get('dept')).join(Offering)
-	elif request.args.get('term') != "-1" or request.args.get('hour') != "-1":
+	if request.values.get('dept') != "-1":
+		courses = Course.query.filter_by(department_id = request.values.get('dept')).join(Offering)
+	elif request.values.get('term') != "-1" or request.values.get('hour') != "-1":
 		courses = Course.query.join(Offering)
 
-	if request.args.get('term') != "-1":
-		courses = courses.filter_by(term_id = request.args.get('term'))
+	if request.values.get('term') != "-1":
+		courses = courses.filter_by(term_id = request.values.get('term'))
 
-	if request.args.get('hour') != "-1":
-		courses = courses.filter_by(hour_id = request.args.get('hour'))
+	if request.values.get('hour') != "-1":
+		courses = courses.filter_by(hour_id = request.values.get('hour'))
 
 	if courses is None:
 		j = jsonify ( {} )
@@ -202,7 +202,7 @@ def getcourses():
 @login_required
 def savecourse():
 
-	offering = get_requested_offering(request.form)
+	offering = get_requested_offering(request)
 
 	success = None
 	if offering is not None:
@@ -221,7 +221,7 @@ def savecourse():
 @login_required
 def swaphour():
 	
-	offering = get_requested_offering(request.form)
+	offering = get_requested_offering(request)
 
 	hour = Hour.query.filter_by(period = request.form['new_hour']).first()
 	success = False
@@ -241,7 +241,7 @@ def swaphour():
 @login_required
 def removecourse():
 	
-	offering = get_requested_offering(request.form)
+	offering = get_requested_offering(request)
 	
 	success = None
 	if offering is not None:
@@ -257,21 +257,21 @@ def removecourse():
 	return j
 
 # Callback to see text of course offering
-@app.route('/getCourseInfo', methods = ['POST'])
+@app.route('/getCourseInfo', methods = ['GET'])
 @login_required
 def getCourseInfo():
 
-	offering = get_requested_offering(request.form)
+	offering = get_requested_offering(request)
 
 	return jsonify ( { "info" : offering.desc})
 
 # Callback to send all available terms of course so they can be highlighted on planner
-@app.route('/findterms', methods = ['POST'])
+@app.route('/findterms', methods = ['GET'])
 @login_required
 def findterms():
 	
 	# Get Course
-	split_course = request.form['course'].strip().split(" ")
+	split_course = request.values.get('course').strip().split(" ")
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
 	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
 
