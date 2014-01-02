@@ -163,7 +163,7 @@ def planner():
 
 	return render_template("planner.html",
         title = 'Course Plan',
-        description = "Manage your Dartmouth course plan with simple drag-and-drop functionality.",
+        description = 'Manage your Dartmouth course plan with simple drag-and-drop functionality.',
         user = g.user,
         dept_form = dept_form,
         hour_form = hour_form,
@@ -173,21 +173,21 @@ def planner():
         terms = all_terms)
 
 # After change in dept form, send courses in that dept to user's view
-@app.route('/getcourses', methods = ['POST'])
+@app.route('/getcourses', methods = ['GET'])
 @login_required
 def getcourses():
 
 	courses = None
-	if request.form['dept'] != "-1":
-		courses = Course.query.filter_by(department_id = request.form['dept']).join(Offering)
-	elif request.form['term'] != "-1" or request.form['hour'] != "-1":
+	if request.args.get('dept') != "-1":
+		courses = Course.query.filter_by(department_id = request.args.get('dept')).join(Offering)
+	elif request.args.get('term') != "-1" or request.args.get('hour') != "-1":
 		courses = Course.query.join(Offering)
 
-	if request.form['term'] != "-1":
-		courses = courses.filter_by(term_id = request.form['term'])
+	if request.args.get('term') != "-1":
+		courses = courses.filter_by(term_id = request.args.get('term'))
 
-	if request.form['hour'] != "-1":
-		courses = courses.filter_by(hour_id = request.form['hour'])
+	if request.args.get('hour') != "-1":
+		courses = courses.filter_by(hour_id = request.args.get('hour'))
 
 	if courses is None:
 		j = jsonify ( {} )
