@@ -205,7 +205,7 @@ function swap_term(term){
         $(term_id).removeClass('off-term');
         $(term_id).find('i').text('Off?');
     } else {
-        if !(confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
+        if (!confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
             return;
         } 
 
