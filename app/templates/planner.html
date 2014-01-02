@@ -94,10 +94,8 @@
 
     $(document).ready(function() {
         $('.on').click(function() {
-            if (confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
-                var btn_id = $(this).parents('ul').attr('id');
-                swap_term(btn_id);
-            }
+            var btn_id = $(this).parents('ul').attr('id');
+            swap_term(btn_id);
         });
     });
 

@@ -205,8 +205,12 @@ function swap_term(term){
         $(term_id).removeClass('off-term');
         $(term_id).find('i').text('Off?');
     } else {
-        $(term_id).addClass('off-term');
-        $(term_id).find('i').text('On?');
+        if (confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
+            $(term_id).addClass('off-term');
+            $(term_id).find('i').text('On?');
+        } else {
+            return;
+        }
     }
 
     var post_opposite = $.post('/swapterm', { term: term });

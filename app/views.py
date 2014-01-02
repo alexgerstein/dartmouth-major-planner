@@ -130,8 +130,7 @@ def fetch_user():
 @app.route('/index')
 def index():
 	return render_template("index.html",
-        title = 'Home',
-        user_count = User.query.count())
+        user_count = format(User.query.count(), ",d"))
 
 # Planner page for signed in users
 # Landing Page for All Users, most will be redirected to login form
@@ -163,7 +162,8 @@ def planner():
 		db.session.commit()
 
 	return render_template("planner.html",
-        title = 'My Plan',
+        title = 'Course Plan',
+        description = "Manage your Dartmouth course plan with simple drag-and-drop functionality.",
         user = g.user,
         dept_form = dept_form,
         hour_form = hour_form,
@@ -307,7 +307,7 @@ def swapterm():
 @app.route('/settings')
 @login_required
 def settings():
-	return render_template('user.html', title = 'Settings', 
+	return render_template('user.html', title = 'Settings', description = "View the settings for your DARTPlan account.", 
 		user = g.user)
 
 # Edit Page to change Name and Graduation Year
@@ -340,7 +340,7 @@ def edit():
 		form.course_updates.data = g.user.email_course_updates
 		form.dartplan_updates.data = g.user.email_Dartplan_updates
 	return render_template('edit.html',
-		form = form, title = 'Settings', user = g.user)
+		form = form, title = 'Edit Profile', description = "Change the nickname, graduation year, and email setting for your DARTPlan account.", user = g.user)
 
 @app.route('/edit/delete', methods=['GET', 'POST'])
 @login_required
