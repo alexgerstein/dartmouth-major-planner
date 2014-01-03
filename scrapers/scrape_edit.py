@@ -30,7 +30,7 @@ print offering
 print User.query.filter(User.courses.contains(offering)).count()
 
 # Check students with more than X courses
-users = User.query.filter(User.courses.any()).all()
+users = User.query.filter(User.courses.any(), grad_year.in_(2013,2015)).all()
 course_count = {}
 for user in users:
 	count = user.courses.count()
@@ -42,6 +42,7 @@ for user in users:
 print "Course Count => Frequency"
 for k,v in sorted(course_count.items()):
 	bar = str(k) + ": "
+
 	for i in range(v):
 		bar += "."
 
