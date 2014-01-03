@@ -39,7 +39,10 @@ for user in users:
 	else:
 		course_count[count] = 1
 
+print "Course Count => Frequency"
 for k,v in sorted(course_count.items()):
-	print str(k) + ": "
+	bar = str(k) + ": "
 	for i in range(v):
-		print "."
+		bar += "."
+
+	print bar
