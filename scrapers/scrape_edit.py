@@ -30,4 +30,4 @@ print offering
 print User.query.filter(User.courses.contains(offering)).count()
 
 # Check students with more than X courses
-print session.query(user_course.user_id, func.count(user_course.user_id)).group_by(user_course.user_id).all()
+print db.session.query(user_course.user_id, func.count(user_course.user_id)).group_by(user_course.user_id).all()
