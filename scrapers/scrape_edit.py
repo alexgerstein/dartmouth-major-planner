@@ -25,4 +25,4 @@ print term
 offering = Offering.query.filter_by(course = course, term = term).first()
 print offering
 
-print User.query.filter_by(User.courses.contains(offering)).count()
+print User.query.filter(User.courses.contains(offering)).count()
