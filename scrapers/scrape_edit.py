@@ -13,8 +13,10 @@ from scrape_curr_orc import *
 from scrape_old_orcs import *
 from scrape_timetable import *
 
-users = User.query.all()
+dept = Department.query.filter_by(abbr="COSC").first()
+course = Course.query.filter_by(dept = dept, number = "50").first()
 
-for user in users:
-	user.email_course_updates = True
-	user.email_Dartplan_updates = True
+term = Term.query.filter_by(season = "W", year = "2014").first()
+offering = Offering.query.filter_by(course = course, term = term).first()
+
+print User.query.filter_by(User.courses.contains(offering)).count()
