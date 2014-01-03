@@ -16,7 +16,7 @@ from scrape_timetable import *
 dept = Department.query.filter_by(abbr = "COSC").first()
 print dept
 
-course = Course.query.filter_by(department = dept, number = "50").first()
+course = Course.query.filter_by(department = dept, number = "76").first()
 print course
 
 term = Term.query.filter_by(season = "W", year = "2014").first()
