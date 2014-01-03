@@ -30,7 +30,7 @@ print offering
 print User.query.filter(User.courses.contains(offering)).count()
 
 # Check students with more than X courses
-users = User.query.filter(User.courses.any(), grad_year.in_(2013,2015)).all()
+users = User.query.filter(User.courses.any(), User.grad_year.in_(2013,2015)).all()
 course_count = {}
 for user in users:
 	count = user.courses.count()
