@@ -7,7 +7,7 @@ SEASONS = ["W", "S", "X", "F"]
 
 user_course = db.Table('user_course',
 	db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete="CASCADE")),
-	db.Column('offering_id', db.Integer, db.ForeignKey('offering.id'))
+	db.Column('offering_id', db.Integer, db.ForeignKey('offering.id', ondelete="CASCADE"))
 )
 
 user_terms = db.Table("user_terms",
