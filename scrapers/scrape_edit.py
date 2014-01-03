@@ -14,23 +14,23 @@ from scrape_old_orcs import *
 from scrape_timetable import *
 
 
-# Check DARTPlan student enrollment
-dept = Department.query.filter_by(abbr = "COSC").first()
-print dept
+# # Check DARTPlan student enrollment
+# dept = Department.query.filter_by(abbr = "COSC").first()
+# print dept
 
-course = Course.query.filter_by(department = dept, number = "76").first()
-print course
+# course = Course.query.filter_by(department = dept, number = "76").first()
+# print course
 
-term = Term.query.filter_by(season = "W", year = "2014").first()
-print term
+# term = Term.query.filter_by(season = "W", year = "2014").first()
+# print term
 
-offering = Offering.query.filter_by(course = course, term = term).first()
-print offering
+# offering = Offering.query.filter_by(course = course, term = term).first()
+# print offering
 
-print User.query.filter(User.courses.contains(offering)).count()
+# print User.query.filter(User.courses.contains(offering)).count()
 
 # Check students with more than X courses
-users = User.query.filter(User.courses.any(), User.grad_year.in_(2013,2015)).all()
+users = User.query.filter(User.courses.any(), User.grad_year != 2016, User.grad_year != 2017).all()
 course_count = {}
 for user in users:
 	count = user.courses.count()
