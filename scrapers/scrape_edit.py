@@ -32,4 +32,4 @@ print User.query.filter(User.courses.contains(offering)).count()
 # Check students with more than X courses
 users = User.query.filter(User.courses.any()).all()
 for user in users:
-	print user.courses
+	print user.courses.count()
