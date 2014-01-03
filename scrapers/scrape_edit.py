@@ -40,4 +40,6 @@ for user in users:
 		course_count[count] = 1
 
 for k,v in sorted(course_count.items()):
-	print k, v
+	print str(k) + ": "
+	for i in range(v):
+		print "."
