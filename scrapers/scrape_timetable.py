@@ -106,6 +106,9 @@ def parse_soup(soup, search_term):
             elif index == HOUR_COL:
                 hour = value.text.replace(u'\xa0', u' ')
 
+                if hour.strip(" ") == "AR":
+                    hour = "Arrange"
+
                 period = Hour.query.filter_by(period = hour.strip(" ")).first()
                 if period is None:
                     period = Hour(period = hour.strip(" "))
