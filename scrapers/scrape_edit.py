@@ -39,4 +39,4 @@ for user in users:
 	else:
 		course_count[count] = 1
 
-print sorted(course_count)
+print sorted(course_count.items())
