@@ -536,10 +536,10 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 	# Loop through all combinations
 	for term in terms_offered:
 
-		# Ignore if ORC data might conflit with the higher-priority timetable
-		if term.in_range(lock_term_start, lock_term_end):
-			print_alert("IGNORED: " + str(course) + " in " + str(term))
-			continue
+		# # Ignore if ORC data might conflit with the higher-priority timetable
+		# if term.in_range(lock_term_start, lock_term_end):
+		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
+		# 	continue
 
 		# Add "ARR" as hour offered if offered 
 		# every term, but at an unspecified time
@@ -554,7 +554,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 			unknown_hour = Hour.query.filter_by(period = "?").first()
 			o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
 			if o1 is not None:
-				users = User.query.filter(User.courses.contains(offering), email_course_updates == True).all()
+				users = User.query.filter(User.email_course_updates == True, User.courses.contains(o1)).all()
 
 				o1.change_period(hour)
 				print_alert("Updated user_added: " + repr(o1))

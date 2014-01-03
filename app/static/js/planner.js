@@ -108,8 +108,6 @@ function clearAvailableSlots(event, ui) {
 
 function saveCourse(event, ui) {
     
-
-
     var selectVal = $('#dept_name').find(":selected").val();
 
     var text = ui.item.attr('id');
