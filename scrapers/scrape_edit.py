@@ -13,6 +13,8 @@ from scrape_curr_orc import *
 from scrape_old_orcs import *
 from scrape_timetable import *
 
+
+# Check DARTPlan student enrollment
 dept = Department.query.filter_by(abbr = "COSC").first()
 print dept
 
@@ -26,3 +28,6 @@ offering = Offering.query.filter_by(course = course, term = term).first()
 print offering
 
 print User.query.filter(User.courses.contains(offering)).count()
+
+# Check students with more than X courses
+print User.query.filter(User.courses.count() > 1).count()
