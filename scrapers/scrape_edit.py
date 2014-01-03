@@ -31,5 +31,12 @@ print User.query.filter(User.courses.contains(offering)).count()
 
 # Check students with more than X courses
 users = User.query.filter(User.courses.any()).all()
+course_count = {}
 for user in users:
-	print user.courses.count()
+	count = user.courses.count()
+	if count in course_count:
+		course_count[count] += 1
+	else:
+		course_count[count] = 1
+
+print course_count
