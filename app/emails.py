@@ -51,7 +51,7 @@ def updated_hour_notification(users, offering, new_hour):
         with app.test_request_context():
             for user in users:
 
-                app.logger.info("EMAIL UPDATED OFFERING TO %s" % user.nickname)
+                app.logger.info("EMAIL UPDATED OFFERING TO %s FROM" % user.nickname)
                 message = create_message("Nice call! %s (%s) now has an actual time." % (str(offering), str(offering.get_term())),
                         ADMINS[0],
                         [user.netid + "@dartmouth.edu"],
@@ -70,7 +70,7 @@ def updated_hour_notification(users, offering, new_hour):
 def deleted_offering_notification(users, offering, term, hour):
         with app.test_request_context():
             for user in users:
-                app.logger.info("EMAIL DELETED OFFERING TO %s" % user.nickname)
+                app.logger.info("EMAIL DELETED OFFERING TO %s ABOUT %s AT %s" % (user.nickname, offering, hour))
                 message = create_message("Oh no! %s is no longer offered when you thought it would be." % (str(offering)),
                         ADMINS[0],
                         [user.netid + "@dartmouth.edu"],
