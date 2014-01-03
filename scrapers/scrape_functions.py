@@ -536,10 +536,10 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 	# Loop through all combinations
 	for term in terms_offered:
 
-		# # Ignore if ORC data might conflit with the higher-priority timetable
-		# if term.in_range(lock_term_start, lock_term_end):
-		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
-		# 	continue
+		# Ignore if ORC data might conflit with the higher-priority timetable
+		if term.in_range(lock_term_start, lock_term_end):
+			print_alert("IGNORED: " + str(course) + " in " + str(term))
+			continue
 
 		# Add "ARR" as hour offered if offered 
 		# every term, but at an unspecified time
