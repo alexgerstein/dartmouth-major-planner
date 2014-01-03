@@ -33,10 +33,10 @@ print User.query.filter(User.courses.contains(offering)).count()
 users = User.query.filter(User.courses.any()).all()
 course_count = {}
 for user in users:
-	count = user.courses.count()
+	count = str(user.courses.count())
 	if count in course_count:
 		course_count[count] += 1
 	else:
 		course_count[count] = 1
 
-print course_count
+print sorted(course_count)
