@@ -49,7 +49,7 @@ def generate_terms(grad_year):
 			if t is None:
 				t = Term(grad_year - year_diff, season)
 				db.session.add(t)
-			
+
 			all_terms.append(t)
 
 	# Remove extra fall
@@ -59,7 +59,7 @@ def generate_terms(grad_year):
 
 # If graduation year changes for user, adjusts terms in planner
 def add_terms(terms):
-	
+
 	# Clear all terms, start clean
 	for term in g.user.terms:
 		g.user.remove_term(term)
@@ -71,7 +71,7 @@ def add_terms(terms):
 
 # Helper method to get the offering a user is editing on the planner interface
 def get_requested_offering(request):
-	
+
 	# Deconstruct the dragged item's id to get the course from the database
 	split_course = request.values.get("course").strip().split(" ")
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
@@ -89,7 +89,7 @@ def get_requested_offering(request):
 		if offering is None:
 			hour = Hour.query.filter_by(period = "?").first()
 		else:
-			hour = offering.get_hour() 
+			hour = offering.get_hour()
 	else:
 		hour_string = request.values.get('hour')
 
@@ -131,6 +131,22 @@ def fetch_user():
 def index():
 	return render_template("index.html",
         user_count = format(User.query.count(), ",d"))
+
+@app.route('/about')
+def about():
+	return render_template("about.html")
+
+@app.route('/about/contact')
+def contact():
+	return render_template("contact.html")
+
+@app.route('/about/donate')
+def donate():
+	return render_template("donate.html")
+
+@app.route('/about/contribute')
+def contribute():
+	return render_template("contribute.html")
 
 # Planner page for signed in users
 # Landing Page for All Users, most will be redirected to login form
@@ -220,7 +236,7 @@ def savecourse():
 @app.route('/swaphour', methods = ['POST'])
 @login_required
 def swaphour():
-	
+
 	offering = get_requested_offering(request)
 
 	hour = Hour.query.filter_by(period = request.form['new_hour']).first()
@@ -240,9 +256,9 @@ def swaphour():
 @app.route('/removecourse', methods = ['POST'])
 @login_required
 def removecourse():
-	
+
 	offering = get_requested_offering(request)
-	
+
 	success = None
 	if offering is not None:
 		success = g.user.drop(offering)
@@ -269,7 +285,7 @@ def getCourseInfo():
 @app.route('/findterms', methods = ['GET'])
 @login_required
 def findterms():
-	
+
 	# Get Course
 	split_course = request.values.get('course').strip().split(" ")
 	d1 = Department.query.filter_by(abbr = split_course[0]).first()
@@ -287,7 +303,7 @@ def findterms():
 @app.route('/swapterm', methods = ['POST'])
 @login_required
 def swapterm():
-	
+
 	# Get term from database
 	term_name = request.form['term']
 	year = "20" + request.form['term'][:2]
@@ -307,7 +323,7 @@ def swapterm():
 @app.route('/settings')
 @login_required
 def settings():
-	return render_template('user.html', title = 'Settings', description = "View the settings for your DARTPlan account.", 
+	return render_template('user.html', title = 'Settings', description = "View the settings for your DARTPlan account.",
 		user = g.user)
 
 # Edit Page to change Name and Graduation Year
@@ -315,7 +331,7 @@ def settings():
 @login_required
 def edit():
 	form = EditForm(g.user.nickname)
-	
+
 	if form.validate_on_submit():
 
 		g.user.nickname = form.nickname.data

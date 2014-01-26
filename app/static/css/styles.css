@@ -78,10 +78,9 @@ h3 {
   background-color: #3d3d3c;
   box-shadow: none;
 }
-/* Header 
+/* Header
 ----------------------------------- */
 header {
-  margin-top: 50px;
   text-align: right;
 }
 header h1 {
@@ -137,7 +136,7 @@ header .slides {
 header .flex-control-nav {
   bottom: 27.5%;
 }
-/* Counter 
+/* Counter
 ----------------------------------- */
 #counter {
   background-color: green;
@@ -162,7 +161,7 @@ header .flex-control-nav {
   padding: 15px 20%;
 }
 
-/* About Us 
+/* About Us
 ----------------------------------- */
 #about {
   background: #eff2f5 url('static/img/about-bg.jpg') no-repeat center top;
@@ -237,7 +236,7 @@ header .flex-control-nav {
 #about .profiles .social-icons .googleplus:hover {
   background-color: #cf3d2e;
 }
-/* Testimonials 
+/* Testimonials
 ----------------------------------- */
 #testimonials {
   margin-top: 85px;
@@ -270,7 +269,7 @@ header .flex-control-nav {
 #testimonials .client-img {
   border: 3px solid #bbbbbb;
 }
-/* Pricing 
+/* Pricing
 ----------------------------------- */
 #pricing {
   margin-top: 85px;
@@ -365,7 +364,7 @@ header .flex-control-nav {
   text-align: center;
   padding: 15px 0;
 }
-/* Gallery 
+/* Gallery
 ----------------------------------- */
 #gallery {
   background-color: #e2e2e2;
@@ -429,7 +428,7 @@ header .flex-control-nav {
 #gallery .flex-control-paging li a.flex-active {
   background: #009530;
 }
-/* Contact 
+/* Contact
 ----------------------------------- */
 #contact {
   margin-top: 85px;
@@ -489,7 +488,7 @@ header .flex-control-nav {
   padding-top: 11px;
   color: #7f7f7f;
 }
-/* Footer 
+/* Footer
 ----------------------------------- */
 footer {
   background-color: #7f7f7f;
@@ -530,7 +529,7 @@ footer .address {
   h3 {
     line-height: 40px;
   }
-  /* Header 
+  /* Header
   	----------------------------------- */
   header {
   }
@@ -552,7 +551,7 @@ footer .address {
   header .notebookslider {
     height: 445px;
   }
-  /* Newsletter 
+  /* Newsletter
   	----------------------------------- */
   #newsletter {
     padding: 50px 0;
@@ -569,7 +568,7 @@ footer .address {
   #newsletter .submit {
     font-size: 18px;
   }
-  /* Information 
+  /* Information
   	----------------------------------- */
   #information h2 {
     margin-bottom: 25px;
@@ -577,7 +576,7 @@ footer .address {
   #information p {
     margin-bottom: 15px;
   }
-  /* Pricing 
+  /* Pricing
   	----------------------------------- */
   #pricing .benefits {
     font-size: 16px;
@@ -585,7 +584,7 @@ footer .address {
   #pricing .select-package-button {
     font-size: 24px;
   }
-  /* Contact 
+  /* Contact
   	----------------------------------- */
   #contact input {
     padding: 12px;
@@ -615,7 +614,7 @@ footer .address {
     font-size: 26px;
   }
 
-  /* Header 
+  /* Header
   	----------------------------------- */
   header h1 {
     margin: 0 0 16px 0;
@@ -642,7 +641,7 @@ footer .address {
     margin-top: 5px;
     margin-bottom: 15px;
   }
-  /* Newsletter 
+  /* Newsletter
   	----------------------------------- */
   #newsletter h2 {
     font-size: 18px;
@@ -650,7 +649,7 @@ footer .address {
   #newsletter h2 i {
     font-size: 20px;
   }
-  /* About Us 
+  /* About Us
   	----------------------------------- */
   #about .profile-image {
     border-width: 8px;
@@ -664,12 +663,12 @@ footer .address {
     line-height: 33px;
     font-size: 14px;
   }
-  /* Testimonials 
+  /* Testimonials
   	----------------------------------- */
   #testimonials .testimonial {
     font-size: 20px;
   }
-  /* Contact 
+  /* Contact
   	----------------------------------- */
   #contact input {
     padding: 8px;
@@ -704,7 +703,7 @@ footer .address {
     margin-left: 0px !important;
     margin-right: 0px !important;
   }
-  /* Header 
+  /* Header
   	----------------------------------- */
   header {
     text-align: center;
@@ -718,7 +717,7 @@ footer .address {
   header .notebookslider {
     height: auto;
   }
-  /* Newsletter 
+  /* Newsletter
   	----------------------------------- */
   #newsletter h2 {
     font-size: 18px;
@@ -729,7 +728,7 @@ footer .address {
   #newsletter .email {
     width: 60%;
   }
-  /* Information 
+  /* Information
   	----------------------------------- */
   #information {
     text-align: center;
@@ -754,7 +753,7 @@ footer .address {
     left: 40%;
     top: -40px;
   }
-  /* About Us 
+  /* About Us
   	----------------------------------- */
   #about {
     background-image: none;
@@ -764,7 +763,7 @@ footer .address {
   #about .profile {
     margin-bottom: 60px;
   }
-  /* Testimonials 
+  /* Testimonials
   	----------------------------------- */
   #testimonials .testimonial {
     font-size: 20px;
@@ -773,7 +772,7 @@ footer .address {
     text-align: center;
     margin-bottom: 15px;
   }
-  /* Pricing 
+  /* Pricing
   	----------------------------------- */
   #pricing .pricing-column-left {
     padding-top: 0;
@@ -794,7 +793,7 @@ footer .address {
     border-left: 1px solid #c5c5c5;
     margin-bottom: 0;
   }
-  /* Gallery 
+  /* Gallery
   	----------------------------------- */
   #gallery {
     text-align: center;
@@ -819,7 +818,7 @@ footer .address {
   #gallery .flex-control-paging li a {
     height: 10px;
   }
-  /* Contact 
+  /* Contact
   	----------------------------------- */
   #contact {
     margin-top: 65px;
@@ -850,7 +849,7 @@ footer .address {
     margin-left: 0px !important;
     margin-right: 0px !important;
   }
-  /* Header 
+  /* Header
   	----------------------------------- */
   header h1 {
     font-size: 30px;
@@ -865,7 +864,7 @@ footer .address {
     width: 9px;
     height: 9px;
   }
-  /* Newsletter 
+  /* Newsletter
   	----------------------------------- */
   #newsletter h2 {
     font-size: 14px;
@@ -882,12 +881,12 @@ footer .address {
     font-size: 14px;
     padding: 0 25px;
   }
-  /* Information 
+  /* Information
   	----------------------------------- */
   #information .infoslider {
     margin: 120px 0 60px 0;
   }
-  /* Contact 
+  /* Contact
   	----------------------------------- */
   #contact p {
     font-size: 13px;

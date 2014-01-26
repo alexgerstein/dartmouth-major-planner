@@ -1,29 +1,71 @@
+html,
 body {
-	font-size: 14px; 
+	height: 100%;;
+	font-size: 14px;
 }
 
-.sortable1, 
-.sortable2 { 
-	list-style-type: none; 
-	background: #eee; 
+.navbar .container-fluid {
+	padding: 0;
+}
+
+#push,
+.footer {
+	min-height: 30px;
+}
+
+.footer {
+	background-color: #333;
+	color: rgb(178, 182, 176);
+
+}
+
+.footer span{
+	padding: 0 10px;
+	line-height: 2;
+}
+
+.footer a{
+	color: white;
+}
+
+.footer a:hover{
+	color: green;
+}
+
+.fa-twitter {
+	font-size: 18px;
+}
+
+#wrap {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	/* Negative indent footer by it's height */
+	margin: 0 auto -30px;
+}
+
+.sortable1,
+.sortable2 {
+	list-style-type: none;
+	background: #eee;
 	border: 1px solid black;
-	overflow:scroll; 
+	overflow:scroll;
 	margin: 5px 0px;
 }
 
 .sortable1 {
-	height: 50%;
+	height: 55%;
 }
 
 .sortable2 {
-	height: 145px;
+	height: 150px;
 }
-    
-.sortable1 li, 
-.sortable2 li { 
-	cursor: move; 
-	background: none; 
-	background-color: white; 
+
+.sortable1 li,
+.sortable2 li {
+	cursor: move;
+	background: none;
+	background-color: white;
 	border: 1px solid black;
 	vertical-align: middle;
 	z-index: 10000;
@@ -31,6 +73,10 @@ body {
 
 .sortable1 li {
 	font-size: 1em;
+}
+
+select {
+	width: 100%;
 }
 
 .btn-group {
@@ -101,4 +147,14 @@ button {
 
 .popover-content h1 {
 	font-size: 22px;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+    .footer {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+    <div class="span3">
+        <ul class="nav nav-tabs nav-stacked">
+             <li><a href="{{ url_for('about') }}">About</a></li>
+             <li><a href="{{ url_for('contribute') }}">Contribute</a></li>
+              <li><a href="{{ url_for('donate') }}">Donate</a></li>
+             <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+    </div>
+
+    <div class="span9">
+
+        {% block text %}{% endblock %}
+
+    </div>
+</div>
+</div>
+ {% endblock %}

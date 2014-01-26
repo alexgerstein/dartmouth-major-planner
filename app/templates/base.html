@@ -1,20 +1,20 @@
 <html>
   <head>
-  	<link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  	<link href="{{ url_for ('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,800" rel="stylesheet" type="text/css">
-    <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{{ url_for ('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
     <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet">
-    <link href="static/css/styles.css" rel="stylesheet">
-    <link href="static/css/flexslider.css" rel="stylesheet">
-    <link href="static/css/animate.min.css" rel="stylesheet">
-    <link href="static/css/magnific-popup.css" rel="stylesheet">
-    <link href="/static/css/override.css" rel="stylesheet">
+    <link href="{{ url_for ('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for ('static', filename='css/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for ('static', filename='css/override.css') }}" rel="stylesheet">
+    <link href="{{ url_for ('static', filename='css/flexslider.css') }}" rel="stylesheet">
+    <link href="{{ url_for ('static', filename='css/magnific-popup.css') }}" rel="stylesheet">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-    <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
+    <script src="{{ url_for ('static', filename='js/jquery.ui.touch-punch.min.js') }}"></script>
 
-    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="{{ url_for ('static', filename='js/bootstrap.min.js') }}"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -26,33 +26,47 @@
 
   </head>
   <body style="cursor: auto">
+    <div id="wrap">
         <div class="navbar">
-                <div class="container-fluid">
+          <div class="container-fluid">
 
           <div class="navbar-inner">
-            <a class="brand" href="{{ url_for('index')}}"><img src="static/img/p-logo-white.png" style="width: 25px; padding: 0 5px;"><b>DART</b>Plan</a>
+            <a class="brand" href="{{ url_for('index')}}"><img src="{{ url_for ('static', filename='img/p-logo-white.png') }}" style="width: 25px; padding: 0 5px;"><b>DART</b>Plan</a>
               <ul class="nav">
+                <li><a href="{{ url_for('about') }}">About</a></li>
                 {% if user %}
                 <li><a href="{{ url_for('planner') }}">My Course Plan</a></li>
                 <li><a href="{{ url_for('settings') }}">Settings</a></li>
                 <li><a href="{{ url_for('flask_cas.logout') }}">Logout</a></li>
                 {% else %}
                 <li><a href="{{ url_for('flask_cas.login') }}">Login</a></li>
-                {% endif %} 
+                {% endif %}
               </ul>
           </div>
         </div>
       </div>
 
+
           {% block content %}{% endblock %}
+        <div id="push"></div>
+
+      </div>
+        <div class="footer">
+          <div class="container-fluid">
+            <span>Made by Alex Gerstein '15</span>
+            <span><a href="{{ url_for('about') }}">About</a></span>
+            <span><a href="{{ url_for('contribute') }}">Contribute</a></span>
+            <span><a href="https://www.gittip.com/alexgerstein/" target="_blank">Donate</a></span>
+            <span><a href="{{ url_for('contact') }}">Contact</a></span>
+            <span><a href="http://www.twitter.com/dartplan"><i class="fa fa-twitter"></i> Updates</a></span>
         </div>
       </div>
     <!-- At end to load page faster -->
 
-    <script src="/static/js/jquery.flexslider-min.js"></script>
-    <script src="/static/js/jquery.magnific-popup.min.js"></script>
-    <script src="/static/js/jquery.simpleplaceholder.js"></script>
-    <script src="/static/js/custom.js"></script>
+    <script src="{{ url_for ('static', filename='js/jquery.flexslider-min.js') }}"></script>
+    <script src="{{ url_for ('static', filename='js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ url_for ('static', filename='js/jquery.simpleplaceholder.js') }}"></script>
+    <script src="{{ url_for ('static', filename='js/custom.js') }}"></script>
 
     <!-- Google Analytics -->
     <script>

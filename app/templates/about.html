@@ -1,0 +1,20 @@
+{% extends "about_us.html" %}
+
+{% block text %}
+
+<h1>About DARTPlan</h1>
+<p>Your college experience is about to get a whole lot easier.</p>
+
+<p>Everyone at Dartmouth has their own way of keeping track of what courses they hope to take. Whether in an Excel document, on a sheet of paper, or in our heads, we all think we know what course would be best to take one, two, even three terms from now. Of course, the college never makes it this simple.</p>
+
+<p>Some courses are no longer offered. Some conflict with your other classes. Sometimes you realize you really don't want to finish that minor.</p>
+
+<p>As plans change, your course planner should change too. But what if it could change without manually searches though the Registrar's site? What if you could receive a blitz when your course will no longer be offered?</p>
+
+<p>With DARTPlan, it's now incredibly easy to find all of the courses that fit.</p>
+
+<p>Simply filter through the courses, drag one you wish to take, and instantly see when it's offered. If the term lights up in green, it's listed by the Registrar. If a term lights up in yellow, you can see how many of your peers believe it to be offered then.</p>
+
+<p>What are you waiting for? <a href='{{url_for ('planner')}}'>Sign up</a> and get your d-plans in order with DARTPlan.</p>
+
+{% endblock %}

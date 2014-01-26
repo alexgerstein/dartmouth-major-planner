@@ -29,7 +29,14 @@ from scrape_timetable import *
 
 # print User.query.filter(User.courses.contains(offering)).count()
 
+#
+# Most popular offerings
+#
+print Offering.query.order_by('users').all()
+
+# 
 # Check students with more than X courses
+# 
 users = User.query.filter(User.courses.any(), User.grad_year != 2016, User.grad_year != 2017).all()
 course_count = {}
 for user in users:
