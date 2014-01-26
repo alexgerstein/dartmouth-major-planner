@@ -23,11 +23,11 @@ function addCourse(term, hour, possible_hours, course, short_name) {
 
     var course_desc = null;
 
-    $.get("/getCourseInfo", 
+    $.get("/getCourseInfo",
         {
             course: course,
             term: obj.attr('id')
-        }, 
+        },
         function(response) {
             var split_id = course.split(" ")
             var course_id = obj.find('li:contains(' + short_name + ')');
@@ -76,23 +76,37 @@ function showAvailableSlots(event, ui) {
     posting.done(function (data) {
 
         $(".progress").addClass("hide");
-        
+
         $.each(data['terms'], function(index, item) {
-            term_id = "#" + item;
+            term_id = "#" + item[0];
             if ($(term_id).hasClass('off-term')) {
                 $(term_id).addClass('available-off');
             } else {
                 $(term_id).addClass('available');
             }
+
+            if (item[1] == 1) {
+                other = "other"
+            } else {
+                other = "others"
+            }
+            $(term_id).prepend('<div class="count">Planned by ' + item[1] + ' ' + other + '</div>');
         });
 
         $.each(data['user-terms'], function(index, item) {
-            term_id = "#" + item;
+            term_id = "#" + item[0];
             if ($(term_id).hasClass('off-term')) {
                 $(term_id).addClass('available-user-off');
             } else {
                 $(term_id).addClass('available-user');
             }
+
+            if (item[1] == 0) {
+                other = "other"
+            } else {
+                other = "others"
+            }
+            $(term_id).prepend('<div class="count">Planned by ' + item[1] + ' ' + other + '</div>');
         });
     });
 }
@@ -103,11 +117,12 @@ function clearAvailableSlots(event, ui) {
         $(this).removeClass('available-off');
         $(this).removeClass('available-user');
         $(this).removeClass('available-user-off');
+        $('.count').remove();
     });
 }
 
 function saveCourse(event, ui) {
-    
+
     var selectVal = $('#dept_name').find(":selected").val();
 
     var text = ui.item.attr('id');
@@ -153,11 +168,11 @@ function saveCourse(event, ui) {
     		});
         }
         var hours = data['possible_hours'].split("; ");
-        
+
         addCourse(ext_term_id, data['hour'], hours, text, data['name']);
 
     });
-        
+
 }
 
 $(document).on('click', '.dropdown-menu li a', function () {
@@ -165,7 +180,7 @@ $(document).on('click', '.dropdown-menu li a', function () {
     var new_hour = $(this).text();
     var term = $(this).parents('.sortable2').attr('id');
     var course = course_item.attr('id');
-    
+
     var posting = $.post('/swaphour', { course: course, term: term, new_hour: new_hour, hour: course_item.find(".dropdown-toggle").text().split(" ")[0] });
 
     posting.done(function (data) {
@@ -189,10 +204,10 @@ function removeCourse(event){
     var that = $ (this)
     var term_id = that.parents('ul').attr('id');
 
-    var posting = $.post('/removecourse', 
-        { course: $(this).parents("li").attr("id"), 
-        term: term_id, 
-        hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] }, 
+    var posting = $.post('/removecourse',
+        { course: $(this).parents("li").attr("id"),
+        term: term_id,
+        hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] },
         function (data) {
             that.parents('li').parent().remove();
         });
@@ -210,7 +225,7 @@ function swap_term(term){
     } else {
         if (!confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
             return;
-        } 
+        }
 
         $(term_id).addClass('off-term');
         $(term_id).find('i').text('On?');
@@ -236,10 +251,10 @@ function showCourses(){
     var hour = $('#hour_name').find(":selected").val();
 
     var getcourses = $.get('/getcourses', { dept: dept, term: term, hour: hour });
-    
+
 
     $(".classesBlock ul.sortable1").empty();
-    if (dept != "-1" || term != "-1" || hour != "-1") { 
+    if (dept != "-1" || term != "-1" || hour != "-1") {
         $(".classesBlock ul.sortable1").append("<li class='loading'>Loading...</li>");
     }
 

@@ -50,7 +50,9 @@ body {
 	background: #eee;
 	border: 1px solid black;
 	overflow:scroll;
-	margin: 5px 0px;
+	margin: 0;
+	margin-bottom: 10px;
+	width: 100%;
 }
 
 .sortable1 {
@@ -58,7 +60,7 @@ body {
 }
 
 .sortable2 {
-	height: 150px;
+	height: 125px;
 }
 
 .sortable1 li,
@@ -73,6 +75,18 @@ body {
 
 .sortable1 li {
 	font-size: 1em;
+}
+
+li.pin {
+	list-style-type: none;
+}
+
+.pin .btn {
+	line-height:  17px;
+}
+
+.count {
+	text-align: center;
 }
 
 select {

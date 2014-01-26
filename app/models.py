@@ -30,7 +30,7 @@ class User(db.Model):
 		secondary=user_terms,
 		lazy='dynamic')
 
-	courses = db.relationship('Offering', 
+	courses = db.relationship('Offering',
 		secondary=user_course,
 		lazy = 'dynamic')
 
@@ -54,7 +54,7 @@ class User(db.Model):
 			self.courses.remove(offering)
 			db.session.commit()
 
-			# Delete user-added offerings from db 
+			# Delete user-added offerings from db
 			# if no users take the course anymore
 			if offering.user_added == "Y":
 				if User.query.filter(User.courses.contains(offering)).count() == 0:
@@ -87,7 +87,7 @@ class User(db.Model):
 			self.terms.append(term)
 			db.session.commit()
 			return self
-	
+
 	def remove_term(self, term):
 		if self.is_enrolled(term):
 			self.terms.remove(term)
@@ -161,6 +161,9 @@ class Offering(db.Model):
 		for offering in Offering.query.filter_by(course_id = self.course_id, term_id = self.term_id).all():
 			possible_hours += str(offering.get_hour()) + "; "
 		return possible_hours[:-2]
+
+	def get_user_count(self):
+		return User.query.filter(User.courses.contains(self)).count()
 
 	def change_period(self, hour):
 		self.hour_id = hour.id
@@ -236,7 +239,7 @@ class Course(db.Model):
 		}
 
 	def __repr__(self):
-		department = Department.query.filter_by(id = self.department_id).first()	
+		department = Department.query.filter_by(id = self.department_id).first()
 
 		# Fix number repr if there are no sections (i.e. CS 1.0 should be CS 1)
 		returned_number = self.number
@@ -294,7 +297,7 @@ class Term(db.Model):
 
 	def __repr__(self):
 		return '%s%s' % (str(self.year)[2:], self.season)
-	
+
 class Hour(db.Model):
 	__tablename__ = "hour"
 

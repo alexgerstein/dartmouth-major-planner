@@ -52,8 +52,8 @@
                             <div class="row-fluid">
                         {% endif %}
                             <div class="span3 term">
+                                <li class="term-name pin">{{term}}<i class="btn on" style="float: right">On?</i></li>
                                 <ul id="{{ term }}" class="sortable2 droptrue ui-sortable off-term" unselectable="on">
-                                    <li class="term-name pin">{{term}}<i class="btn on" style="float: right">On?</i></li>
                                     {% for on_term in on_terms %}
                                         {% if term == on_term %}
                                             <script>
