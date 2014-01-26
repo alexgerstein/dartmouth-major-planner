@@ -294,10 +294,29 @@ def findterms():
 	available_user_offerings = Offering.query.filter_by(course = c1, user_added = "Y").all()
 	available_registrar_offerings = Offering.query.filter_by(course = c1, user_added = "N").all()
 
-	# Send array of terms to client's view
-	j = jsonify( { 'terms' : [[str(i.term), i.get_user_count()] for i in available_registrar_offerings], 'user-terms': [[str(i.term), i.get_user_count()] for i in available_user_offerings] })
+	data = {'terms': [], 'user_terms': []}
 
-	return j
+	terms = {}
+	for offering in available_registrar_offerings:
+		if offering.term in terms:
+			terms[str(offering.term)] += offering.get_user_count()
+		else:
+			terms[str(offering.term)] = offering.get_user_count()
+
+	user_terms = {}
+	for offering in available_user_offerings:
+		if offering.term in user_terms:
+			user_terms[str(offering.term)] += offering.get_user_count()
+		else:
+			user_terms[str(offering.term)] = offering.get_user_count()
+
+	for key, value in terms.iteritems():
+		data['terms'].append([key, value])
+
+	for key, value in user_terms.iteritems():
+		data['user_terms'].append([key, value])
+
+	return jsonify(data)
 
 # Toggle on/off terms
 @app.route('/swapterm', methods = ['POST'])
