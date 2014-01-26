@@ -74,7 +74,7 @@ class User(db.Model):
 		o1 = Offering.query.filter_by(course = course, term = term, hour = hour).first()
 		if o1 is not None:
 			self.take(o1)
-			return True
+			return o1.id
 
 		return False
 

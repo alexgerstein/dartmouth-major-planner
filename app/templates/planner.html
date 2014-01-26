@@ -67,7 +67,7 @@
                                         {% if course.term == term %}
                                             <script>
                                                 var possible_hours = "{{course.get_possible_hours()}}".split("; ")
-                                                addCourse("#{{term}}", "{{ course.get_hour() }}", possible_hours, "{{ course.get_full_name() }}", "{{ course }}");
+                                                addCourse("#{{term}}", "{{ course.get_hour() }}", possible_hours, "{{ course.id }}", "{{ course }}");
                                             </script>
                                         {% endif %}
                                     {% endfor %}

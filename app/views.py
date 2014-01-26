@@ -73,9 +73,10 @@ def add_terms(terms):
 def get_requested_offering(request):
 
 	# Deconstruct the dragged item's id to get the course from the database
-	split_course = request.values.get("course").strip().split(" ")
-	d1 = Department.query.filter_by(abbr = split_course[0]).first()
-	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+	if request.values.get('offering'):
+		c1 = Offering.query.filter_by(id = request.values.get("offering")).first().get_course()
+	else:
+		c1 = Course.query.filter_by(id = request.values.get('course')).first()
 
 	# Construct the requested offering based on where dropped
 	year = "20" + request.values.get('term')[:2]
@@ -83,19 +84,19 @@ def get_requested_offering(request):
 	t = Term.query.filter_by(year = year, season = season).first()
 
 	# Construct the requested hour if one exists
-	if 'hour' not in request.form:
+	if request.values.get('hour'):
+		hour_string = request.values.get('hour')
+
+		if hour_string == "Arr":
+			hour_string = "Arrange"
+		hour = Hour.query.filter_by(period = hour_string).first()
+	else:
 		offering = Offering.query.filter_by(course = c1, term = t).first()
 
 		if offering is None:
 			hour = Hour.query.filter_by(period = "?").first()
 		else:
 			hour = offering.get_hour()
-	else:
-		hour_string = request.values.get('hour')
-
-		if hour_string == "Arr":
-			hour_string = "Arrange"
-		hour = Hour.query.filter_by(period = hour_string).first()
 
 	o1 = Offering.query.filter_by(course = c1, term = t, hour = hour).first()
 	if o1 is None:
@@ -228,7 +229,7 @@ def savecourse():
 		j = jsonify( { 'error' : "Course could not be added" } )
 		return j
 
-	j = jsonify( { 'name' : str(offering), 'hour' : str(offering.get_hour()), 'possible_hours' : offering.get_possible_hours() } )
+	j = jsonify( {'id': offering.id, 'name' : str(offering), 'hour' : str(offering.get_hour()), 'possible_hours' : offering.get_possible_hours() } )
 
 	return j
 
@@ -242,13 +243,13 @@ def swaphour():
 	hour = Hour.query.filter_by(period = request.form['new_hour']).first()
 	success = False
 	if offering is not None:
-		success = g.user.switch_hour(offering, hour)
+		new_id = g.user.switch_hour(offering, hour)
 
-	if not success:
+	if not new_id:
 		j = jsonify( { 'error' : "Course could not be swapped" } )
 		return j
 
-	j = jsonify( { 'name' : str(offering), 'hour' : str(hour), 'possible_hours' : offering.get_possible_hours() } )
+	j = jsonify( {'id': new_id, 'name' : str(offering), 'hour' : str(hour), 'possible_hours' : offering.get_possible_hours() } )
 
 	return j
 
@@ -287,9 +288,11 @@ def getCourseInfo():
 def findterms():
 
 	# Get Course
-	split_course = request.values.get('course').strip().split(" ")
-	d1 = Department.query.filter_by(abbr = split_course[0]).first()
-	c1 = Course.query.filter_by(number = split_course[1], department = d1).first()
+	if request.values.get('offering'):
+
+		c1 = Offering.query.filter_by(id = request.values.get('offering')).first().get_course()
+	else:
+		c1 = Course.query.filter_by(id = request.values.get('course')).first()
 
 	available_user_offerings = Offering.query.filter_by(course = c1, user_added = "Y").all()
 	available_registrar_offerings = Offering.query.filter_by(course = c1, user_added = "N").all()
