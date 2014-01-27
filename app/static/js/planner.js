@@ -96,7 +96,7 @@ function showAvailableSlots(event, ui) {
             $(term_id).prepend('<div class="count">Planned by ' + item[1] + ' ' + other + '</div>');
         });
 
-        $.each(data['user-terms'], function(index, item) {
+        $.each(data['user_terms'], function(index, item) {
             term_id = "#" + item[0];
             if ($(term_id).hasClass('off-term')) {
                 $(term_id).addClass('available-user-off');
