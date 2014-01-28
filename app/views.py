@@ -328,8 +328,8 @@ def swapterm():
 
 	# Get term from database
 	term_name = request.form['term']
-	year = "20" + request.form['term'][:2]
-	season = request.form['term'][2]
+	year = "20" + term_name[:2]
+	season = term_name[2]
 	t1 = Term.query.filter_by(year = year, season = season).first()
 
 	g.user.swap_onterm(t1)

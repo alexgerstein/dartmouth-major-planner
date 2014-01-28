@@ -58,7 +58,7 @@
                                         {% if term == on_term %}
                                             <script>
                                                 $("#{{term}}").removeClass('off-term');
-                                                $("#{{term}} i").text('Off?');
+                                                $("#{{term}}").siblings('li').find('i').text('Off?');
                                             </script>
                                             {% break %}
                                         {% endif %}
@@ -91,7 +91,7 @@
 
     $(document).ready(function() {
         $('.on').click(function() {
-            var btn_id = $(this).parents('ul').attr('id');
+            var btn_id = $(this).parents('.term').find('ul').attr('id');
             swap_term(btn_id);
         });
     });

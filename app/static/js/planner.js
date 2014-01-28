@@ -232,26 +232,26 @@ function swap_term(term){
     // Mark term as off
     if ($(term_id).hasClass('off-term')) {
         $(term_id).removeClass('off-term');
-        $(term_id).find('i').text('Off?');
+        $(term_id).siblings('li').find('i').text('Off?');
     } else {
         if (!confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
-            return;
+            return
         }
 
+        $(term_id).siblings('li').find('i').text('On?');
         $(term_id).addClass('off-term');
-        $(term_id).find('i').text('On?');
     }
 
     var post_opposite = $.post('/swapterm', { term: term });
 
+    post_opposite.success( function (data) {
+        // Remove all courses in term
+        $(term_id + " li").each(function(index, item) {
+            var course = $(item);
 
-    // Remove all courses in term
-    $(term_id + " li:not(.pin)").each(function(index, item) {
-        var course = $(item);
-
-        course.parent().remove();
+            course.parent().remove();
+        })
     })
-
 }
 
 
