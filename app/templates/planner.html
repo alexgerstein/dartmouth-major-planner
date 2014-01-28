@@ -41,12 +41,7 @@
 
             <div class="span9">
                 <div class="termsBlock">
-                    {% if on_terms == [] %}
-                        <div class="row-fluid">
-                            ERROR: Please re-enter graduation year in <a href="/settings/">settings</a>.
-                        </div>
-                    {% endif %}
-
+                    <div class="flash hide"></div>
                     {% for term in terms %}
                         {% if (loop.index + 3) % 4 == 0 %}
                             <div class="row-fluid">

@@ -1,5 +1,13 @@
 var MAX_COURSES = 4
 
+function flash(message) {
+    $(".flash").text("");
+    $(".flash").text(message);
+    $( ".flash" ).show();
+    $(".flash").removeClass('hide');
+    $('.flash').delay(5000).fadeOut(400)
+}
+
 function getHoursUl(possible_hours, hour) {
     var hour_text = '<div class="btn-group"><button class="btn dropdown-toggle btn-mini" data-toggle="dropdown"><i class="selected-hour">' + hour + ' </i><span class="caret"></span></button><ul class="dropdown-menu">'
     $.each(possible_hours, function(key, value) {
@@ -75,6 +83,11 @@ function showAvailableSlots(event, ui) {
     }
 
     $(".progress").removeClass("hide");
+
+    posting.fail(function (data) {
+        $(".progress").addClass("hide");
+        flash("There was an error during your request. Please check your internet connection and try again.")
+    })
 
     posting.done(function (data) {
 
