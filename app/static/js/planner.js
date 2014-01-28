@@ -1,11 +1,13 @@
 var MAX_COURSES = 4
 
-function flash(message) {
+function flash_alert(alert) {
     $(".flash").text("");
-    $(".flash").text(message);
+    $(".flash").text(alert);
+
     $( ".flash" ).show();
     $(".flash").removeClass('hide');
-    $('.flash').delay(5000).fadeOut(400)
+
+    $('.flash').delay(7000).fadeOut(400);
 }
 
 function getHoursUl(possible_hours, hour) {
@@ -31,12 +33,18 @@ function addCourse(term, hour, possible_hours, offering_id, short_name) {
 
     var course_desc = null;
 
-    $.get("/getCourseInfo",
+    var posting = $.get("/getCourseInfo",
         {
             offering: offering_id,
             term: obj.attr('id'),
-        },
-        function(response) {
+        })
+
+    posting.fail (function (response) {
+        flash_alert("There was an error loading the course description. Please try reloading the page.");
+        return
+    })
+
+    posting.done(function(response) {
             $('#' + offering_id).find('.popover-trigger').popover(  {
                 content: response['info'],
                 title: 'Course Info',
@@ -86,7 +94,8 @@ function showAvailableSlots(event, ui) {
 
     posting.fail(function (data) {
         $(".progress").addClass("hide");
-        flash("There was an error during your request. Please check your internet connection and try again.")
+        flash_alert("We seem to be having some technical difficulties. Please check your internet connection and try again.")
+        return
     })
 
     posting.done(function (data) {
@@ -171,6 +180,11 @@ function saveCourse(event, ui) {
         posting = $.post('/savecourse', { course: course_id, term: term_id });
     }
 
+    posting.fail (function (data) {
+        flash_alert("There was an error saving the course. Please check your internet connection and try again.");
+        return
+    })
+
     posting.done(function (data) {
         var senderclass = ui.sender.attr('class');
 
@@ -205,6 +219,11 @@ $(document).on('click', '.dropdown-menu li a', function () {
 
     var posting = $.post('/swaphour', { offering: offering_id, term: term, new_hour: new_hour, hour: course_item.find(".dropdown-toggle").text().split(" ")[0] });
 
+    posting.fail (function (data) {
+        flash_alert("There was an error swapping hours. Please check your internet connection and try again.");
+        return
+    })
+
     posting.done(function (data) {
 
         if (data['error']) {
@@ -231,10 +250,16 @@ function removeCourse(event){
     var posting = $.post('/removecourse',
         { offering: $(this).parents("li").attr("id"),
         term: term_id,
-        hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] },
-        function (data) {
-            that.parents('li').parent().remove();
-        });
+        hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] })
+
+    posting.fail (function (data) {
+        flash_alert("We encountered an issue removing that course. Please check your internet connection and try again.");
+        return
+    })
+
+    posting.done (function (data) {
+        that.parents('li').parent().remove();
+    })
 
 }
 
@@ -242,28 +267,34 @@ function swap_term(term){
 
     var term_id = "#" + term;
 
-    // Mark term as off
-    if ($(term_id).hasClass('off-term')) {
-        $(term_id).removeClass('off-term');
-        $(term_id).siblings('li').find('i').text('Off?');
-    } else {
+    if (!$(term_id).hasClass('off-term')) {
         if (!confirm('Are you sure you would like to mark this term as off? This will remove all listed courses for the term.')) {
             return
         }
-
-        $(term_id).siblings('li').find('i').text('On?');
-        $(term_id).addClass('off-term');
     }
 
     var post_opposite = $.post('/swapterm', { term: term });
 
-    post_opposite.success( function (data) {
+    post_opposite.fail (function (data) {
+        flash_alert("There was an issue with swapping the term. Please check your internet connection and try again.");
+        return;
+    })
+
+    post_opposite.done( function (data) {
         // Remove all courses in term
         $(term_id + " li").each(function(index, item) {
             var course = $(item);
-
             course.parent().remove();
         })
+
+        // Mark term as off
+        if ($(term_id).hasClass('off-term')) {
+            $(term_id).removeClass('off-term');
+            $(term_id).siblings('li').find('i').text('Off?');
+        } else {
+            $(term_id).siblings('li').find('i').text('On?');
+            $(term_id).addClass('off-term');
+        }
     })
 }
 
@@ -281,6 +312,11 @@ function showCourses(){
     if (dept != "-1" || term != "-1" || hour != "-1") {
         $(".classesBlock ul.sortable1").append("<li class='loading'>Loading...</li>");
     }
+
+    getcourses.fail(function (data) {
+        $(".classesBlock ul.sortable1").empty();
+        flash_alert("Oops! We're having trouble displaying the courses. Please check your internet connection and try again.");
+    })
 
     getcourses.done(function (data) {
         $(".classesBlock ul.sortable1").empty();
