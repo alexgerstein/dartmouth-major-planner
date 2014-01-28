@@ -15,7 +15,7 @@ from scrape_timetable import *
 
 # Option to debug scraping by jumping to a page
 curr_orc_shortcut = ""
-old_orcs_shortcut = ""
+old_orcs_shortcut = "fren"
 
 # Add missing pre-defined models to the database
 # store_distribs()
@@ -31,8 +31,8 @@ lock_term_end = Term.query.filter_by(year = timetable_globals.TIMETABLE_LOCK_YEA
 # i.e. fix user error
 remove_erroneous_user_adds()
 
-# Add current ORC
-scrape_curr_orc(lock_term_start, lock_term_end, curr_orc_shortcut)
+# # Add current ORC
+# scrape_curr_orc(lock_term_start, lock_term_end, curr_orc_shortcut)
 
 # Add all old classes
 scrape_old_orcs(lock_term_start, lock_term_end, old_orcs_shortcut)

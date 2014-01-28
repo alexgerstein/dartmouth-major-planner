@@ -496,11 +496,18 @@ def find_starting_abbr(links, start=""):
 	print start
 
 	if (start != ""):
-		for s in links:
-			print s['href']
-			if start in s['href']:
-				abbr_index = links.index(s)
-				break
+		if isinstance(links, dict):
+			for s in links:
+				print s['href']
+				if start in s['href']:
+					abbr_index = links.index(s)
+					break
+		elif isinstance(links, list):
+			for s in links:
+				print s
+				if start in s:
+					abbr_index = links.index(s)
+					break
 
 	return abbr_index
 
@@ -544,10 +551,10 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 	# Loop through all combinations
 	for term in terms_offered:
 
-		# Ignore if ORC data might conflit with the higher-priority timetable
-		if term.in_range(lock_term_start, lock_term_end):
-			print_alert("IGNORED: " + str(course) + " in " + str(term))
-			continue
+		# # Ignore if ORC data might conflit with the higher-priority timetable
+		# if term.in_range(lock_term_start, lock_term_end):
+		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
+		# 	continue
 
 		# Add "ARR" as hour offered if offered
 		# every term, but at an unspecified time

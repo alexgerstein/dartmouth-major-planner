@@ -6,15 +6,17 @@ from bs4 import Comment
 
 # List of all departments missed in scraping of the ORL
 # Format: URLs, Abbreviation, Name
-MISSED_UG_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/LAT-Latin', 'LAT', 'Latin'], 
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/CLST-Classical-Studies', 'CLST', 'Classical Studies'], 
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/GRK-Greek', 'GRK', 'Greek'], 
+MISSED_UG_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/LAT-Latin', 'LAT', 'Latin'],
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/CLST-Classical-Studies', 'CLST', 'Classical Studies'],
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/GRK-Greek', 'GRK', 'Greek'],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/ARAB-Arabic', "ARAB", "Arabic"],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/CHIN-Chinese', "CHIN", "Chinese"],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/HEBR-Hebrew', "HEBR", "Hebrew"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/JAPN-Japanese', "JAPN", "Japanese"], 
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/JAPN-Japanese', "JAPN", "Japanese"],
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/French-and-Italian-Languages-and-Literatures/ITAL-Italian', 'ITAL', 'Italian'],
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/French-and-Italian-Languages-and-Literatures/FRIT-French-and-Italian-in-Translation', "FRIT", 'French and Italian in Translation'],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/The-Nelson-A-Rockefeller-Center-for-Public-Policy/Public-Policy-Minor/PBPL-Public-Policy', 'PBPL', 'Public Policy'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/WRIT-Writing', 'WRIT', 'Writing'], 
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/WRIT-Writing', 'WRIT', 'Writing'],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/SPEE-Speech', 'SPEE', 'Speech'],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Humanities/HUM-Humanities', 'HUM', "Humanities"],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Physics-and-Astronomy/PHYS-Physics-Undergraduate', 'PHYS', "Physics"],
@@ -43,17 +45,17 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 	# Convert the page to BeautifulSoup
 	r = requests.get(url)
 	info_soup = BeautifulSoup(r.content.decode("utf-8"), "lxml")
-	
+
 	# Search the main section of the page
 	info_soup = info_soup.find( 'div', {"id" : "rightpanel"})
 	if (info_soup):
 		info_soup = info_soup.find('div', {'id': 'main'})
-		
+
 		if (info_soup):
-			# scripts can be executed from comments in some cases  
-			comments = info_soup.findAll(text=lambda text:isinstance(text, Comment))  
-			for comment in comments:  
-		   		comment.extract()  
+			# scripts can be executed from comments in some cases
+			comments = info_soup.findAll(text=lambda text:isinstance(text, Comment))
+			for comment in comments:
+		   		comment.extract()
 
 	if info_soup is not None:
 
@@ -71,7 +73,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 		# 	# Check if distrib or WC for each word in section
 		# 	for dist in dists:
 		# 		stripped_dist = re.sub('^[^a-zA-z]*|[^a-zA-Z]*$','',dist)
-				
+
 		# 		# Add to offering if distrib
 		# 		possible_distrib = Distrib.query.filter_by(distributive = stripped_dist).first()
 		# 		if possible_distrib:
@@ -86,7 +88,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 		# Check for department in database
 		d1 = Department.query.filter_by(abbr = dept_abbr).first()
 		if (d1 is None):
-			
+
 			# Remove Undergrad/Grad distinctions in depts
 			if "Undergraduate" in dept_name:
 				dept_name = dept_name.strip("Undergraduate")
@@ -111,9 +113,9 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 		# Add offerings to course
 		offering_info = info_soup.find('div', {'id' : "offered"})
 		if offering_info is None:
-			
+
 			# If no section for offerings on page, check if it's a topics
-			# course with numerous sections. 
+			# course with numerous sections.
 			scan_topics_offerings(info_soup, c1, d1, year, lock_term_start, lock_term_end)
 
 		else:
@@ -130,13 +132,13 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 	r = requests.get(url)
 	listing_soup = BeautifulSoup(r.content, from_encoding=r.encoding)
 
-	# Find the section of the page with course listings 
+	# Find the section of the page with course listings
 	course_list = listing_soup.find( 'ul', { "class" : 'sc-child-item-links' } )
 	print dept_abbr + ' - ' + dept_name
-	
+
 	# Loop through course links
 	for course in course_list.find_all('a'):
-		
+
 		# Split link into name and number components
 		course_to_ascii = course.text.replace(u'\xa0', u' ')
 		course_split = course_to_ascii.split(' ')
@@ -155,12 +157,12 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 		print "Number: " + str(course_number.group(0))
 		print "Name: " + unicodedata.normalize('NFKD', u" ".join(course_name)).encode('ascii', 'ignore')
 
-		# Store the course in the database 
+		# Store the course in the database
 		store_course_info(BASE_URL + course['href'], float(course_number.group(0)), " ".join(course_name), dept_abbr, dept_name, year, lock_term_start, lock_term_end)
 
 # Search through the courses in each department's listing
 def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):
-	
+
 	for link in links:
 
 		right_panel = get_link_rightpanel(BASE_URL + link['href'])
@@ -168,18 +170,18 @@ def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):
 		if (link != None and url_ext in link['href']):
 			link_breakdown = link['href'].split('/')
 			last_link = link_breakdown[-1].split('-')
-			if ('Requirements' not in last_link[-1] 
-				and 'Policy' not in last_link[-1] 
-				and not is_number(last_link[-1]) 
-				and 'Course' not in last_link[-2] 
-				and 'Major' not in last_link[-2] 
+			if ('Requirements' not in last_link[-1]
+				and 'Policy' not in last_link[-1]
+				and not is_number(last_link[-1])
+				and 'Course' not in last_link[-2]
+				and 'Major' not in last_link[-2]
 				and 'Neuroscience' not in last_link[-1]):
 
 				search_courses(BASE_URL + link['href'], last_link[0], " ".join(last_link[1:]), year, lock_term_start, lock_term_end)
 
 # Main function for scraping the current ORC
 def scrape_college_orc(url_ext, lock_term_start, lock_term_end, start_dept_name):
-	
+
 	# Use CSS formatting to find each department's link
 	department_list = get_link_rightpanel(BASE_URL + url_ext)
 
@@ -197,7 +199,7 @@ def scrape_college_orc(url_ext, lock_term_start, lock_term_end, start_dept_name)
 
 	return int(year)
 
-	
+
 
 def scrape_curr_orc(lock_term_start, lock_term_end, start_dept_name = ""):
 	scrape_college_orc(UG_DEPT_URL, lock_term_start, lock_term_end, start_dept_name)

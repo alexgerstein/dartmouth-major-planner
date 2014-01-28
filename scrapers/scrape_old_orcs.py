@@ -74,6 +74,21 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 
 			dept = Department.query.filter_by(abbr = abbreviation).first()
 
+		# Adjust for French and Italian departments
+		if old_dept.abbr == "FREN":
+			actual_department = title.findPreviousSibling('p', { "class" : "subsectitle" })
+			if actual_department:
+				if "TRANSLATION" in actual_department.text:
+					abbreviation = "FRIT"
+				elif "CLUB" in actual_department.text:
+					continue
+				elif "ITALIAN" in actual_department.text:
+					abbreviation = "ITAL"
+				elif "FRENCH" in actual_department.text:
+					abbreviation = "FREN"
+
+				dept = Department.query.filter_by(abbr = abbreviation).first()
+
 		print "Number: " + str(course_number.group(0))
 		if isinstance(course_name, unicode):
 			print "Name: " + unicodedata.normalize('NFKD', course_name).encode('ascii', 'ignore')
@@ -123,7 +138,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 
 		# For each list of offerings of the course, add to the database
 		while ("courseoffered" in offerings['class']):
-			
+
 			# Split the offering into a list of each word
 			offering_split = offerings.text.split(" ")
 
@@ -134,7 +149,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			offering_html += offerings.text + "<br>"
 			description = offerings.findNext('p', {'class': 'coursedescptnpar'})
 			while (description is not None) and (description['class'] == ['coursedescptnpar']):
-				
+
 				# Append description and look for another
 				offering_html += description.text + "<br>"
 				description = description.findNext("p")
@@ -173,7 +188,7 @@ def add_offerings_by_headers(soup, dept):
 
 # Scrape a department's courses and offerings off its "Courses" page
 def get_old_courses(url, dept, lock_term_start, lock_term_end):
-	
+
 	# Convert page to BeautifulSoup
 	r = requests.get(url)
 	soup = BeautifulSoup(r.content.decode("utf-8"), "lxml")
@@ -198,20 +213,20 @@ def get_old_courses(url, dept, lock_term_start, lock_term_end):
 	else:
 		add_offerings_by_headers(soup, d1)
 
-# Main function for scraping the archived ORCs 
+# Main function for scraping the archived ORCs
 def scrape_old_orcs(lock_term_start, lock_term_end, start_abbr = ""):
-	
+
 	# Use CSS formatting to find each department's link
 	old_orc_links = get_old_links(PAST_BASE_URL)
 	links = get_old_course_links(old_orc_links)
-	
+
 	# The oldest three archived ORCs have different CSS styling than the others. Leave them be.
 	for link in links[len(links) - 3:]:
 		continue
 
 	# Get and scrape each department's listings for the other ORCs
 	for link in links[:len(links) - 3]:
-		
+
 		# Trim off the excess '/~regarchive' of each link
 		trim_link = link[12:]
 
@@ -231,9 +246,9 @@ def scrape_old_orcs(lock_term_start, lock_term_end, start_abbr = ""):
 		# If debugging the scraping, find debugger's starting department
 		shortened_index = find_starting_abbr(course_links, start_abbr)
 
-		# For each course listings link, go to deptartment's 'Courses' page 
+		# For each course listings link, go to deptartment's 'Courses' page
 		# and scrape
-		for course_link in course_links[shortened_index:]:		
+		for course_link in course_links[shortened_index:]:
 
 			department = course_link.split("/")
 			dept_abbr = department[len(department) - 1].split(".")[0].upper()
