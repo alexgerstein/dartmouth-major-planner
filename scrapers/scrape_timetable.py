@@ -22,7 +22,7 @@ HOUR_COL = 7
 def url_to_html_str(url):
     # Setup the header and request settings
     txheaders =  {'User-agent' : 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'}
-    
+
     # Get the request
     req = urllib2.Request(url, None, txheaders)
     handle = urllib2.urlopen(req)
@@ -34,7 +34,7 @@ def html_to_soup(html):
     soup = BeautifulSoup(html.decode("utf-8"), features="html5lib")
     return soup
 
-# Import the courses to the database by row 
+# Import the courses to the database by row
 def parse_soup(soup, search_term):
 
     # Narrow the page down to the table itself
@@ -65,7 +65,7 @@ def parse_soup(soup, search_term):
                 term = Term.query.filter_by(year = year, season = season).first()
                 if term == None:
                     break
-            
+
             # Store the department of course
             elif index == DEPT_COL:
                 dept = Department.query.filter_by(abbr = value.text.strip(" ")).first()
@@ -106,8 +106,16 @@ def parse_soup(soup, search_term):
             elif index == HOUR_COL:
                 hour = value.text.replace(u'\xa0', u' ')
 
-                if hour.strip(" ") == "AR":
+                if "AR" in hour.strip(" ").upper():
                     hour = "Arrange"
+
+                if "F.S.P" in hour.strip(" ") \
+                or "FSP" in hour.strip(" "):
+                    hour = "FS"
+
+                if "L.S.A" in hour.strip(" ") \
+                or "LSA" in hour.strip(" "):
+                    hour = "LS"
 
                 period = Hour.query.filter_by(period = hour.strip(" ")).first()
                 if period is None:
@@ -119,12 +127,12 @@ def parse_soup(soup, search_term):
         if ((search_term == None) or (term == search_term)) and dept and (number is not None) and (section is not "") and title and ( title is not "") and period:
 
             course = Course.query.filter_by(department = dept, number = float(number)).first()
-            
+
             # If initial search for course fails, check if it's a topics course
             if not course and section:
                 course = Course.query.filter_by(department = dept, number = float(number + "." + str(section))).first()
 
-            # Otherwise, add the course. It's not ideal to take these course 
+            # Otherwise, add the course. It's not ideal to take these course
             # names since they're often abbreviated, but it will have to do.
             if not course:
                 course = Course(department = dept.id, number = float(number), name = title)
@@ -152,7 +160,7 @@ def parse_soup(soup, search_term):
 
             offering.mark("F")
 
-            # Mark for removal all non-final offerings of the term. If they're still in 
+            # Mark for removal all non-final offerings of the term. If they're still in
             # the timetable, they'll be marked as F again
             old_offerings = Offering.query.filter_by(course = course, term = term).all()
             for old_offering in old_offerings:

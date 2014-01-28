@@ -1,6 +1,6 @@
-# scrape_all.py
+# scrape_edit.py
 # Alex Gerstein
-# Main file to scrape all sources of course info.
+# File to run database fixes quickly.
 
 # Add app directory to path
 import sys
@@ -13,44 +13,52 @@ from scrape_curr_orc import *
 from scrape_old_orcs import *
 from scrape_timetable import *
 
+dfsp = Hour.query.filter_by(period = "D.F.S.P").first()
+if dfsp:
+    dfsps = Offering.query.filter_by(hour_id = dfsp.id).all()
 
-# # Check DARTPlan student enrollment
-# dept = Department.query.filter_by(abbr = "COSC").first()
-# print dept
+    fs = Hour.query.filter_by(period = "FS").first()
+    for offering in dfsps:
+        offering.change_period(fs)
 
-# course = Course.query.filter_by(department = dept, number = "76").first()
-# print course
+    db.session.delete(dfsp)
 
-# term = Term.query.filter_by(season = "W", year = "2014").first()
-# print term
+fsp = Hour.query.filter_by(period = "FSP").first()
+if fsp:
+    fsps = Offering.query.filter_by(hour_id = fsp.id).all()
 
-# offering = Offering.query.filter_by(course = course, term = term).first()
-# print offering
+    fs = Hour.query.filter_by(period = "FS").first()
+    for offering in fsps:
+        offering.change_period(fs)
 
-# print User.query.filter(User.courses.contains(offering)).count()
+    db.session.delete(fsp)
 
-#
-# Most popular offerings
-#
-print Offering.query.order_by('users').all()
+dlsa = Hour.query.filter_by(period = "D.L.S.A").first()
+if dlsa:
+    dlsas = Offering.query.filter_by(hour_id = dlsa.id).all()
 
-# 
-# Check students with more than X courses
-# 
-users = User.query.filter(User.courses.any(), User.grad_year != 2016, User.grad_year != 2017).all()
-course_count = {}
-for user in users:
-	count = user.courses.count()
-	if count in course_count:
-		course_count[count] += 1
-	else:
-		course_count[count] = 1
+    ls = Hour.query.filter_by(period = "LS").first()
+    for offering in dlsas:
+        offering.change_period(ls)
 
-print "Course Count => Frequency"
-for k,v in sorted(course_count.items()):
-	bar = str(k) + ": "
+    db.session.delete(dlsa)
 
-	for i in range(v):
-		bar += "."
+lsa = Hour.query.filter_by(period = "LSA").first()
+if lsa:
+    lsas = Offering.query.filter_by(hour_id = lsa.id).all()
 
-	print bar
+    ls = Hour.query.filter_by(period = "LS").first()
+    for offering in lsas:
+        offering.change_period(ls)
+
+    db.session.delete(lsa)
+
+ar = Hour.query.filter_by(period = "AR").first()
+if ar:
+    ars = Offering.query.filter_by(hour_id = ar.id).all()
+
+    arrange = Hour.query.filter_by(period = "Arrange").first()
+    for offering in ars:
+        offering.change_period(arrange)
+
+    db.session.delete(ar)

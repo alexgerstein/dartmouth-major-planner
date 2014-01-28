@@ -149,6 +149,10 @@ def donate():
 def contribute():
 	return render_template("contribute.html")
 
+@app.route('/about/disclaimer')
+def disclaimer():
+	return render_template("disclaimer.html")
+
 # Planner page for signed in users
 # Landing Page for All Users, most will be redirected to login form
 @app.route('/planner', methods = ['GET'])
