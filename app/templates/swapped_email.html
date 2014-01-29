@@ -1,0 +1,12 @@
+<h1><img src="{{ url_for('static', filename='favicon.ico', _external = True) }}" style="width: 25px; height: 25px;"><b>DART</b>Plan</p></h1>
+
+<p>Hey {{user.nickname.split(" ")[0]}},</p>
+
+<p>It doesn't look like {{offering}} is being offered as a {{hour}} during {{term}} anymore. On the bright side, it seems to be a {{new_offering.get_hour()}}. We made this switch for you, but you might want to check that the new time does not conflict with your other classes.</p>
+
+<p>Find your options at <a href="www.dartplan.com">dartplan.com</a>.</p>
+
+<p>Regards,</p>
+
+<p>Alex Gerstein<br/>
+<a href="www.dartplan.com">dartplan.com</a></p>

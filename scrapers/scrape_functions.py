@@ -532,12 +532,27 @@ def remove_deleted_offerings(timetable_globals):
 		# Ignore if ORC data from the higher-priority timetable
 		if offering.get_term() is not None:
 			if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
-				users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
+				emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
+				all_users = User.query.filter(User.courses.contains(offering)).all()
 
-				emails.deleted_offering_notification(users, offering, offering.get_term(), offering.get_hour())
+				# Determine if course is offered at another time during the term
+				other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.hour_id != offering.hour_id).first()
+				if other_time:
+					for user in all_users:
+						user.drop(offering)
+						user.take(other_time)
 
-				print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
+					emails.swapped_course_times(emailed_users, offering, other_time)
+					print_alert("SWAPPED: " + repr(offering.get_term()) + " " + repr(offering) + "at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
+				else:
+					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
+
+					for user in all_users:
+						user.drop(offering)
+
 				db.session.delete(offering)
+				db.session.commit()
 
 	db.session.commit()
 	remove_course_marks()
