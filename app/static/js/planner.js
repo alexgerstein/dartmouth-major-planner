@@ -192,7 +192,7 @@ function saveCourse(event, ui) {
 
         if (senderclass.indexOf('sortable2') >= 0) {
             var course_hour = ui.sender.find('li:contains(' + data['name'] + ')').find('.selected-hour').text();
-        	var postremove = $.post('/removecourse', { offering: course_id, term: ui.sender.attr('id'), hour: course_hour.split(' ')[0] })
+        	var postremove = $.post('/removecourse', { offering: course_id, term: ui.sender.attr('id'), hour: $.trim(course_hour) })
 
     		$("#" + ui.sender.attr('id') + " li").each(function(index, li) {
     			var course = $(li);
