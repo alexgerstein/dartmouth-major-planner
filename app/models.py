@@ -6,13 +6,13 @@ SEASONS = ["W", "S", "X", "F"]
 
 
 user_course = db.Table('user_course',
-	db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete="CASCADE")),
-	db.Column('offering_id', db.Integer, db.ForeignKey('offering.id', ondelete="CASCADE"))
+	db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+	db.Column('offering_id', db.Integer, db.ForeignKey('offering.id'))
 )
 
 user_terms = db.Table("user_terms",
-	db.Column('user_id', db.Integer, db.ForeignKey("user.id", ondelete="CASCADE")),
-	db.Column("term_id", db.Integer, db.ForeignKey("term.id", ondelete="CASCADE"))
+	db.Column('user_id', db.Integer, db.ForeignKey("user.id")),
+	db.Column("term_id", db.Integer, db.ForeignKey("term.id"))
 )
 
 class User(db.Model):
@@ -32,7 +32,7 @@ class User(db.Model):
 
 	courses = db.relationship('Offering',
 		secondary=user_course,
-		passive_deletes=True,
+		backref ='users',
 		lazy = 'dynamic')
 
 	def __init__(self, full_name, netid):
