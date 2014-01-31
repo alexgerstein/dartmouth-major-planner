@@ -244,8 +244,8 @@ $(document).on('click', '.dropdown-menu li a', function () {
 function removeCourse(event){
     var that = $ (event.target)
     var term_id = that.parents('ul').attr('id');
-    var offering = that.parents("li").attr("id")
-    var hour = that.parents("li").find(".dropdown-toggle").text().split(" ")[0]
+    var offering = that.parents("li").attr("id");
+    var hour = $.trim(that.parents("li").find(".selected-hour").text());
 
     var posting = $.post('/removecourse',
         { offering: offering,

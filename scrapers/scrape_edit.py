@@ -22,6 +22,7 @@ if dfsp:
         offering.change_period(fs)
 
     db.session.delete(dfsp)
+    db.session.commit()
 
 fsp = Hour.query.filter_by(period = "FSP").first()
 if fsp:
@@ -32,6 +33,8 @@ if fsp:
         offering.change_period(fs)
 
     db.session.delete(fsp)
+    db.session.commit()
+
 
 dlsa = Hour.query.filter_by(period = "D.L.S.A").first()
 if dlsa:
@@ -42,6 +45,8 @@ if dlsa:
         offering.change_period(ls)
 
     db.session.delete(dlsa)
+    db.session.commit()
+
 
 lsa = Hour.query.filter_by(period = "LSA").first()
 if lsa:
@@ -52,6 +57,8 @@ if lsa:
         offering.change_period(ls)
 
     db.session.delete(lsa)
+    db.session.commit()
+
 
 ar = Hour.query.filter_by(period = "AR").first()
 if ar:
@@ -62,3 +69,5 @@ if ar:
         offering.change_period(arrange)
 
     db.session.delete(ar)
+    db.session.commit()
+

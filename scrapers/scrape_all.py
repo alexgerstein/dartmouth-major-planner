@@ -11,6 +11,7 @@ from app import app
 
 from scrape_curr_orc import *
 from scrape_old_orcs import *
+from scrape_department_pages import *
 from scrape_timetable import *
 
 # Option to debug scraping by jumping to a page
@@ -36,6 +37,9 @@ scrape_curr_orc(lock_term_start, lock_term_end, curr_orc_shortcut)
 
 # Add all old classes
 scrape_old_orcs(lock_term_start, lock_term_end, old_orcs_shortcut)
+
+# Add courses from department pages
+scrape_department_pages(lock_term_start, lock_term_end)
 
 # Add current timetable, usurping any previous new entries
 scrape_timetable()
