@@ -34,6 +34,9 @@ remove_erroneous_user_adds()
 # Add current ORC
 scrape_curr_orc(lock_term_start, lock_term_end, curr_orc_shortcut)
 
+# Add courses from department pages
+scrape_department_pages(lock_term_start, lock_term_end)
+
 # Add current timetable, usurping any previous new entries
 scrape_timetable()
 
