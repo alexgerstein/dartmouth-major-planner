@@ -27,9 +27,7 @@ function addCourse(term, hour, possible_hours, offering_id, short_name) {
 
     var hour_text = getHoursUl(possible_hours, hour);
 
-    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + offering_id + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons">' + hour_text + '<i class="btn btn-danger btn-small hidden-phone"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-info-sign"></i></span> </div> </div> </li> </div> </div>');
-
-    $('i.btn-danger').click(removeCourse);
+    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + offering_id + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons">' + hour_text + '<i class="btn btn-danger btn-small hidden-phone" onclick="removeCourse(event)"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-info-sign"></i></span> </div> </div> </li> </div> </div>');
 
     var course_desc = null;
 
@@ -244,13 +242,15 @@ $(document).on('click', '.dropdown-menu li a', function () {
 });
 
 function removeCourse(event){
-    var that = $ (this)
+    var that = $ (event.target)
     var term_id = that.parents('ul').attr('id');
+    var offering = that.parents("li").attr("id")
+    var hour = that.parents("li").find(".dropdown-toggle").text().split(" ")[0]
 
     var posting = $.post('/removecourse',
-        { offering: $(this).parents("li").attr("id"),
+        { offering: offering,
         term: term_id,
-        hour: $(this).parents("li").find(".dropdown-toggle").text().split(" ")[0] })
+        hour:  hour})
 
     posting.fail (function (data) {
         flash_alert("We encountered an issue removing that course. Please check your internet connection and try again.");
