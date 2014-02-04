@@ -534,7 +534,7 @@ def remove_deleted_offerings(timetable_globals):
 			updated_offering = Offering.query.filter(Offering.course_id == alt_course.id, Offering.term_id == offering.term_id).first()
 			for user in all_users:
 				user.drop(offering)
-				user_take(updated_offering)
+				user.take(updated_offering)
 
 			print_alert("UPDATED NAME: " + repr(offering_course.name) + " to " + repr(alt_course.name))
 			db.session.delete(offering)
