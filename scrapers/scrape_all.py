@@ -22,6 +22,7 @@ old_orcs_shortcut = ""
 # store_distribs()
 store_hours()
 store_terms()
+store_distribs()
 
 # Set current range of timetable
 timetable_globals = Timetable()
@@ -32,7 +33,7 @@ lock_term_end = Term.query.filter_by(year = timetable_globals.TIMETABLE_LOCK_YEA
 # i.e. fix user error
 remove_erroneous_user_adds()
 
-# # Add current ORC
+# Add current ORC
 scrape_curr_orc(lock_term_start, lock_term_end, curr_orc_shortcut)
 
 # Add all old classes

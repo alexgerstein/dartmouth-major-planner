@@ -17,6 +17,7 @@ NUM_COL = 3
 SEC_COL = 4
 TITLE_COL = 5
 HOUR_COL = 7
+DIST_COL = 12
 
 # Get the timetable's html
 def url_to_html_str(url):
@@ -54,6 +55,7 @@ def parse_soup(soup, search_term):
         number = None
         title = None
         hour = None
+        distribs = []
 
         for index, value in enumerate(row.findAll('td')):
 
@@ -123,14 +125,24 @@ def parse_soup(soup, search_term):
                     db.session.add(period)
                     db.session.commit()
 
+            elif index == DIST_COL:
+                distrib_split = value.text.split(" ")
+                for distrib in distrib_split:
+                    stripped_dist = re.match(r'\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b', distrib)
+
+                    if stripped_dist:
+                        possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
+                        if possible_distrib:
+                            distribs.append(possible_distrib)
+
 
         if ((search_term == None) or (term == search_term)) and dept and (number is not None) and (section is not "") and title and ( title is not "") and period:
 
-            course = Course.query.filter_by(department = dept, number = float(number)).first()
+            course = Course.query.filter(Course.department == dept, Course.number == float(number)).first()
 
             # If initial search for course fails, check if it's a topics course
             if not course and section:
-                course = Course.query.filter_by(department = dept, number = float(number + "." + str(section))).first()
+                course = Course.query.filter(Course.department == dept, Course.number == float(number + "." + str(section))).first()
 
             # Otherwise, add the course. It's not ideal to take these course
             # names since they're often abbreviated, but it will have to do.
@@ -159,6 +171,10 @@ def parse_soup(soup, search_term):
                 print str(offering)
 
             offering.mark("F")
+
+            for distrib in distribs:
+                offering.add_distrib(distrib)
+                db.session.commit()
 
             # Mark for removal all non-final offerings of the term. If they're still in
             # the timetable, they'll be marked as F again

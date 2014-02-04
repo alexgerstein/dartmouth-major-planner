@@ -32,8 +32,17 @@ def scrape_anthropology_course_page(dept_abbreviation, department_course_page, l
 
         description = offering_soup.find_next_sibling('p')
 
+        distribs = []
+        split_description = description.text.split(" ")
+        for word in split_description:
+            stripped_dist = re.match(r"\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b", word)
+            if stripped_dist:
+                        possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
+                        if possible_distrib:
+                            distribs.append(possible_distrib)
+
         department = Department.query.filter_by(abbr = dept_abbreviation).first()
-        course = Course.query.filter_by(department = department, number = number).first()
+        course = Course.query.filter(Course.department == department, Course.name.contains(title), Course.number == number).first()
         if course is None:
 
             course = Course(number = number, name = title, department = department.id)
@@ -43,12 +52,10 @@ def scrape_anthropology_course_page(dept_abbreviation, department_course_page, l
 
         print number, title
 
-        store_offerings(offerings, course, department, course_view, date.today().year, course_view.prettify(), lock_term_start, lock_term_end)
+        store_offerings(offerings, course, department, distribs, course_view, date.today().year, course_view.prettify(), lock_term_start, lock_term_end)
 
 def scrape_anthropology_department_site(dept_abbreviation, department_course_page, lock_term_start, lock_term_end):
     scrape_anthropology_course_page(dept_abbreviation, department_course_page, lock_term_start, lock_term_end)
 
 def scrape_department_pages(lock_term_start, lock_term_end):
     scrape_anthropology_department_site(ANTH_COURSE_PAGE[1], ANTH_COURSE_PAGE[0], lock_term_start, lock_term_end)
-
-scrape_department_pages(None, None)

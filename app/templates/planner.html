@@ -16,15 +16,23 @@
                         {{dept_form.hidden_tag()}}
                         {{dept_form.dept_name}}
                     </form>
+                    <br/>
                     Term:
                     <form action="" method="post" name="add">
                         {{term_form.hidden_tag()}}
                         {{term_form.term_name}}
                     </form>
+                    <br/>
                     Hour:
                     <form action="" method="post" name="add">
                         {{hour_form.hidden_tag()}}
                         {{hour_form.hour_name}}
+                    </form>
+                    <br/>
+                    Distrib:
+                    <form action="" method="post" name="add">
+                        {{distrib_form.hidden_tag()}}
+                        {{distrib_form.distrib_name}}
                     </form>
 
                     <div class="classesBlock">
@@ -109,6 +117,10 @@
     });
 
     $("#term_name").change(function () {
+        showCourses();
+    });
+
+    $("#distrib_name").change(function () {
         showCourses();
     });
 

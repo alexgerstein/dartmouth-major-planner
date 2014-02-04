@@ -22,7 +22,7 @@ class EditForm(Form):
 	def __init__(self, original_nickname, *args, **kwargs):
 		Form.__init__(self, *args, **kwargs)
 		self.original_nickname = original_nickname
-		
+
 
 class DeptPickerForm(Form):
 	dept_name = SelectField('Department', coerce=int)
@@ -31,7 +31,7 @@ class DeptPickerForm(Form):
 
 		if self.dept_name.data == -1:
 			return False
-			
+
 		return True
 
 class HourPickerForm(Form):
@@ -41,7 +41,7 @@ class HourPickerForm(Form):
 
 		if self.hour_name.data == -1:
 			return False
-			
+
 		return True
 
 class TermPickerForm(Form):
@@ -51,5 +51,15 @@ class TermPickerForm(Form):
 
 		if self.term_name.data == -1:
 			return False
-			
+
+		return True
+
+class DistribPickerForm(Form):
+	distrib_name = SelectField('Distrib', coerce=int)
+
+	def validate(self):
+
+		if self.distrib_name.data == -1:
+			return False
+
 		return True

@@ -101,7 +101,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			continue
 
 		# Look for the course in the database by department
-		course = Course.query.filter_by(number = float(course_number.group(0)), department_id = dept.id).first()
+		course = Course.query.filter(Course.number == float(course_number.group(0)), Course.name.contains(course_name), Course.department_id == dept.id).first()
 		if not (is_number(course_number.group(0))) and (course is None):
 			dept = old_dept
 			continue
@@ -136,7 +136,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 				offerings['class'] = 'courseoffered'
 				print offerings['class']
 
-		# For each list of offerings of the course, add to the database
+		# For each list of offerings of the course, add info and distribs to the database
 		while ("courseoffered" in offerings['class']):
 
 			# Split the offering into a list of each word
@@ -145,10 +145,22 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			print course
 			print offerings
 
+			distribs = []
+
 			# Concatenate listing from orc page
 			offering_html += offerings.text + "<br>"
 			description = offerings.findNext('p', {'class': 'coursedescptnpar'})
 			while (description is not None) and (description['class'] == ['coursedescptnpar']):
+
+				# Add distribs as they appear in the description
+				desc_words = description.text.split(" ")
+				for word in desc_words:
+					stripped_dist = re.match(r"\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b", word)
+
+					if stripped_dist:
+						possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
+						if possible_distrib:
+							distribs.append(possible_distrib)
 
 				# Append description and look for another
 				offering_html += description.text + "<br>"
@@ -165,7 +177,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 					break
 
 			# Iterate through the list of words, storing each offering
-			store_offerings(offering_split, course, dept, soup, year, offering_html, lock_term_start, lock_term_end)
+			store_offerings(offering_split, course, dept, distribs, soup, year, offering_html, lock_term_start, lock_term_end)
 
 			# Step to next set of offerings
 			offerings = offerings.findNext("p")
@@ -177,6 +189,9 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 				continue
 			else:
 				break
+
+		# Add distribs
+		distributives = offerings.findNext("p", { 'class': 'coursedescptnpar' })
 
 		dept = old_dept
 

@@ -59,32 +59,6 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 
 	if info_soup is not None:
 
-		# # Initialize Distribs
-		# course_distributives = []
-		# course_wc = None
-
-		# # Search distributive section of listing
-		# distrib_info = info_soup.find('div', {'id' : "distribution"})
-		# if distrib_info is not None:
-
-		# 	distrib_info = distrib_info.text[12:]
-		# 	dists = distrib_info.split(" ")
-
-		# 	# Check if distrib or WC for each word in section
-		# 	for dist in dists:
-		# 		stripped_dist = re.sub('^[^a-zA-z]*|[^a-zA-Z]*$','',dist)
-
-		# 		# Add to offering if distrib
-		# 		possible_distrib = Distrib.query.filter_by(distributive = stripped_dist).first()
-		# 		if possible_distrib:
-		# 			course_distributives.append(possible_distrib)
-		# 			continue
-
-		# 		# Add to offering if WC
-		# 		possible_wc = Wc.query.filter_by(wc = stripped_dist).first()
-		# 		if possible_wc:
-		# 			course_wc = possible_wc
-
 		# Check for department in database
 		d1 = Department.query.filter_by(abbr = dept_abbr).first()
 		if (d1 is None):
@@ -102,13 +76,33 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 			db.session.commit()
 
 		# Check if course already exists. Add if not.
-		c1 = Course.query.filter_by(number = course_number, name = course_name, department = d1).first()
+		c1 = Course.query.filter(Course.number == course_number, Course.name.contains(course_name), Course.department == d1).first()
 		if (c1 is None):
 
 			c1 = Course(number = course_number, name = course_name, department = d1.id)
 
 			db.session.add(c1)
 			db.session.commit()
+
+		# Initialize Distribs
+		course_distributives = []
+
+		# Search distributive section of listing
+		distrib_info = info_soup.find('div', {'id' : "distribution"})
+		if distrib_info is not None:
+
+			distrib_info = distrib_info.text[12:]
+			dists = distrib_info.split(" ")
+
+			# Check if distrib or WC for each word in section
+			for dist in dists:
+				stripped_dist = re.match(r'\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b', dist)
+
+				# Add to offering if distrib
+				if stripped_dist:
+					possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
+					if possible_distrib:
+						course_distributives.append(possible_distrib)
 
 		# Add offerings to course
 		offering_info = info_soup.find('div', {'id' : "offered"})
@@ -122,7 +116,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 			offering_info = offering_info.text[7:]
 			offerings = offering_info.split(" ")
 
-			store_offerings(offerings, c1, d1, info_soup, year, info_soup.prettify(), lock_term_start, lock_term_end)
+			store_offerings(offerings, c1, d1, course_distributives, info_soup, year, info_soup.prettify(), lock_term_start, lock_term_end)
 
 
 # Seach through the course page for each listing on the department's course listing page

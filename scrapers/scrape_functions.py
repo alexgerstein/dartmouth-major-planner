@@ -14,12 +14,12 @@ from html5lib import HTMLParser, treebuilders
 import unicodedata
 from bs4 import BeautifulSoup
 import requests
-import re
+import re, string
 
 from app import emails
 
 from app import db
-from app.models import User, Offering, Course, Department, Hour, Term
+from app.models import User, Offering, Course, Department, Hour, Term, Distributive
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
@@ -30,9 +30,8 @@ GRAD_DEPT_URL = "/en/2013/orc/Departments-Programs-Graduate"
 TIMETABLE_BASE = "http://oracle-www.dartmouth.edu/dart/groucho/timetable.subject_search?distribradio=alldistribs&subjectradio=allsubjects&termradio=selectterms&hoursradio=allhours&terms=no_value&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&sortorder=dept&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=Subject+Area(s)"
 SEASON_MONTH = {"01": "W", "03": "S", "06": "X", "09": "F"}
 
-# # Distributives and World Culture Abbreviations
-# DISTRIBS = ["ART", "LIT", "TMV", "INT", "SOC", "QDS", "SCI", "SLA", "TAS", "TLA"]
-# WCS = ["W", "NW", "CI"]
+# Distributives and World Culture Abbreviations
+DISTRIBS = ["ART", "CI", "INT", "LIT", "NW", "QDS", "SCI", "SLA", "SOC", "TAS", "TLA", "TMV", "W"]
 
 # Hours and Seasons
 HOURS = ["?", "8", "9", "9L", "9S", "10",  "11", "12", "2", "10A", "2A", "3A", "3B", "Arrange", "Check", "8AM-9:50AM", "7pm", "FS", "LS", "1"]
@@ -90,17 +89,10 @@ def remove_erroneous_user_adds():
 # Add all missing distribs and World Cultures to the database
 def store_distribs():
 	for distrib in DISTRIBS:
-		dist1 = Distrib.query.filter_by(distributive = distrib).first()
+		dist1 = Distributive.query.filter_by(abbr = distrib).first()
 		if (dist1 is None):
-			dist1 = Distrib(abbr = distrib)
+			dist1 = Distributive(abbr = distrib)
 			db.session.add(dist1)
-			db.session.commit()
-
-	for wc in WCS:
-		wc1 = Wc.query.filter_by(wc = wc).first()
-		if (wc1 is None):
-			wc1 = Wc(abbr = wc)
-			db.session.add(wc1)
 			db.session.commit()
 
 # Add all missing hours to the database
@@ -131,7 +123,7 @@ def scan_topics_offerings(course_soup, course, dept, year, lock_term_start, lock
 	# Regex search for all instances of "[TERM] at [HOUR]"
 	for offering in course_soup.find_all(text=re.compile('[0-9][0-9][FWSX] at [0-9A-Z]{1,2}')):
 		split_offering = offering.split(" ")
-		store_offerings(split_offering, course, dept, course_soup, year, course_soup.prettify(), lock_term_start, lock_term_end)
+		store_offerings(split_offering, course, dept, [], course_soup, year, course_soup.prettify(), lock_term_start, lock_term_end)
 
 # Check each stripped offering for typos in the ORC's listing
 def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category):
@@ -241,7 +233,7 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
 # 	"[TERM1], [TERM2]: [HOUR1], [HOUR2]"
 # In this case, there would be 4 offerings, one for each combination of the
 # terms and hours
-def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term_start, lock_term_end):
+def store_offerings(offering_info, c1, d1, distribs, info_soup, year, desc_html, lock_term_start, lock_term_end):
 	# Initialize offered lists to empty
 	terms_offered = []
 	hours_offered = []
@@ -298,7 +290,7 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 
 			# Assume no other hours offered, since Arrange is usually listed
 			# for the later terms, so run combinator fcn for offering lists
-			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
+			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, distribs, desc_html, lock_term_start, lock_term_end)
 			continue
 
 		# Ignore Lab and Discussion hours
@@ -364,7 +356,7 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 		# If typo check returned nothing, then add the current combinations
 		# to the offerings and move on to the next word in offerings
 		if stripped_offering == "":
-			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
+			terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, distribs, desc_html, lock_term_start, lock_term_end)
 			continue
 
 		# Check if word is an hour. If it is, append it to hours_offered
@@ -398,13 +390,13 @@ def store_offerings(offering_info, c1, d1, info_soup, year, desc_html, lock_term
 			# If the categories swapped from hours, back to term, then add all
 			# possible combinations of the terms and hours
 			if (old_category != "" and old_category != new_category):
-				terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
+				terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, distribs, desc_html, lock_term_start, lock_term_end)
 
 			# Append the new term
 			terms_offered.append(possible_term)
 
 	# Now that loop has been exited, add then clear any remaining combinations
-	terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, desc_html, lock_term_start, lock_term_end)
+	terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, distribs, desc_html, lock_term_start, lock_term_end)
 
 # Generalized check for missing space between terms and hours
 def check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category):
@@ -522,18 +514,36 @@ def remove_course_marks():
 # Delete all terms not marked as added, because they were not found in the
 # latest scraping. Then reset all "added" flags for next scraping.
 def remove_deleted_offerings(timetable_globals):
-	deleted_offerings = Offering.query.filter_by(added = "").all()
-
 	oldest_term = Term.query.filter_by(year = timetable_globals.ARBITRARY_OLD_YEAR, season = timetable_globals.ARBITRARY_SEASON).first()
 	latest_lock_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LOCK_YEAR, season = timetable_globals.TIMETABLE_LOCK_SEASON).first()
 
+	start_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_START_YEAR, season = timetable_globals.TIMETABLE_START_SEASON).first()
+	latest_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LATEST_YEAR, season = timetable_globals.TIMETABLE_LATEST_SEASON).first()
+
+	# Delete offerings that were not found during the scrape
+	deleted_offerings = Offering.query.filter_by(added = "", user_added = "N").all()
 	for offering in deleted_offerings:
+
+		emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
+		all_users = User.query.filter(User.courses.contains(offering)).all()
+
+		# Determine if course simply had a name update
+		offering_course = offering.get_course()
+		alt_course = Course.query.filter(Course.number == offering_course.number, Course.department_id == offering_course.department_id, Course.name != offering_course.name, Course.name.contains(offering_course.name)).first()
+		if alt_course:
+			updated_offering = Offering.query.filter(Offering.course_id == alt_course.id, Offering.term_id == offering.term_id).first()
+			for user in all_users:
+				user.drop(offering)
+				user_take(updated_offering)
+
+			print_alert("UPDATED NAME: " + repr(offering_course.name) + " to " + repr(alt_course.name))
+			db.session.delete(offering)
+			db.session.commit()
+			continue
 
 		# Ignore if ORC data from the higher-priority timetable
 		if offering.get_term() is not None:
-			if not offering.get_term().in_range(oldest_term, latest_lock_term) and offering.user_added == "N":
-				emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
-				all_users = User.query.filter(User.courses.contains(offering)).all()
+			if not offering.get_term().in_range(oldest_term, latest_lock_term):
 
 				# Determine if course is offered at another time during the term
 				other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.hour_id != offering.hour_id).first()
@@ -544,10 +554,38 @@ def remove_deleted_offerings(timetable_globals):
 
 					if str(offering.get_hour()) != str(other_time.get_hour()):
 						emails.swapped_course_times(emailed_users, offering, other_time)
-					print_alert("SWAPPED: " + repr(offering.get_term()) + " " + repr(offering) + "at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
+					print_alert("SWAPPED: " + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
 					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
+
+					for user in all_users:
+						user.drop(offering)
+
+				db.session.delete(offering)
+				db.session.commit()
+
+	# Delete offerings in timetable range that don't actually exist in the timetable
+	deleted_offerings = Offering.query.filter(Offering.added != "F").all()
+	for offering in deleted_offerings:
+		if offering.get_term() is not None:
+			if offering.get_term().in_range(start_term, latest_term):
+				emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
+				all_users = User.query.filter(User.courses.contains(offering)).all()
+
+				# Determine if course is offered at another time during the term
+				other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.added == "F").first()
+				if other_time:
+					for user in all_users:
+						user.drop(offering)
+						user.take(other_time)
+
+					if str(offering.get_hour()) != str(other_time.get_hour()):
+						emails.swapped_course_times(emailed_users, offering, other_time)
+					print_alert('SWAPPED (from not F): ' + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
+				else:
+					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					print_alert('DELETED (from not F): ' + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
 						user.drop(offering)
@@ -559,7 +597,7 @@ def remove_deleted_offerings(timetable_globals):
 	remove_course_marks()
 
 # Add all possible combinations of terms and hours to course's offerings
-def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_start, lock_term_end):
+def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, lock_term_start, lock_term_end):
 	print terms_offered
 	print hours_offered
 	print "\n"
@@ -580,6 +618,7 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 				hours_offered.append(arrange_hour)
 
 		for hour in hours_offered:
+
 
 			# Check if user-added offering exists. If so, overwrite with hour
 			unknown_hour = Hour.query.filter_by(period = "?").first()
@@ -611,6 +650,9 @@ def add_offerings(course, terms_offered, hours_offered, course_desc, lock_term_s
 				print_alert("ADDED: " + repr(o1))
 			else:
 				o1.change_desc(course_desc)
+
+			for distrib in distribs:
+				o1.add_distrib(distrib)
 
 			# Mark offering as "[T]emporarily" added to check for deleted
 			# offerings at end

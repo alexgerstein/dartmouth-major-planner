@@ -304,8 +304,10 @@ function showCourses(){
     var dept = $('#dept_name').find(":selected").val();
     var term = $('#term_name').find(":selected").val();
     var hour = $('#hour_name').find(":selected").val();
+    var distrib = $('#distrib_name').find(":selected").val();
 
-    var getcourses = $.get('/getcourses', { dept: dept, term: term, hour: hour });
+
+    var getcourses = $.get('/getcourses', { dept: dept, term: term, hour: hour, distrib: distrib });
 
 
     $(".classesBlock ul.sortable1").empty();

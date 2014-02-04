@@ -15,6 +15,11 @@ user_terms = db.Table("user_terms",
 	db.Column("term_id", db.Integer, db.ForeignKey("term.id"))
 )
 
+offering_distribs = db.Table("offering_distribs",
+	db.Column('offering_id', db.Integer, db.ForeignKey("offering.id")),
+	db.Column("distributive_id", db.Integer, db.ForeignKey("distributive.id"))
+)
+
 class User(db.Model):
 	__tablename__ = 'user'
 	id = db.Column(db.Integer, primary_key = True)
@@ -128,8 +133,10 @@ class Offering(db.Model):
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 	desc = db.Column(db.Unicode(25000))
 
-	# distributives = db.relationship("Distrib", backref="offering")
-	# wc_id = db.Column(db.Integer, db.ForeignKey('wc.id'))
+	distributives = db.relationship("Distributive",
+		secondary=offering_distribs,
+		backref='offerings',
+		lazy='dynamic')
 
 	added = db.Column(db.String(2))
 	user_added = db.Column(db.String(2))
@@ -140,10 +147,6 @@ class Offering(db.Model):
 		self.hour_id = hour
 		self.desc = desc
 		self.user_added = user_added
-		# self.wc_id = wc
-
-		# for distrib in distribs:
-		# 	self.distributives.append(distrib)
 
 	def get_full_name(self):
 		return str(Course.query.filter_by(id = self.course_id).first())
@@ -170,6 +173,12 @@ class Offering(db.Model):
 		self.hour_id = hour.id
 		db.session.commit()
 		return self
+
+	def add_distrib(self, distrib):
+		if distrib not in self.distributives:
+			self.distributives.append(distrib)
+			db.session.commit()
+			return self
 
 	def change_desc(self, course_desc):
 		self.desc = ""
@@ -330,3 +339,16 @@ class Department(db.Model):
 
 	def __repr__(self):
 		return '%s' % (self.abbr)
+
+class Distributive(db.Model):
+	__tablename__ = 'distributive'
+
+	id = db.Column(db.Integer, primary_key = True)
+	abbr = db.Column(db.String(10), index = True, unique = True)
+
+	def __init__(self, abbr):
+		self.abbr = abbr
+
+	def __repr__(self):
+		return '%s' % (self.abbr)
+

@@ -4,8 +4,8 @@
 
 from flask import render_template, request, flash, redirect, url_for, session, g, jsonify
 from app import app, db
-from models import User, Offering, Course, Department, Term, Hour
-from forms import EditForm, DeptPickerForm, HourPickerForm, TermPickerForm
+from models import User, Offering, Course, Department, Term, Hour, Distributive
+from forms import EditForm, DeptPickerForm, HourPickerForm, TermPickerForm, DistribPickerForm
 from functools import wraps
 from emails import welcome_notification
 
@@ -175,6 +175,11 @@ def planner():
 	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms.order_by('year', 'id')]
 	term_form.term_name.choices.insert(0, (-1,"Choose a Term"))
 
+	# Initialize the term selection form
+	distrib_form = DistribPickerForm()
+	distrib_form.distrib_name.choices = [(a.id, str(a)) for a in Distributive.query.order_by('abbr')]
+	distrib_form.distrib_name.choices.insert(0, (-1,"Choose a Distrib"))
+
 	all_terms = generate_terms(g.user.grad_year)
 
 	# Check if terms aren't in the session
@@ -189,6 +194,7 @@ def planner():
         dept_form = dept_form,
         hour_form = hour_form,
         term_form = term_form,
+        distrib_form = distrib_form,
         courses = g.user.courses.order_by('hour_id'),
         on_terms = g.user.terms.order_by('year', 'id').all(),
         terms = all_terms)
@@ -201,7 +207,7 @@ def getcourses():
 	courses = None
 	if request.values.get('dept') != "-1":
 		courses = Course.query.filter_by(department_id = request.values.get('dept')).join(Offering)
-	elif request.values.get('term') != "-1" or request.values.get('hour') != "-1":
+	elif request.values.get('term') != "-1" or request.values.get('hour') != "-1" or request.values.get('distrib') != "-1":
 		courses = Course.query.join(Offering)
 
 	if request.values.get('term') != "-1":
@@ -209,6 +215,10 @@ def getcourses():
 
 	if request.values.get('hour') != "-1":
 		courses = courses.filter_by(hour_id = request.values.get('hour'))
+
+	if request.values.get('distrib') != "-1":
+		distrib = Distributive.query.filter_by(id = int(request.values.get('distrib'))).first()
+		courses = courses.filter(Offering.distributives.contains(distrib))
 
 	if courses is None:
 		j = jsonify ( {} )
