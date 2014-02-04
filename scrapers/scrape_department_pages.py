@@ -42,7 +42,7 @@ def scrape_anthropology_course_page(dept_abbreviation, department_course_page, l
                             distribs.append(possible_distrib)
 
         department = Department.query.filter_by(abbr = dept_abbreviation).first()
-        course = Course.query.filter(Course.department == department, Course.name.contains(title), Course.number == number).first()
+        course = Course.query.filter(Course.department == department, Course.name == title, Course.number == number).first()
         if course is None:
 
             course = Course(number = number, name = title, department = department.id)

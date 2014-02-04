@@ -76,7 +76,7 @@ def store_course_info(url, course_number, course_name, dept_abbr, dept_name, yea
 			db.session.commit()
 
 		# Check if course already exists. Add if not.
-		c1 = Course.query.filter(Course.number == course_number, Course.name.contains(course_name), Course.department == d1).first()
+		c1 = Course.query.filter(Course.number == course_number, Course.name == course_name, Course.department == d1).first()
 		if (c1 is None):
 
 			c1 = Course(number = course_number, name = course_name, department = d1.id)

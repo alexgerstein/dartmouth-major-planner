@@ -527,20 +527,20 @@ def remove_deleted_offerings(timetable_globals):
 		emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
 		all_users = User.query.filter(User.courses.contains(offering)).all()
 
-		# Determine if course simply had a name update
-		offering_course = offering.get_course()
-		alt_course = Course.query.filter(Course.number == offering_course.number, Course.department_id == offering_course.department_id, Course.name != offering_course.name, Course.name.contains(offering_course.name)).first()
-		if alt_course:
-			updated_offering = Offering.query.filter(Offering.course_id == alt_course.id, Offering.term_id == offering.term_id).first()
-			if updated_offering:
-				for user in all_users:
-					user.drop(offering)
-					user.take(updated_offering)
+		# # Determine if course simply had a name update
+		# offering_course = offering.get_course()
+		# alt_course = Course.query.filter(Course.number == offering_course.number, Course.department_id == offering_course.department_id, Course.name != offering_course.name, Course.name.contains(offering_course.name)).first()
+		# if alt_course:
+		# 	updated_offering = Offering.query.filter(Offering.course_id == alt_course.id, Offering.term_id == offering.term_id).first()
+		# 	if updated_offering:
+		# 		for user in all_users:
+		# 			user.drop(offering)
+		# 			user.take(updated_offering)
 
-				print_alert("UPDATED NAME: " + repr(offering_course.name) + " to " + repr(alt_course.name))
-				db.session.delete(offering)
-				db.session.commit()
-				continue
+		# 		print_alert("UPDATED NAME: " + repr(offering_course.name) + " to " + repr(alt_course.name))
+		# 		db.session.delete(offering)
+		# 		db.session.commit()
+		# 		continue
 
 		# Ignore if ORC data from the higher-priority timetable
 		if offering.get_term() is not None:
