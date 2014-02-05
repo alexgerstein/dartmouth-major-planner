@@ -48,3 +48,5 @@ scrape_timetable()
 # If course in database was not added by the latest scraping, then it has been changed by the registrar. So, delete.
 if (curr_orc_shortcut == "") and (old_orcs_shortcut == ""):
 	remove_deleted_offerings(timetable_globals)
+
+remove_unused_model_instances()

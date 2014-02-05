@@ -101,7 +101,7 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			continue
 
 		# Look for the course in the database by department
-		course = Course.query.filter(Course.number == float(course_number.group(0)), Course.name == course_name, Course.department_id == dept.id).first()
+		course = Course.query.filter(Course.number == float(course_number.group(0)), Course.name.ilike(course_name + "%"), Course.department_id == dept.id).first()
 		if not (is_number(course_number.group(0))) and (course is None):
 			dept = old_dept
 			continue

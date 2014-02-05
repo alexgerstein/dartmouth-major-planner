@@ -16,8 +16,9 @@ DEPT_COL = 2
 NUM_COL = 3
 SEC_COL = 4
 TITLE_COL = 5
-HOUR_COL = 7
-DIST_COL = 12
+HOUR_COL = 8
+WC_COL = 12
+DIST_COL = 13
 
 # Get the timetable's html
 def url_to_html_str(url):
@@ -42,8 +43,35 @@ def parse_soup(soup, search_term):
     soup = soup.find('div', {'class': 'data-table'})
     soup = soup.find('tbody')
 
-    # Get all rows, removing column headers
+    # Get all rows, storing indices of column headers
     rows = soup.findAll('tr')
+
+    header_row = rows[0].findAll('th')
+    for index, value in enumerate(header_row):
+        if "Term" in value.text:
+            TERM_COL = index
+
+        elif "Subj" in value.text:
+            DEPT_COL = index
+
+        elif "Num" in value.text:
+            NUM_COL = index
+
+        elif "Sec" in value.text:
+            SEC_COL = index
+
+        elif "Title" in value.text:
+            TITLE_COL = index
+
+        elif "Period" in value.text:
+            HOUR_COL = index
+
+        elif "WC" in value.text:
+            WC_COL = index
+
+        elif "Dist" in value.text:
+            DIST_COL = index
+
     rows = rows[1:]
 
     # Look up each row's course and offering in the database.
@@ -125,7 +153,7 @@ def parse_soup(soup, search_term):
                     db.session.add(period)
                     db.session.commit()
 
-            elif index == DIST_COL:
+            elif index == DIST_COL or index == WC_COL:
                 distrib_split = value.text.split(" ")
                 for distrib in distrib_split:
                     stripped_dist = re.match(r'\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b', distrib)

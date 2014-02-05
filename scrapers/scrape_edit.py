@@ -13,61 +13,12 @@ from scrape_curr_orc import *
 from scrape_old_orcs import *
 from scrape_timetable import *
 
-dfsp = Hour.query.filter_by(period = "D.F.S.P").first()
-if dfsp:
-    dfsps = Offering.query.filter_by(hour_id = dfsp.id).all()
+dept = Department.query.filter_by(abbr = "ANTH").first()
+offering_course  = Course.query.filter_by(department_id = dept.id, number = float(12.3)).first()
 
-    fs = Hour.query.filter_by(period = "FS").first()
-    for offering in dfsps:
-        offering.change_period(fs)
+query =  Course.query.filter(Course.number == offering_course.number, Course.department_id == offering_course.department_id, Course.name != offering_course.name, Course.name.ilike(offering_course.name + "%"))
 
-    db.session.delete(dfsp)
-    db.session.commit()
+print query
 
-fsp = Hour.query.filter_by(period = "FSP").first()
-if fsp:
-    fsps = Offering.query.filter_by(hour_id = fsp.id).all()
-
-    fs = Hour.query.filter_by(period = "FS").first()
-    for offering in fsps:
-        offering.change_period(fs)
-
-    db.session.delete(fsp)
-    db.session.commit()
-
-
-dlsa = Hour.query.filter_by(period = "D.L.S.A").first()
-if dlsa:
-    dlsas = Offering.query.filter_by(hour_id = dlsa.id).all()
-
-    ls = Hour.query.filter_by(period = "LS").first()
-    for offering in dlsas:
-        offering.change_period(ls)
-
-    db.session.delete(dlsa)
-    db.session.commit()
-
-
-lsa = Hour.query.filter_by(period = "LSA").first()
-if lsa:
-    lsas = Offering.query.filter_by(hour_id = lsa.id).all()
-
-    ls = Hour.query.filter_by(period = "LS").first()
-    for offering in lsas:
-        offering.change_period(ls)
-
-    db.session.delete(lsa)
-    db.session.commit()
-
-
-ar = Hour.query.filter_by(period = "AR").first()
-if ar:
-    ars = Offering.query.filter_by(hour_id = ar.id).all()
-
-    arrange = Hour.query.filter_by(period = "Arrange").first()
-    for offering in ars:
-        offering.change_period(arrange)
-
-    db.session.delete(ar)
-    db.session.commit()
-
+print offering_course
+print query.first()

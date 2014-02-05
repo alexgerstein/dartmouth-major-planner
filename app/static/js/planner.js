@@ -102,6 +102,9 @@ function showAvailableSlots(event, ui) {
 
         $.each(data['terms'], function(index, item) {
             term_id = "#" + item[0];
+
+            $(term_id).scrollTop(0);
+
             if ($(term_id).hasClass('off-term')) {
                 $(term_id).addClass('available-off');
             } else {

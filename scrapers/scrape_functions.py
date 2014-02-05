@@ -520,27 +520,54 @@ def remove_deleted_offerings(timetable_globals):
 	start_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_START_YEAR, season = timetable_globals.TIMETABLE_START_SEASON).first()
 	latest_term = Term.query.filter_by(year = timetable_globals.TIMETABLE_LATEST_YEAR, season = timetable_globals.TIMETABLE_LATEST_SEASON).first()
 
+	# Delete offerings in timetable range that don't actually exist in the timetable
+	deleted_offerings = Offering.query.filter(Offering.added != "F").all()
+	for offering in deleted_offerings:
+
+		emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
+		all_users = User.query.filter(User.courses.contains(offering)).all()
+
+		# Determine if course had a name update
+		offering_course = offering.get_course()
+		if offering_course:
+			alt_course = Course.query.filter(Course.number == offering_course.number, Course.department_id == offering_course.department_id, Course.name != offering_course.name, Course.name.ilike(offering_course.name + "%")).first()
+			if alt_course:
+				old_offerings = Offering.query.filter(Offering.course_id == offering_course.id).all()
+				for old_offering in old_offerings:
+					old_offering.course_id = alt_course.id
+					db.session.commit()
+
+				print_alert("UPDATED NAME: " + repr(offering_course.name) + " to " + repr(alt_course.name))
+
+		if offering.get_term() is not None:
+			if offering.get_term().in_range(start_term, latest_term):
+
+				# Determine if course is offered at another time during the term
+				other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.added == "F").first()
+				if other_time:
+					for user in all_users:
+						user.drop(offering)
+						user.take(other_time)
+
+					# if str(offering.get_hour()) != str(other_time.get_hour()):
+					# 	emails.swapped_course_times(emailed_users, offering, other_time)
+					print_alert('SWAPPED (from not F): ' + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
+				else:
+					# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					print_alert('DELETED (from not F): ' + repr(offering.get_term()) + " " + repr(offering))
+
+					for user in all_users:
+						user.drop(offering)
+
+				db.session.delete(offering)
+				db.session.commit()
+
 	# Delete offerings that were not found during the scrape
 	deleted_offerings = Offering.query.filter_by(added = "", user_added = "N").all()
 	for offering in deleted_offerings:
 
 		emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
 		all_users = User.query.filter(User.courses.contains(offering)).all()
-
-		# # Determine if course simply had a name update
-		# offering_course = offering.get_course()
-		# alt_course = Course.query.filter(Course.number == offering_course.number, Course.department_id == offering_course.department_id, Course.name != offering_course.name, Course.name.contains(offering_course.name)).first()
-		# if alt_course:
-		# 	updated_offering = Offering.query.filter(Offering.course_id == alt_course.id, Offering.term_id == offering.term_id).first()
-		# 	if updated_offering:
-		# 		for user in all_users:
-		# 			user.drop(offering)
-		# 			user.take(updated_offering)
-
-		# 		print_alert("UPDATED NAME: " + repr(offering_course.name) + " to " + repr(alt_course.name))
-		# 		db.session.delete(offering)
-		# 		db.session.commit()
-		# 		continue
 
 		# Ignore if ORC data from the higher-priority timetable
 		if offering.get_term() is not None:
@@ -553,40 +580,12 @@ def remove_deleted_offerings(timetable_globals):
 						user.drop(offering)
 						user.take(other_time)
 
-					if str(offering.get_hour()) != str(other_time.get_hour()):
-						emails.swapped_course_times(emailed_users, offering, other_time)
+					# if str(offering.get_hour()) != str(other_time.get_hour()):
+					# 	emails.swapped_course_times(emailed_users, offering, other_time)
 					print_alert("SWAPPED: " + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
-					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
-
-					for user in all_users:
-						user.drop(offering)
-
-				db.session.delete(offering)
-				db.session.commit()
-
-	# Delete offerings in timetable range that don't actually exist in the timetable
-	deleted_offerings = Offering.query.filter(Offering.added != "F").all()
-	for offering in deleted_offerings:
-		if offering.get_term() is not None:
-			if offering.get_term().in_range(start_term, latest_term):
-				emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
-				all_users = User.query.filter(User.courses.contains(offering)).all()
-
-				# Determine if course is offered at another time during the term
-				other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.added == "F").first()
-				if other_time:
-					for user in all_users:
-						user.drop(offering)
-						user.take(other_time)
-
-					if str(offering.get_hour()) != str(other_time.get_hour()):
-						emails.swapped_course_times(emailed_users, offering, other_time)
-					print_alert('SWAPPED (from not F): ' + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
-				else:
-					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
-					print_alert('DELETED (from not F): ' + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
 						user.drop(offering)
@@ -596,6 +595,21 @@ def remove_deleted_offerings(timetable_globals):
 
 	db.session.commit()
 	remove_course_marks()
+
+# When the scraping is done, delete any hours and courses that don't have any offerings
+def remove_unused_model_instances():
+	hours = Hour.query.all()
+	for hour in hours:
+		if Offering.query.filter_by(hour = hour).count() == 0:
+			db.session.delete(hour)
+			db.session.commit()
+
+	courses = Course.query.all()
+	for course in courses:
+		if Offering.query.filter_by(course = course).count() == 0:
+			db.session.delete(course)
+			db.session.commit()
+
 
 # Add all possible combinations of terms and hours to course's offerings
 def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, lock_term_start, lock_term_end):
@@ -635,7 +649,7 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 
 				db.session.commit()
 
-				emails.updated_hour_notification(users, o1, hour)
+				# emails.updated_hour_notification(users, o1, hour)
 
 				continue
 
