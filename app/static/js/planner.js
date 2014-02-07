@@ -157,17 +157,17 @@ function saveCourse(event, ui) {
     var ext_term_id = "#" + term_id;
 
     if ($(ext_term_id + " li:not(.hour)").length > MAX_COURSES + 1) {
-        alert("Maximum courses exceeded for this term.");
+        flash_alert("Maximum courses exceeded for this term.");
         return;
     }
 
     if ($(this).hasClass('off-term')) {
-        alert("You cannot add courses to off terms.");
+        flash_alert("You cannot add courses to off terms.");
         return;
     }
 
     if ($(this).hasClass('available') == false) {
-        if (confirm('Are you sure you want to put the course here? According to our records, it might not be offered this term. Please consult the latest registrar listing to verify.') != true) {
+        if (confirm('Are you sure you want to put the course here? According to our records, it might not be offered this term. Please consult the latest  listings from the Registrar to verify.') != true) {
             return;
         }
     }
