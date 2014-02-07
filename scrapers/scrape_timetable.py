@@ -186,6 +186,10 @@ def parse_soup(soup, search_term):
             else:
                 course = Course.query.filter(Course.department == dept, Course.number == float(number)).first()
 
+                # Check if topic in wrong column
+                if not course:
+                    course = Course.query.filter(Course.department == dept, Course.number == float(number + "." + str(section))).first()
+
                 # Otherwise, add the course. It's not ideal to take these course
                 # names since they're often abbreviated, but it will have to do.
                 if not course:
