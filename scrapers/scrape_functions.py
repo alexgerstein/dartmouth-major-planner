@@ -622,13 +622,11 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 	print hours_offered
 	print "\n"
 
-	spring_term = Term.query.filter_by(year = 2013, season = "S").first()
-
 	# Loop through all combinations
 	for term in terms_offered:
 
 		# Ignore if ORC data might conflit with the higher-priority timetable
-		if term.in_range(lock_term_start, lock_term_end) and term is not spring_term:
+		if term.in_range(lock_term_start, lock_term_end):
 			print_alert("IGNORED: " + str(course) + " in " + str(term))
 			continue
 
