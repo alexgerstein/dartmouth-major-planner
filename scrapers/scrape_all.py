@@ -40,7 +40,7 @@ remove_erroneous_user_adds()
 # scrape_old_orcs(lock_term_start, lock_term_end, old_orcs_shortcut)
 
 # Add courses from department pages
-# scrape_department_pages(lock_term_start, lock_term_end)
+scrape_department_pages(lock_term_start, lock_term_end)
 
 # Add current timetable, usurping any previous new entries
 scrape_timetable()
