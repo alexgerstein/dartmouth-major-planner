@@ -29,6 +29,7 @@ GRAD_DEPT_URL = "/en/2013/orc/Departments-Programs-Graduate"
 # Timetable Setup
 TIMETABLE_BASE = "http://oracle-www.dartmouth.edu/dart/groucho/timetable.subject_search?distribradio=alldistribs&subjectradio=allsubjects&termradio=selectterms&hoursradio=allhours&terms=no_value&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&sortorder=dept&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=Subject+Area(s)"
 SEASON_MONTH = {"01": "W", "03": "S", "06": "X", "09": "F"}
+SEASON_NAME = {"FALL": "F", "WINTER": "W", "SPRING": "S", "SUMMER": "X"}
 
 # Distributives and World Culture Abbreviations
 DISTRIBS = ["ART", "CI", "INT", "LIT", "NW", "QDS", "SCI", "SLA", "SOC", "TAS", "TLA", "TMV", "W"]
@@ -620,10 +621,10 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 	# Loop through all combinations
 	for term in terms_offered:
 
-		# # Ignore if ORC data might conflit with the higher-priority timetable
-		# if term.in_range(lock_term_start, lock_term_end):
-		# 	print_alert("IGNORED: " + str(course) + " in " + str(term))
-		# 	continue
+		# Ignore if ORC data might conflit with the higher-priority timetable
+		if term.in_range(lock_term_start, lock_term_end):
+			print_alert("IGNORED: " + str(course) + " in " + str(term))
+			continue
 
 		# Add "ARR" as hour offered if offered
 		# every term, but at an unspecified time
