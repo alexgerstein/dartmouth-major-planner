@@ -58,8 +58,10 @@ class Timetable(object):
 		self.TIMETABLE_LOCK_YEAR = int(last_finalized_term[:4])
 		self.TIMETABLE_LOCK_SEASON = SEASON_MONTH[last_finalized_term[4:]]
 
-		self.TIMETABLE_START_YEAR = 2013
-		self.TIMETABLE_START_SEASON = "W"
+		# Store first term in timetable
+		last_finalized_term = orig_soup.find(id="term4")['value']
+		self.TIMETABLE_START_YEAR = int(last_finalized_term[:4])
+		self.TIMETABLE_START_SEASON = SEASON_MONTH[last_finalized_term[4:]]
 
 		self.ARBITRARY_OLD_YEAR = 2005
 		self.ARBITRARY_SEASON = "W"
@@ -550,11 +552,11 @@ def remove_deleted_offerings(timetable_globals):
 						user.drop(offering)
 						user.take(other_time)
 
-					# if str(offering.get_hour()) != str(other_time.get_hour()):
-					# 	emails.swapped_course_times(emailed_users, offering, other_time)
+					if str(offering.get_hour()) != str(other_time.get_hour()):
+						emails.swapped_course_times(emailed_users, offering, other_time)
 					print_alert('SWAPPED (from not F): ' + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
-					# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert('DELETED (from not F): ' + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
@@ -581,11 +583,11 @@ def remove_deleted_offerings(timetable_globals):
 						user.drop(offering)
 						user.take(other_time)
 
-					# if str(offering.get_hour()) != str(other_time.get_hour()):
-					# 	emails.swapped_course_times(emailed_users, offering, other_time)
+					if str(offering.get_hour()) != str(other_time.get_hour()):
+						emails.swapped_course_times(emailed_users, offering, other_time)
 					print_alert("SWAPPED: " + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
-					# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
@@ -650,7 +652,7 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 
 				db.session.commit()
 
-				# emails.updated_hour_notification(users, o1, hour)
+				emails.updated_hour_notification(users, o1, hour)
 
 				continue
 

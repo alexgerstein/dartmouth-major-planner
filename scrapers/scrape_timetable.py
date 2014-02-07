@@ -79,11 +79,13 @@ def parse_soup(soup, search_term):
     for row in rows:
         term = None
         dept = None
-        section = None
+        section = 0
         number = None
         title = None
         hour = None
         distribs = []
+
+        split_number = False
 
         for index, value in enumerate(row.findAll('td')):
 
@@ -104,7 +106,7 @@ def parse_soup(soup, search_term):
                     break
 
             # Store the section of the course
-            elif index == SEC_COL:
+            elif index == SEC_COL and not split_number:
                 section = value.text.lstrip("0")
 
                 if section == "":
@@ -119,6 +121,7 @@ def parse_soup(soup, search_term):
                 # Protect for section being in course number
                 if len(number_split) > 1:
                     section = number_split[1].lstrip("0")
+                    split_number = True
 
                 if number == "":
                     number = None
@@ -166,21 +169,32 @@ def parse_soup(soup, search_term):
 
         if ((search_term == None) or (term == search_term)) and dept and (number is not None) and (section is not "") and title and ( title is not "") and period:
 
-            course = Course.query.filter(Course.department == dept, Course.number == float(number)).first()
+            course = None
 
-            # If initial search for course fails, check if it's a topics course
-            if not course and section:
+            # First check if topics course
+            if split_number:
                 course = Course.query.filter(Course.department == dept, Course.number == float(number + "." + str(section))).first()
+                if not course:
+                    course = Course(department = dept.id, number = float(number + "." + str(section)), name = title)
+                    db.session.add(course)
+                    db.session.commit()
+                    print_alert("COURSE ADDED: " + str(course))
+                else:
+                    print str(course)
 
-            # Otherwise, add the course. It's not ideal to take these course
-            # names since they're often abbreviated, but it will have to do.
-            if not course:
-                course = Course(department = dept.id, number = float(number), name = title)
-                db.session.add(course)
-                db.session.commit()
-                print_alert("COURSE ADDED: " + str(course))
+            # If initial search for course fails, check if it's not a topics course
             else:
-                print str(course)
+                course = Course.query.filter(Course.department == dept, Course.number == float(number)).first()
+
+                # Otherwise, add the course. It's not ideal to take these course
+                # names since they're often abbreviated, but it will have to do.
+                if not course:
+                    course = Course(department = dept.id, number = float(number), name = title)
+                    db.session.add(course)
+                    db.session.commit()
+                    print_alert("COURSE ADDED: " + str(course))
+                else:
+                    print str(course)
 
             offering = Offering.query.filter_by(course = course, term = term, hour = period).first()
 
@@ -215,12 +229,6 @@ def parse_soup(soup, search_term):
 
 
 def scrape_timetable():
-    # Scrape missing Winter (W13)
-    winter_term = Term.query.filter_by(year = 2013, season = "W").first()
-    html = url_to_html_str(w13timetable_url)
-    soup = html_to_soup(html)
-    parse_soup(soup, winter_term)
-
     # Scrape full timetable
     html = url_to_html_str(timetable_url)
     soup = html_to_soup(html)
