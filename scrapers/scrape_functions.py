@@ -553,10 +553,12 @@ def remove_deleted_offerings(timetable_globals):
 						user.take(other_time)
 
 					if str(offering.get_hour()) != str(other_time.get_hour()):
-						emails.swapped_course_times(emailed_users, offering, other_time)
+						if offering.get_term() == latest_term:
+							emails.swapped_course_times(emailed_users, offering, other_time)
 					print_alert('SWAPPED (from not F): ' + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
-					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					if offering.get_term() == latest_term:
+						emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert('DELETED (from not F): ' + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
@@ -620,11 +622,13 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 	print hours_offered
 	print "\n"
 
+	spring_term = Term.query.filter(year = 2013, season = "S").first()
+
 	# Loop through all combinations
 	for term in terms_offered:
 
 		# Ignore if ORC data might conflit with the higher-priority timetable
-		if term.in_range(lock_term_start, lock_term_end):
+		if term.in_range(lock_term_start, lock_term_end) and term is not spring_term:
 			print_alert("IGNORED: " + str(course) + " in " + str(term))
 			continue
 
@@ -652,7 +656,8 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 
 				db.session.commit()
 
-				emails.updated_hour_notification(users, o1, hour)
+				if not term.in_range(lock_term_start, lock_term_end):
+					emails.updated_hour_notification(users, o1, hour)
 
 				continue
 
