@@ -622,7 +622,7 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 	print hours_offered
 	print "\n"
 
-	spring_term = Term.query.filter(year = 2013, season = "S").first()
+	spring_term = Term.query.filter_by(year = 2013, season = "S").first()
 
 	# Loop through all combinations
 	for term in terms_offered:
