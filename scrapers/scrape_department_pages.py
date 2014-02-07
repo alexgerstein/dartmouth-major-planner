@@ -53,7 +53,7 @@ def scrape_anth_course_page(dept_abbreviation, department_course_page, lock_term
             db.session.add(course)
             db.session.commit()
 
-        print number, title
+        print repr(number), repr(title)
 
         store_offerings(offerings, course, department, distribs, course_view, date.today().year, course_view.prettify(), lock_term_start, lock_term_end)
 
@@ -112,7 +112,7 @@ def scrape_aaas_course_page(dept_abbreviation, department_course_page, lock_term
                     if possible_distrib:
                         distribs.append(possible_distrib)
 
-            print number, title
+            print repr(number), repr(title)
             store_offerings(offerings, course, department, distribs, course_view, date.today().year, desc.prettify(), lock_term_start, lock_term_end)
 
 
