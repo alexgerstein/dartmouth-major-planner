@@ -66,15 +66,22 @@ body {
 .sortable2 {
 	list-style-type: none;
 	background: #eee;
-	border: 1px solid black;
 	overflow:scroll;
 	margin: 0;
 	margin-bottom: 10px;
 	width: 100%;
+
+	border-radius: 0px 0px 5px 5px;
+	-moz-border-radius: 0px 0px 5px 5px;
+	-webkit-border-radius: 0px 0px 5px 5px;
+	border: 1px solid black;
 }
 
 .sortable1 {
 	height: 55%;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 
 .sortable2 {
@@ -89,6 +96,10 @@ body {
 	border: 1px solid black;
 	vertical-align: middle;
 	z-index: 10000;
+
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
 }
 
 .sortable1 li {
@@ -97,11 +108,13 @@ body {
 
 li.pin {
 	list-style-type: none;
-}
+	border-radius: 5px 5px 0px 0px;
+	-moz-border-radius: 5px 5px 0px 0px;
+	-webkit-border-radius: 5px 5px 0px 0px;
+	border: 1px solid black;
 
-#missing-distribs {
-/*	border: 10px dashed;
-*/}
+	width: 100%;
+}
 
 .pin .btn {
 	line-height:  17px;
