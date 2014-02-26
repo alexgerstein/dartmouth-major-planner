@@ -343,6 +343,6 @@ function update_missing_distribs(){
 
     getmissingdistribs.done(function (data) {
         missing.empty();
-        missing.append('<p> Missing (approx.): ' + data['missing'].join(', ') + '</p>')
+        missing.append('<p> Missing (approx): ' + data['missing'].join(', ') + '</p>')
     })
 }
