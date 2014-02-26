@@ -96,10 +96,6 @@ body {
 	border: 1px solid black;
 	vertical-align: middle;
 	z-index: 10000;
-
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
 }
 
 .sortable1 li {
@@ -145,7 +141,7 @@ form {
 }
 
 li.draggable.ui-state-default  {
-	line-height: 35px;
+	line-height: 25px;
 	padding: 0px 5px;
 }
 
