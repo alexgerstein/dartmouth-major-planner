@@ -75,6 +75,8 @@ function addCourse(term, hour, possible_hours, offering_id, short_name) {
                 },
                 delay: {show:500, hide: 100}
             });
+
+            update_missing_distribs();
         }
     )
 };
@@ -207,9 +209,7 @@ function saveCourse(event, ui) {
         var hours = data['possible_hours'].split("; ");
 
         addCourse(ext_term_id, data['hour'], hours, data['id'], data['name']);
-
     });
-
 }
 
 $(document).on('click', '.dropdown-menu li a', function () {
@@ -263,6 +263,8 @@ function removeCourse(event){
     posting.done (function (data) {
         that.parents('li').parent().remove();
     })
+
+    update_missing_distribs();
 
 }
 
@@ -330,4 +332,17 @@ function showCourses(){
         });
 
     });
+}
+
+function update_missing_distribs(){
+    var missing = $('#missing-distribs')
+    var getmissingdistribs = $.get('/missingdistribs');
+    getmissingdistribs.fail(function (data) {
+        flash_alert("Oops! We're having trouble with your distribs. Please check your internet connection and try again.");
+    })
+
+    getmissingdistribs.done(function (data) {
+        missing.empty();
+        missing.append('<p> Missing (approx.): ' + data['missing'].join(', ') + '</p>')
+    })
 }

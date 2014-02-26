@@ -335,6 +335,59 @@ def findterms():
 
 	return jsonify(data)
 
+# Callback to find all missing distribs
+@app.route('/missingdistribs', methods = ['GET'])
+@login_required
+def getmissingdistribs():
+	courses = sorted(g.user.courses, key=lambda offering: offering.distributives.count, reverse=True)
+	missing_distribs = [str(distrib) for distrib in Distributive.query.all()]
+
+	for course in courses:
+		world_distrib = False
+		general_distrib_taken = False
+
+		for distrib in course.distributives.all():
+
+			if distrib.abbr in missing_distribs:
+				if distrib.abbr in ['CI', 'NW', 'W']:
+					if not world_distrib:
+						missing_distribs.remove(distrib.abbr)
+						world_distrib = True
+
+				else:
+					if not general_distrib_taken:
+						missing_distribs.remove(distrib.abbr)
+						general_distrib_taken = True
+
+						# Remove paired lab/no-lab distribs
+						if distrib.abbr == 'SLA':
+							try:
+								missing_distribs.remove('SCI')
+							except ValueError:
+								pass
+						elif distrib.abbr == 'TLA':
+							try:
+								missing_distribs.remove('TAS')
+							except ValueError:
+								pass
+
+			if general_distrib_taken and world_distrib:
+				break
+
+		# Check if lab is covered
+		if not 'TLA' in missing_distribs:
+			try:
+				missing_distribs.remove('SLA')
+			except ValueError:
+				pass
+		if not 'SLA' in missing_distribs:
+			try:
+				missing_distribs.remove('TLA')
+			except ValueError:
+				pass
+
+	return jsonify( {'missing': missing_distribs} )
+
 # Toggle on/off terms
 @app.route('/swapterm', methods = ['POST'])
 @login_required

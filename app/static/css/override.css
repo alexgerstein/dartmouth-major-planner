@@ -99,6 +99,10 @@ li.pin {
 	list-style-type: none;
 }
 
+#missing-distribs {
+/*	border: 10px dashed;
+*/}
+
 .pin .btn {
 	line-height:  17px;
 }
