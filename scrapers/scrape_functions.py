@@ -88,7 +88,6 @@ def remove_erroneous_user_adds():
 			db.session.delete(offering)
 			db.session.commit()
 
-
 # Add all missing distribs and World Cultures to the database
 def store_distribs():
 	for distrib in DISTRIBS:

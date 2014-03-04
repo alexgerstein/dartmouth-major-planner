@@ -133,6 +133,8 @@ class Offering(db.Model):
 	hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
 	desc = db.Column(db.Unicode(25000))
 
+	median = db.Column(db.String(5))
+
 	distributives = db.relationship("Distributive",
 		secondary=offering_distribs,
 		backref='offerings',
@@ -224,6 +226,7 @@ class Course(db.Model):
 	department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
 
 	offerings = db.relationship('Offering', backref = 'course')
+	avg_median = db.Column(db.String(5))
 
 	def __init__(self, number, name, department):
 		self.name = name

@@ -21,7 +21,8 @@ MISSED_UG_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departme
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Humanities/HUM-Humanities', 'HUM', "Humanities"],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Physics-and-Astronomy/PHYS-Physics-Undergraduate', 'PHYS', "Physics"],
 ['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Linguistics-and-Cognitive-Science/COGS-Cognitive-Science', 'COGS', "Cognitive Science"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Graduate/Microbiology-and-Immunology/MICR-Microbiology-and-Immunology', 'MICR', 'Microbiology and Immunology']
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Graduate/Microbiology-and-Immunology/MICR-Microbiology-and-Immunology', 'MICR', 'Microbiology and Immunology'],
+['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Spanish-and-Portuguese-Languages-and-Literatures/PORT-Portuguese', 'PORT', 'Portuguese']
 ]
 
 # Return the section of the base url with the links to the departments
@@ -200,5 +201,5 @@ def scrape_curr_orc(lock_term_start, lock_term_end, start_dept_name = ""):
 	year = scrape_college_orc(GRAD_DEPT_URL, lock_term_start, lock_term_end, start_dept_name)
 
 	# Repeat for all missed departments
-	for listing in MISSED_UG_LISTINGS:
+	for listing in MISSED_UG_LISTINGS[16:]:
 		search_courses(listing[0], listing[1], listing[2], year, lock_term_start, lock_term_end)

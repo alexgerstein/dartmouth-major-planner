@@ -50,3 +50,4 @@ if (curr_orc_shortcut == "") and (old_orcs_shortcut == ""):
 	remove_deleted_offerings(timetable_globals)
 
 remove_unused_model_instances()
+scrape_medians()

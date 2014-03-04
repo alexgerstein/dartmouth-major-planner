@@ -5,11 +5,12 @@
 from flask import render_template, request, flash, redirect, url_for, session, g, jsonify
 from app import app, db
 from models import User, Offering, Course, Department, Term, Hour, Distributive
-from forms import EditForm, DeptPickerForm, HourPickerForm, TermPickerForm, DistribPickerForm
+from forms import EditForm, DeptPickerForm, HourPickerForm, TermPickerForm, DistribPickerForm, MedianPickerForm
 from functools import wraps
 from emails import welcome_notification
 
 SEASONS = ["W", "S", "X", "F"]
+MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B', 'B/B-', 'B-', 'B-/C+', 'C+', 'C+/C', 'C']
 
 # Wrapper function so certain pages remain private to new users
 def login_required(fn):
@@ -160,27 +161,31 @@ def disclaimer():
 @year_required
 def planner():
 
+	all_terms = generate_terms(g.user.grad_year)
+
 	# Initialize the department selection form
 	dept_form = DeptPickerForm()
 	dept_form.dept_name.choices = [(a.id, a.abbr + " - " + a.name) for a in Department.query.order_by('abbr')]
-	dept_form.dept_name.choices.insert(0, (-1,"Choose a Department"))
+	dept_form.dept_name.choices.insert(0, (-1,"Select Department"))
 
 	# Initialize the hour selection form
 	hour_form = HourPickerForm()
 	hour_form.hour_name.choices = [(a.id, a.period) for a in Hour.query.order_by('id')]
-	hour_form.hour_name.choices.insert(0, (-1,"Choose an Hour"))
+	hour_form.hour_name.choices.insert(0, (-1,"Select Hour"))
 
 	# Initialize the term selection form
 	term_form = TermPickerForm()
-	term_form.term_name.choices = [(a.id, str(a)) for a in g.user.terms.order_by('year', 'id')]
-	term_form.term_name.choices.insert(0, (-1,"Choose a Term"))
+	term_form.term_name.choices = [(a.id, str(a)) for a in all_terms]
+	term_form.term_name.choices.insert(0, (-1,"Select Term"))
 
 	# Initialize the term selection form
 	distrib_form = DistribPickerForm()
 	distrib_form.distrib_name.choices = [(a.id, str(a)) for a in Distributive.query.order_by('abbr')]
-	distrib_form.distrib_name.choices.insert(0, (-1,"Choose a Distrib"))
+	distrib_form.distrib_name.choices.insert(0, (-1,"Select Distrib"))
 
-	all_terms = generate_terms(g.user.grad_year)
+	median_form = MedianPickerForm()
+	median_form.median_name.choices = [(index, str(a)) for index, a in enumerate(MEDIANS)]
+	median_form.median_name.choices.insert(0, (-1, 'Select Min. Median'))
 
 	# Check if terms aren't in the session
 	if g.user.terms.all() == []:
@@ -195,6 +200,7 @@ def planner():
         hour_form = hour_form,
         term_form = term_form,
         distrib_form = distrib_form,
+        median_form = median_form,
         courses = g.user.courses.order_by('hour_id'),
         on_terms = g.user.terms.order_by('year', 'id').all(),
         terms = all_terms)
@@ -205,10 +211,12 @@ def planner():
 def getcourses():
 
 	courses = None
+	for val in request.values.itervalues():
+		if val != "-1":
+			courses = Course.query.join(Offering)
+
 	if request.values.get('dept') != "-1":
-		courses = Course.query.filter_by(department_id = request.values.get('dept')).join(Offering)
-	elif request.values.get('term') != "-1" or request.values.get('hour') != "-1" or request.values.get('distrib') != "-1":
-		courses = Course.query.join(Offering)
+		courses = courses.filter_by(department_id = request.values.get('dept'))
 
 	if request.values.get('term') != "-1":
 		courses = courses.filter_by(term_id = request.values.get('term'))
@@ -219,6 +227,9 @@ def getcourses():
 	if request.values.get('distrib') != "-1":
 		distrib = Distributive.query.filter_by(id = int(request.values.get('distrib'))).first()
 		courses = courses.filter(Offering.distributives.contains(distrib))
+
+	if request.values.get('median') != '-1':
+		courses = courses.filter(Course.avg_median.in_(MEDIANS[:int(request.values.get('median')) + 1]))
 
 	if courses is None:
 		j = jsonify ( {} )

@@ -33,6 +33,12 @@
                         {{distrib_form.hidden_tag()}}
                         {{distrib_form.distrib_name}}
                     </form>
+                    <br/>
+                    Median (min.):
+                    <form action="" method="post" name="add">
+                        {{median_form.hidden_tag()}}
+                        {{median_form.median_name}}
+                    </form>
 
                     <div class="classesBlock">
                         <ul id="" class="sortable1 dropfalse" unselectable="on"></ul>
@@ -140,6 +146,10 @@
     });
 
     $("#distrib_name").change(function () {
+        showCourses();
+    });
+
+    $("#median_name").change(function () {
         showCourses();
     });
 

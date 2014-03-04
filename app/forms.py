@@ -63,3 +63,13 @@ class DistribPickerForm(Form):
 			return False
 
 		return True
+
+class MedianPickerForm(Form):
+	median_name = SelectField('Median', coerce=int)
+
+	def validate(self):
+
+		if self.median_name.data == -1:
+			return False
+
+		return True
