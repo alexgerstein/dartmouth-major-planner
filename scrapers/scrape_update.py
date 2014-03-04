@@ -12,6 +12,7 @@ from app import app
 from scrape_curr_orc import *
 from scrape_old_orcs import *
 from scrape_timetable import *
+from scrape_medians import *
 
 # Option to debug scraping by jumping to a page
 curr_orc_shortcut = ""

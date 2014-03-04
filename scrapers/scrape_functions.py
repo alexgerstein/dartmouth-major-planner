@@ -553,11 +553,13 @@ def remove_deleted_offerings(timetable_globals):
 
 					if str(offering.get_hour()) != str(other_time.get_hour()):
 						if offering.get_term() == latest_term:
-							emails.swapped_course_times(emailed_users, offering, other_time)
+							# emails.swapped_course_times(emailed_users, offering, other_time)
+							print "EMAIL 1"
 					print_alert('SWAPPED (from not F): ' + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
 					if offering.get_term() == latest_term:
-						emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+						print "EMAIL 2"
+						# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert('DELETED (from not F): ' + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
@@ -585,10 +587,12 @@ def remove_deleted_offerings(timetable_globals):
 						user.take(other_time)
 
 					if str(offering.get_hour()) != str(other_time.get_hour()):
-						emails.swapped_course_times(emailed_users, offering, other_time)
+						print "EMAIL 3"
+						# emails.swapped_course_times(emailed_users, offering, other_time)
 					print_alert("SWAPPED: " + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
-					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					print "EMAIL 4"
+					# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
@@ -654,7 +658,8 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 				db.session.commit()
 
 				if not term.in_range(lock_term_start, lock_term_end):
-					emails.updated_hour_notification(users, o1, hour)
+					print "EMAIL UPDATE"
+					# emails.updated_hour_notification(users, o1, hour)
 
 				continue
 
