@@ -214,6 +214,7 @@ def getcourses():
 	for val in request.values.itervalues():
 		if val != "-1":
 			courses = Course.query.join(Offering)
+			break
 
 	if request.values.get('dept') != "-1":
 		courses = courses.filter(Course.department_id == request.values.get('dept'))
@@ -222,7 +223,7 @@ def getcourses():
 		courses = courses.filter(Offering.term_id == request.values.get('term'))
 
 	if request.values.get('hour') != "-1":
-		courses = courses.filter_by(Offering.hour_id == request.values.get('hour'))
+		courses = courses.filter(Offering.hour_id == request.values.get('hour'))
 
 	if request.values.get('distrib') != "-1":
 		distrib = Distributive.query.filter_by(id = int(request.values.get('distrib'))).first()

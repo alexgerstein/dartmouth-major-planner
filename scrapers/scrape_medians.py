@@ -168,7 +168,7 @@ def calculate_course_medians():
             avg_median_float = (sort_medians[median_count / 2 - 1] + sort_medians[median_count / 2]) / 2.0
             course.avg_median = convert_median_to_string(avg_median_float)
 
-        print avg_median_float, course.avg_median
+        print course.avg_median
 
         db.session.commit()
 
