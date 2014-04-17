@@ -6,7 +6,7 @@
 # 3) Select hour in planner
 # 4) Select term in planner
 
-from flask.ext.wtf import Form, TextField, IntegerField
+from flask.ext.wtf import Form
 from wtforms import TextField, IntegerField, SelectField, BooleanField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import Required, Length, NumberRange
