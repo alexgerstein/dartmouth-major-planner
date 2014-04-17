@@ -9,7 +9,7 @@ Flask-WTF==0.8.3
 Flask-Mail==0.8.2
 Flask-Admin==1.0.7
 MySQL-python==1.2.4
-SQLAlchemy==0.7.9
+SQLAlchemy==0.8.2
 Tempita==0.5.1
 WTForms==1.0.3
 blinker==1.2
