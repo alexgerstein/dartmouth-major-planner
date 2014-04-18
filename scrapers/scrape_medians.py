@@ -7,7 +7,7 @@ from bs4 import Comment
 MEDIAN_BASE_URL = 'http://www.dartmouth.edu/'
 MEDIAN_INDEX_URL = '~reg/transcript/medians/'
 
-MEDIANS = {'A': 4.00, 'B': 3.00, 'C': 2.00, 'D': 1.00,
+MEDIANS = {'A': 4.00, 'B': 3.00, 'C': 2.00, 'D': 1.00, 'E': 0.00,
             '+': 0.33, '-': -0.33}
 
 def fix_dept_abbr(abbr):
@@ -143,6 +143,30 @@ def convert_median_to_string(float_median):
         return "C+/C"
     elif float_median >= 1.9175:
         return "C"
+    elif float_median >= 1.7525:
+        return "C/C-"
+    elif float_median >= 1.5875:
+        return "C-"
+    elif float_median >= 1.4225:
+        return "C-/D+"
+    elif float_median >= 1.2575:
+        return "D+"
+    elif float_median >= 1.0925:
+        return "D+/D"
+    elif float_median >= 0.9275:
+        return "D"
+    elif float_median >= 0.7625:
+        return "D/D-"
+    elif float_median >= 0.5975:
+        return "D-"
+    elif float_median >= 0.4325:
+        return "D-/E+"
+    elif float_median >= 0.2675:
+        return "E+"
+    elif float_median >= 0.1025:
+        return "E+/E"
+    else
+        return "E"
 
 def calculate_course_medians():
     courses = Course.query.all()
