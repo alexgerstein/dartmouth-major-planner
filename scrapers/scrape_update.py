@@ -11,6 +11,7 @@ from app import app
 
 from scrape_curr_orc import *
 from scrape_old_orcs import *
+from scrape_department_pages import *
 from scrape_timetable import *
 from scrape_medians import *
 
@@ -22,6 +23,7 @@ old_orcs_shortcut = ""
 # store_distribs()
 store_hours()
 store_terms()
+store_distribs()
 
 # Set current range of timetable
 timetable_globals = Timetable()
@@ -43,7 +45,7 @@ scrape_timetable()
 
 # If course in database was not added by the latest scraping, then it has been changed by the registrar. So, delete.
 if (curr_orc_shortcut == "") and (old_orcs_shortcut == ""):
-	remove_deleted_offerings(timetable_globals)
+    remove_deleted_offerings(timetable_globals)
 
 remove_unused_model_instances()
 scrape_medians()
