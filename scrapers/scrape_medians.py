@@ -165,7 +165,7 @@ def convert_median_to_string(float_median):
         return "E+"
     elif float_median >= 0.1025:
         return "E+/E"
-    else
+    else:
         return "E"
 
 def calculate_course_medians():
