@@ -383,6 +383,10 @@ def store_offerings(offering_info, c1, d1, distribs, info_soup, year, desc_html,
 
 			continue
 
+		# Check that string is long enough to contain format: "14X"
+		if len(stripped_offering) < 3:
+			continue
+
 		# Check if word is a term. If it is, append it to terms_offered
 		possible_term = Term.query.filter_by(year = int("20" + stripped_offering[:2]), season = stripped_offering[2]).first()
 		if possible_term:
