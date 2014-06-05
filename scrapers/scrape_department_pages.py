@@ -26,15 +26,26 @@ def scrape_anth_course_page(dept_abbreviation, department_course_page, lock_term
         course_view = course.parent
 
         header = course_view.find('h3')
+
+        if header is None:
+            continue
+
         split_header = header.text.split(" ")
 
         number = float(split_header[0].strip(".").lstrip("0"))
         title = " ".join(split_header[1:]).strip(" ")
 
         offering_soup = course_view.find('p')
+
+        if offering_soup is None:
+            continue
+
         offerings = offering_soup.text.split(" ")
 
         description = offering_soup.find_next_sibling('p')
+
+        if description is None:
+            continue
 
         distribs = []
         split_description = description.text.split(" ")
