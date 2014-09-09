@@ -6,23 +6,24 @@ from bs4 import Comment
 
 # List of all departments missed in scraping of the ORL
 # Format: URLs, Abbreviation, Name
-MISSED_UG_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/LAT-Latin', 'LAT', 'Latin'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/CLST-Classical-Studies', 'CLST', 'Classical Studies'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/GRK-Greek', 'GRK', 'Greek'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/ARAB-Arabic', "ARAB", "Arabic"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/CHIN-Chinese', "CHIN", "Chinese"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/HEBR-Hebrew', "HEBR", "Hebrew"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/JAPN-Japanese', "JAPN", "Japanese"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/French-and-Italian-Languages-and-Literatures/ITAL-Italian', 'ITAL', 'Italian'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/French-and-Italian-Languages-and-Literatures/FRIT-French-and-Italian-in-Translation', "FRIT", 'French and Italian in Translation'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/The-Nelson-A-Rockefeller-Center-for-Public-Policy/Public-Policy-Minor/PBPL-Public-Policy', 'PBPL', 'Public Policy'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/WRIT-Writing', 'WRIT', 'Writing'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/SPEE-Speech', 'SPEE', 'Speech'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Humanities/HUM-Humanities', 'HUM', "Humanities"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Physics-and-Astronomy/PHYS-Physics-Undergraduate', 'PHYS', "Physics"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Linguistics-and-Cognitive-Science/COGS-Cognitive-Science', 'COGS', "Cognitive Science"],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Graduate/Microbiology-and-Immunology/MICR-Microbiology-and-Immunology', 'MICR', 'Microbiology and Immunology'],
-['http://dartmouth.smartcatalogiq.com/en/2013/orc/Departments-Programs-Undergraduate/Spanish-and-Portuguese-Languages-and-Literatures/PORT-Portuguese', 'PORT', 'Portuguese']
+MISSED_UG_LISTINGS = [['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/LAT-Latin', 'LAT', 'Latin'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/CLST-Classical-Studies', 'CLST', 'Classical Studies'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Classics-Classical-Studies-Greek-Latin/GRK-Greek', 'GRK', 'Greek'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/ARAB-Arabic', "ARAB", "Arabic"],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/CHIN-Chinese', "CHIN", "Chinese"],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/HEBR-Hebrew', "HEBR", "Hebrew"],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Asian-and-Middle-Eastern-Languages-and-Literatures-Arabic-Chinese-Hebrew-Japanese/JAPN-Japanese', "JAPN", "Japanese"],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/French-and-Italian-Languages-and-Literatures/ITAL-Italian', 'ITAL', 'Italian'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/French-and-Italian-Languages-and-Literatures/FRIT-French-and-Italian-in-Translation', "FRIT", 'French and Italian in Translation'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/The-Nelson-A-Rockefeller-Center-for-Public-Policy/Public-Policy-Minor/PBPL-Public-Policy', 'PBPL', 'Public Policy'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/WRIT-Writing', 'WRIT', 'Writing'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Institute-for-Writing-and-Rhetoric/SPEE-Speech', 'SPEE', 'Speech'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Humanities/HUM-Humanities', 'HUM', "Humanities"],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Physics-and-Astronomy/PHYS-Physics-Undergraduate', 'PHYS', "Physics"],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Linguistics-and-Cognitive-Science/COGS-Cognitive-Science', 'COGS', "Cognitive Science"],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Graduate/Microbiology-and-Immunology/MICR-Microbiology-and-Immunology', 'MICR', 'Microbiology and Immunology'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/Spanish-and-Portuguese-Languages-and-Literatures/PORT-Portuguese', 'PORT', 'Portuguese'],
+['http://dartmouth.smartcatalogiq.com/en/2014/orc/Departments-Programs-Undergraduate/The-Nelson-A-Rockefeller-Center-for-Public-Policy/Public-Policy-Minor/PBPL-Public-Policy', 'PBPL', 'Public Policy']
 ]
 
 # Return the section of the base url with the links to the departments
@@ -36,7 +37,6 @@ def get_course_links(url_ext, department_list):
 	links = []
 	for link in department_list.find_all(href=re.compile(url_ext)):
 		links.append(link)
-		print link
 
 	return links
 
@@ -144,8 +144,12 @@ def search_courses(url, dept_abbr, dept_name, year, lock_term_start, lock_term_e
 			course_number = re.match('[0-9]*(\.[0-9]+$)?', course_split[2])
 			course_name = course_split[3:]
 
+		if course_number.group(0) == "":
+			course_number = re.match('[0-9]*(\.[0-9]+$)?', course_split[3])
+			course_name = course_split[4:]
+
 		# Fix leading space
-		if not course_number:
+		if not course_number.group(0):
 			continue
 
 		print "Department: " + dept_name
@@ -170,6 +174,7 @@ def search_course_links (url_ext, links, year, lock_term_start, lock_term_end):
 				and not is_number(last_link[-1])
 				and 'Course' not in last_link[-2]
 				and 'Major' not in last_link[-2]
+				and 'Minor' not in last_link[-1]
 				and 'Neuroscience' not in last_link[-1]):
 
 				search_courses(BASE_URL + link['href'], last_link[0], " ".join(last_link[1:]), year, lock_term_start, lock_term_end)

@@ -16,7 +16,7 @@ from scrape_timetable import *
 from scrape_medians import *
 
 # Option to debug scraping by jumping to a page
-curr_orc_shortcut = ""
+curr_orc_shortcut = "The Nelson A Rockefeller Center for Public Policy"
 old_orcs_shortcut = ""
 
 # Add missing pre-defined models to the database

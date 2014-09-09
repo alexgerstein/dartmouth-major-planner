@@ -23,8 +23,8 @@ from app.models import User, Offering, Course, Department, Hour, Term, Distribut
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
-UG_DEPT_URL = "/en/2013/orc/Departments-Programs-Undergraduate"
-GRAD_DEPT_URL = "/en/2013/orc/Departments-Programs-Graduate"
+UG_DEPT_URL = "/en/2014/orc/Departments-Programs-Undergraduate"
+GRAD_DEPT_URL = "/en/2014/orc/Departments-Programs-Graduate"
 
 # Timetable Setup
 TIMETABLE_BASE = "http://oracle-www.dartmouth.edu/dart/groucho/timetable.subject_search?distribradio=alldistribs&subjectradio=allsubjects&termradio=selectterms&hoursradio=allhours&terms=no_value&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&sortorder=dept&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=Subject+Area(s)"
@@ -157,6 +157,14 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
 	elif (d1.abbr == "EARS"):
 		if (c1.number == "70"):
 			stripped_offering = ""
+
+	elif (d1.abbr == "ENGL"):
+		if (int(c1.number) == 85):
+			print "INSIDE"
+			if ("2A;16S" in stripped_offering):
+				possible_hour = Hour.query.filter_by(period = "2A").first()
+				hours_offered.append(possible_hour)
+				stripped_offering = "16S"
 
 	# "Government": Misplaced colon
 	elif (d1.abbr == "GOVT"):
@@ -557,13 +565,13 @@ def remove_deleted_offerings(timetable_globals):
 
 					if str(offering.get_hour()) != str(other_time.get_hour()):
 						if offering.get_term() == latest_term:
-							emails.swapped_course_times(emailed_users, offering, other_time)
+							# emails.swapped_course_times(emailed_users, offering, other_time)
 							print "EMAIL 1"
 					print_alert('SWAPPED (from not F): ' + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
 					if offering.get_term() == latest_term:
 						print "EMAIL 2"
-						emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+						# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert('DELETED (from not F): ' + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
@@ -592,11 +600,11 @@ def remove_deleted_offerings(timetable_globals):
 
 					if str(offering.get_hour()) != str(other_time.get_hour()):
 						print "EMAIL 3"
-						emails.swapped_course_times(emailed_users, offering, other_time)
+						# emails.swapped_course_times(emailed_users, offering, other_time)
 					print_alert("SWAPPED: " + repr(offering.get_term()) + " " + repr(offering) + " at " + repr(offering.get_hour()) + "with " + repr(other_time.get_hour()))
 				else:
 					print "EMAIL 4"
-					emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
+					# emails.deleted_offering_notification(emailed_users, offering, offering.get_term(), offering.get_hour())
 					print_alert("DELETED: " + repr(offering.get_term()) + " " + repr(offering))
 
 					for user in all_users:
@@ -663,7 +671,7 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 
 				if not term.in_range(lock_term_start, lock_term_end):
 					print "EMAIL UPDATE"
-					emails.updated_hour_notification(users, o1, hour)
+					# emails.updated_hour_notification(users, o1, hour)
 
 				continue
 
