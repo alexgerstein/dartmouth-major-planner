@@ -46,7 +46,7 @@ def store_offering_median(offering_row):
             dept = Department.query.filter_by(abbr = fixed_dept_abbr).first()
 
             # Number
-            number = course_text_split[1].lstrip('0').strip('.')
+            number = course_text_split[1].lstrip('0').split('.')[0]
             section = course_text_split[2].lstrip('0').strip('.')
             section_number = number + "." + section
 
