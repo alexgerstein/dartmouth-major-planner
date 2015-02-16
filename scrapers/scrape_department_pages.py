@@ -6,8 +6,10 @@ from datetime import date
 
 # List of all department course description pages to scrape
 # Format: URLs, Abbreviation, Name
-ANTH_COURSE_PAGE = ['http://dartmouth.edu/anthropology/undergraduate/course-listings', "ANTH", 'Anthropology']
-AAAS_COURSE_PAGE = ['http://www.dartmouth.edu/~african/courses/', 'AAAS', 'African and African American Studies']
+AAAS_BASE = 'http://aaas.dartmouth.edu/'
+
+ANTH_COURSE_PAGE = ['http://anthropology.dartmouth.edu/undergraduate/courses/course-schedule-term', "ANTH", 'Anthropology']
+AAAS_COURSE_PAGE = [AAAS_BASE + '/undergraduate/courses', 'AAAS', 'African and African American Studies']
 
 # List of all department offering calendars to scrape
 ANTH_DEPARTMENT_PAGE = []
@@ -16,112 +18,125 @@ def scrape_anth_course_page(dept_abbreviation, department_course_page, lock_term
     # Get main content
     r = requests.get(department_course_page)
     orig_soup = BeautifulSoup(r.content, from_encoding=r.encoding)
-    page_content = orig_soup.find('div', { 'id': 'main-content' })
+    dept_sections = orig_soup.findAll('section', { 'class': 'dept-section' })
 
     department = Department.query.filter_by(abbr = dept_abbreviation).first()
     assert department
 
     # Loop through each course
-    for course in page_content.findAll('h3',  text=re.compile('[0-9][.].[\s]*[A-Za-z]')):
-        course_view = course.parent
-
-        header = course_view.find('h3')
-
-        if header is None:
+    for term_selection in dept_sections:
+        if not term_selection.find('table'):
             continue
 
-        split_header = header.text.split(" ")
+        season, year = term_selection.find('h2').text.strip().split()
+        season = SEASON_NAME[season.upper()]
+        year = '20' + year
+        term = Term.query.filter_by(season=season, year=year).first()
 
-        number = float(split_header[0].strip(".").lstrip("0"))
-        title = " ".join(split_header[1:]).strip(" ")
+        courses = term_selection.find('tbody')
+        for index, tr in enumerate(courses.findAll('tr')):
+            if index == 0:
+                continue
 
-        offering_soup = course_view.find('p')
+            distribs = []
 
-        if offering_soup is None:
-            continue
+            for index, td in enumerate(tr.findAll('td')):
+                if index == 0:
+                    dept, number = td.text.split()
+                    number = float(number)
+                elif index == 1:
+                    title = td.text.split(" (")[0]
+                elif index == 4:
+                    period = td.text
+                elif index == 5:
+                    for word in td.text.split():
+                        stripped_dist = re.match(r"\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b", word)
+                        if stripped_dist:
+                            possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
+                            if possible_distrib:
+                                distribs.append(possible_distrib)
+                elif index == 6:
+                    for word in td.text.split():
+                        stripped_dist = re.match(r"\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b", word)
+                        if stripped_dist:
+                            possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
+                            if possible_distrib:
+                                distribs.append(possible_distrib)
 
-        offerings = offering_soup.text.split(" ")
+            offerings = [unicode(term), unicode(period)]
+            course = Course.query.filter(Course.department == department, Course.name.ilike(title + "%"), Course.number == number).first()
+            if course is None:
 
-        description = offering_soup.find_next_sibling('p')
+                course = Course(number = number, name = title, department = department.id)
 
-        if description is None:
-            continue
+                db.session.add(course)
+                db.session.commit()
 
-        distribs = []
-        split_description = description.text.split(" ")
-        for word in split_description:
-            stripped_dist = re.match(r"\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b", word)
-            if stripped_dist:
-                        possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
-                        if possible_distrib:
-                            distribs.append(possible_distrib)
+            print repr(number), repr(title)
 
-        course = Course.query.filter(Course.department == department, Course.name.ilike(title + "%"), Course.number == number).first()
-        if course is None:
-
-            course = Course(number = number, name = title, department = department.id)
-
-            db.session.add(course)
-            db.session.commit()
-
-        print repr(number), repr(title)
-
-        store_offerings(offerings, course, department, distribs, course_view, date.today().year, course_view.prettify(), lock_term_start, lock_term_end)
+            store_offerings(offerings, course, department, distribs, courses, date.today().year, '', lock_term_start, lock_term_end)
 
 def scrape_aaas_course_page(dept_abbreviation, department_course_page, lock_term_start, lock_term_end):
     # Get main content
     r = requests.get(department_course_page)
     orig_soup = BeautifulSoup(r.content, from_encoding=r.encoding)
-    page_content = orig_soup.find('div', { 'class': 'b6' })
+    term_course_listings = orig_soup.find('div', {'class': 'entity'}).findAll('a')
 
     department = Department.query.filter_by(abbr = dept_abbreviation).first()
     assert department
 
-    # Get term from header
-    full_term = page_content.find('h2', { 'style': 'text-align: center;'})
-    split_term = full_term.text.split()
-    season = SEASON_NAME[split_term[0].upper()]
-    year = split_term[1]
-    term = Term.query.filter_by(season = season, year = year).first()
-    assert term != None
-    print term
+    for term_course_link in term_course_listings:
+        link = term_course_link['href']
 
-    # Search through listed courses by bolded headers
-    # ***EXTREMELY FLAKY, but don't have any choice***
-    for course_view in page_content.findAll('p'):
-        split_header = course_view.find('strong')
-        if not split_header:
-            continue
+        r = requests.get(AAAS_BASE + link)
+        orig_soup = BeautifulSoup(r.content, from_encoding=r.encoding)
 
-        split_header = split_header.text.split()
-        number = float(split_header[1].strip(":").split('-')[0])
-        title = " ".join(split_header[2:])
+        course_listings = orig_soup.find('div', {'id': 'main-content'})
 
-        course = Course.query.filter(Course.department == department, Course.name.ilike(title + "%"), Course.number == number).first()
-        if course is None:
+        # Get term from header
+        full_term = course_listings.find('h1', { 'class': 'title'})
+        split_term = full_term.text.split()
+        season = SEASON_NAME[split_term[0].upper()]
+        year = split_term[1]
+        term = Term.query.filter_by(season = season, year = year).first()
+        assert term != None
 
-            course = Course(number = number, name = title, department = department.id)
+        offerings = [unicode(term), unicode("Arrange")]
 
-            db.session.add(course)
-            db.session.commit()
+        # Search through listed courses by bolded headers
+        # ***EXTREMELY FLAKY, but don't have any choice***
+        for course_view in course_listings.findAll('article', {'class': 'dept-landing-module'}):
+            split_header = course_view.find('h2')
+            if not split_header:
+                continue
+            dept_and_number = split_header.text.split()
+            dept = dept_and_number[0]
+            number = float(dept_and_number[1].split("-")[0])
 
-        desc = course_view
-        distribs = []
+            title = course_view.find('h3').text
 
-        offering_data = course_view.find('em')
-        if offering_data:
+            course = Course.query.filter(Course.department == department, Course.name.ilike(title + "%"), Course.number == number).first()
+            if course is None:
 
-            # Get offerings
-            offerings = offering_data.text.split(") ")[0].split()
-            offerings.insert(0, unicode(term))
+                course = Course(number = number, name = title, department = department.id)
 
-            split_desc = offering_data.text.split()
-            for word in split_desc:
-                stripped_dist = re.match(r"\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b", word)
-                if stripped_dist:
-                    possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
-                    if possible_distrib:
-                        distribs.append(possible_distrib)
+                db.session.add(course)
+                db.session.commit()
+
+            distribs = []
+
+            desc_and_distrib_text = course_view.findAll('p')
+
+            desc = desc_and_distrib_text[0]
+            if len(desc_and_distrib_text) > 1:
+                distrib_text = desc_and_distrib_text[1].text.split()
+
+                for word in distrib_text:
+                    stripped_dist = re.match(r"\b(ART|CI|INT|LIT|NW|QDS|SCI|SLA|SOC|TAS|TLA|TMV|W)\b", word)
+                    if stripped_dist:
+                        possible_distrib = Distributive.query.filter_by(abbr = stripped_dist.group(0)).first()
+                        if possible_distrib:
+                            distribs.append(possible_distrib)
 
             print repr(number), repr(title)
             store_offerings(offerings, course, department, distribs, course_view, date.today().year, desc.prettify(), lock_term_start, lock_term_end)
