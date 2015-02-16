@@ -30,7 +30,8 @@ def scrape_anth_course_page(dept_abbreviation, department_course_page, lock_term
 
         season, year = term_selection.find('h2').text.strip().split()
         season = SEASON_NAME[season.upper()]
-        year = '20' + year
+        if len(year) == 2:
+            year = '20' + year
         term = Term.query.filter_by(season=season, year=year).first()
 
         courses = term_selection.find('tbody')
