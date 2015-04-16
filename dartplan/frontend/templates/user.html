@@ -9,7 +9,7 @@
     {% if user.grad_year %}<p>{{user.grad_year}}</p>{% endif %}
     <p>
     {% if user.id == g.user.id %}
-        <a href="{{url_for('edit')}}">Edit your profile</a>
+        <a href="{{url_for('frontend.edit')}}">Edit your profile</a>
     {% endif %}
     </p>
 </div>
