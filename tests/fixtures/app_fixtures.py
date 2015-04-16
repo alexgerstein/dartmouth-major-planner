@@ -1,5 +1,6 @@
 import pytest
 
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from dartplan import create_app
 from dartplan.database import db as _db
 
@@ -38,7 +39,7 @@ def session(db, request):
     # begin a non-ORM transaction
     transaction = connection.begin()
 
-    options = dict(bind=connection)
+    options = dict()
     session = db.create_scoped_session(options)
     db.session = session
 

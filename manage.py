@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 from dartplan import create_app
 from dartplan.database import db
@@ -19,7 +20,8 @@ def _make_context():
 
 @manager.command
 def tests():
-    subprocess.call(TEST_CMD, shell=True)
+    status = subprocess.call(TEST_CMD, shell=True)
+    sys.exit(status)
 
 manager.add_command('server', Server())
 manager.add_command('shell', Shell(make_context=_make_context))
