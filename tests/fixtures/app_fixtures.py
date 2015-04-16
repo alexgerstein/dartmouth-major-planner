@@ -39,7 +39,7 @@ def session(db, request):
     # begin a non-ORM transaction
     transaction = connection.begin()
 
-    options = dict(bind=connection)
+    options = dict()
     session = db.create_scoped_session(options)
     db.session = session
 
