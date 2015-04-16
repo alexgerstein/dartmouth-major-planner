@@ -3,7 +3,7 @@ Webapp for Dartmouth students to plan their courses for their time at Dartmouth.
 Currently at [dartplan.com](dartplan.com). DartmouthID required.
 
 ## Statuses
-[![Coverage Status](https://coveralls.io/repos/alexgerstein/dartmouth-major-planner/badge.svg)](https://coveralls.io/r/alexgerstein/dartmouth-major-planner)
+[![Coverage Status](https://coveralls.io/repos/alexgerstein/dartmouth-major-planner/badge.svg?branch=master)](https://coveralls.io/r/alexgerstein/dartmouth-major-planner?branch=master)
 
 
 ## Languages/Tools Learned
