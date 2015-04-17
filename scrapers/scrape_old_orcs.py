@@ -58,47 +58,51 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			else:
 				continue
 
-		abbreviation = dept.abbr
 		old_dept = dept
 
 		# Adjust for AMEL department
-		if old_dept.abbr == "AMEL":
-			if "Arab" in course_name:
-				abbreviation = "ARAB"
-			elif "Chinese" in course_name:
-				abbreviation = "CHIN"
-			elif "Hebrew" in course_name:
-				abbreviation = "HEBR"
-			elif "Japanese"in course_name:
-				abbreviation = "JAPN"
-
-			dept = Department.query.filter_by(abbr = abbreviation).first()
-
-		# Adjust for French and Italian departments
-		if old_dept.abbr == "FREN":
-			actual_department = title.findPreviousSibling('p', { "class" : "subsectitle" })
-			if actual_department:
-				if "TRANSLATION" in actual_department.text:
-					abbreviation = "FRIT"
-				elif "CLUB" in actual_department.text:
-					continue
-				elif "ITALIAN" in actual_department.text:
-					abbreviation = "ITAL"
-				elif "FRENCH" in actual_department.text:
-					abbreviation = "FREN"
+		if dept:
+			abbreviation = dept.abbr
+			if old_dept.abbr == "AMEL":
+				if "Arab" in course_name:
+					abbreviation = "ARAB"
+				elif "Chinese" in course_name:
+					abbreviation = "CHIN"
+				elif "Hebrew" in course_name:
+					abbreviation = "HEBR"
+				elif "Japanese"in course_name:
+					abbreviation = "JAPN"
 
 				dept = Department.query.filter_by(abbr = abbreviation).first()
+
+		# Adjust for French and Italian departments
+		if dept:
+			abbreviation = dept.abbr
+			if old_dept.abbr == "FREN":
+				actual_department = title.findPreviousSibling('p', { "class" : "subsectitle" })
+				if actual_department:
+					if "TRANSLATION" in actual_department.text:
+						abbreviation = "FRIT"
+					elif "CLUB" in actual_department.text:
+						continue
+					elif "ITALIAN" in actual_department.text:
+						abbreviation = "ITAL"
+					elif "FRENCH" in actual_department.text:
+						abbreviation = "FREN"
+
+					dept = Department.query.filter_by(abbr = abbreviation).first()
 
 		print "Number: " + str(course_number.group(0))
 		if isinstance(course_name, unicode):
 			print "Name: " + unicodedata.normalize('NFKD', course_name).encode('ascii', 'ignore')
 		else:
 			print "Name: " + course_name
-		print "Dept: " + str(dept)
 
 		if not dept:
 			print_alert("Wrong Dept")
 			continue
+
+		print "Dept: " + str(dept)
 
 		if re.search('[0-9].', course_name.split(" ")[0]):
 			print_alert("Wrong Name")
@@ -222,7 +226,7 @@ def get_old_courses(url, dept, lock_term_start, lock_term_end):
 
 	# Look up the department in the database. Return if it does not exist
 	d1 = Department.query.filter_by(abbr = dept).first()
-	if (d1 is None):
+	if not d1:
 		print_alert("MISSING DEPT " + dept)
 		return
 
