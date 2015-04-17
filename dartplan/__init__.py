@@ -20,8 +20,9 @@ def create_app(env=None):
     if env_config_file:
         app.config.from_object('config.%s' % env_config_file)
 
-    from dartplan.database import db
+    from dartplan.database import db, migrate
     db.init_app(app)
+    migrate.init_app(app, db)
 
     from dartplan.mail import mail
     mail.init_app(app)

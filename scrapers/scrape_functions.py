@@ -5,21 +5,16 @@
 import os
 import imp
 
-# Add app directory to path
-import sys
-app_path = "../"
-sys.path.insert(0, app_path)
-
 from html5lib import HTMLParser, treebuilders
 import unicodedata
 from bs4 import BeautifulSoup
 import requests
 import re, string
 
-from app import emails
+from dartplan import mail
 
-from app import db
-from app.models import User, Offering, Course, Department, Hour, Term, Distributive
+from dartplan.database import db
+from dartplan.models import User, Offering, Course, Department, Hour, Term, Distributive
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"

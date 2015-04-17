@@ -17,4 +17,4 @@ deploy:
   app:
     master: dartplan-staging
   run:
-    - "python db_upgrade.py"
+    - "python manage.py db upgrade"
