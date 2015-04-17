@@ -1,6 +1,5 @@
 import pytest
 
-from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from dartplan import create_app
 from dartplan.database import db as _db
 

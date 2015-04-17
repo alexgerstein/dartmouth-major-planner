@@ -13,6 +13,7 @@ WTForms==1.0.3
 Werkzeug==0.9.4
 beautifulsoup4==4.3.1
 blinker==1.2
+configparser==3.3.0r2
 cov-core==1.15.0
 coverage==3.7.1
 decorator==3.4.0
