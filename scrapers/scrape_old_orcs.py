@@ -96,6 +96,10 @@ def add_offerings_by_tag(soup, dept, year, lock_term_start, lock_term_end):
 			print "Name: " + course_name
 		print "Dept: " + str(dept)
 
+		if not dept:
+			print_alert("Wrong Dept")
+			continue
+
 		if re.search('[0-9].', course_name.split(" ")[0]):
 			print_alert("Wrong Name")
 			continue
