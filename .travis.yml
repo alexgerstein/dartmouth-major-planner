@@ -16,10 +16,7 @@ env:
 script: python manage.py tests
 after_success:
 - coveralls
-  if ([ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "production" ]); then
-    git remote add dokku dokku@dartplan.com:dartplan
-    git push dokku production
-  fi
+- bash ./scripts/dokku_deploy.sh
 deploy:
   provider: heroku
   api_key:

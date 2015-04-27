@@ -11,9 +11,6 @@ from flask.ext.migrate import MigrateCommand
 app = create_app(os.environ.get("APP_CONFIG_FILE") or "development")
 manager = Manager(app)
 
-TEST_CMD = "py.test --cov-report term-missing --cov-config .coveragerc \
-                    --cov . --boxed -n2 tests/"
-
 
 def _make_context():
     """Return context dict for a shell session so you can access
@@ -23,7 +20,7 @@ def _make_context():
 
 @manager.command
 def tests():
-    status = subprocess.call(TEST_CMD, shell=True)
+    status = subprocess.call("bash test.sh", shell=True)
     sys.exit(status)
 
 
