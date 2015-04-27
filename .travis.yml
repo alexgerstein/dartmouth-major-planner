@@ -4,15 +4,12 @@ sudo: false
 python:
 - '2.7'
 before_install:
-- openssl aes-256-cbc -k '$DEPLOY_KEY' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
+- openssl aes-256-cbc -k '' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
 install:
 - pip install -r requirements.txt
 - pip install coveralls
 env:
-  matrix:
   - APP_CONFIG_FILE=testing
-  global:
-    secure: KeSjV6DU+TyWqcVZ9is95WatvLZz03s8ZD1UYeQjgUzCXQvOykUbZLoErrM/Cn6eoMNZjrddGQ65OdVap9JMa7cADDXg47C89IkfjJHGkTrXmhdYB3/stAkbYjpS9GHC4oEPLllM/i/FPQtiZFVej9qSRzpjBcT5/P+BO0LC+nQ=
 script: python manage.py tests
 after_success:
 - coveralls
