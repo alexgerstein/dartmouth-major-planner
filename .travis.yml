@@ -14,12 +14,11 @@ env:
 script: python manage.py tests
 after_success:
 - coveralls
-- if [[ "$TRAVIS_PULL_REQUEST" == false ]] && [[ "$TRAVIS_BRANCH" == production ]];
-  then
-- openssl aes-256-cbc -k '$DEPLOY_KEY' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa
-- git remote add dokku dokku@dartplan.com:dartplan
-- git push dokku production
-- fi
+- test $TRAVIS_PULL_REQUEST = false \
+  && test $TRAVIS_BRANCH = production \
+  && openssl aes-256-cbc -k '$DEPLOY_KEY' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
+  && git remote add dokku dokku@dartplan.com:dartplan
+  && git push dokku production
 deploy:
   provider: heroku
   api_key:
