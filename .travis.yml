@@ -3,6 +3,8 @@ cache: pip
 sudo: false
 python:
 - '2.7'
+before_install:
+- openssl aes-256-cbc -k '$DEPLOY_KEY' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
 install:
 - pip install -r requirements.txt
 - pip install coveralls
@@ -14,10 +16,8 @@ env:
 script: python manage.py tests
 after_success:
 - coveralls
-- test $TRAVIS_PULL_REQUEST = false \
-  && test $TRAVIS_BRANCH = production \
-  && openssl aes-256-cbc -k '$DEPLOY_KEY' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
-  && git remote add dokku dokku@dartplan.com:dartplan
+- test $TRAVIS_PULL_REQUEST = false && test $TRAVIS_BRANCH = production \
+  && git remote add dokku dokku@dartplan.com:dartplan \
   && git push dokku production
 deploy:
   provider: heroku
