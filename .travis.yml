@@ -16,7 +16,7 @@ env:
 script: python manage.py tests
 after_success:
 - coveralls
-- test $TRAVIS_PULL_REQUEST = false && test $TRAVIS_BRANCH = production \
+- test "$TRAVIS_PULL_REQUEST" = "false" && test "$TRAVIS_BRANCH" = "production" \
   && git remote add dokku dokku@dartplan.com:dartplan \
   && git push dokku production
 deploy:
