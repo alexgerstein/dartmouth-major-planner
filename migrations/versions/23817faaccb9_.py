@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 107d38e7e2a7
+Revision ID: 23817faaccb9
 Revises: None
-Create Date: 2015-04-16 22:36:01.921181
+Create Date: 2015-04-27 12:32:26.175374
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '107d38e7e2a7'
+revision = '23817faaccb9'
 down_revision = None
 
 from alembic import op
@@ -22,6 +22,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_hour_period'), 'hour', ['period'], unique=True)
+
     op.create_table('department',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=True),
@@ -30,6 +31,7 @@ def upgrade():
     )
     op.create_index(op.f('ix_department_abbr'), 'department', ['abbr'], unique=True)
     op.create_index(op.f('ix_department_name'), 'department', ['name'], unique=True)
+
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('netid', sa.String(length=15), nullable=True),
@@ -41,12 +43,14 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_netid'), 'user', ['netid'], unique=True)
+
     op.create_table('distributive',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('abbr', sa.String(length=10), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_distributive_abbr'), 'distributive', ['abbr'], unique=True)
+
     op.create_table('term',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('year', sa.SmallInteger(), nullable=True),
@@ -63,6 +67,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_course_name'), 'course', ['name'], unique=False)
+
     op.create_table('user_terms',
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('term_id', sa.Integer(), nullable=True),
@@ -104,16 +109,21 @@ def downgrade():
     op.drop_table('offering_distribs')
     op.drop_table('offering')
     op.drop_table('user_terms')
-    op.drop_index(op.f('ix_course_name'), table_name='course')
+    op.drop_index(op.f('ix_course_name'), 'course')
+
     op.drop_table('course')
     op.drop_table('term')
-    op.drop_index(op.f('ix_distributive_abbr'), table_name='distributive')
+    op.drop_index(op.f('ix_distributive_abbr'), 'distributive')
+
     op.drop_table('distributive')
-    op.drop_index(op.f('ix_user_netid'), table_name='user')
+    op.drop_index(op.f('ix_user_netid'), 'user')
+
     op.drop_table('user')
-    op.drop_index(op.f('ix_department_name'), table_name='department')
-    op.drop_index(op.f('ix_department_abbr'), table_name='department')
+    op.drop_index(op.f('ix_department_name'), 'department')
+    op.drop_index(op.f('ix_department_abbr'), 'department')
+
     op.drop_table('department')
-    op.drop_index(op.f('ix_hour_period'), table_name='hour')
+    op.drop_index(op.f('ix_hour_period'), 'hour')
+
     op.drop_table('hour')
     ### end Alembic commands ###
