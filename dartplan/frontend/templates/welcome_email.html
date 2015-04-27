@@ -1,0 +1,24 @@
+<h1><img src="{{ url_for('static', filename='favicon.ico', _external = True) }}" style="width: 25px; height: 25px;"><b>DART</b>Plan</p></h1>
+
+<p>Dear {{user.nickname.split(" ")[0]}},</p>
+
+<p>
+	Your course planning experience is about to get a whole lot better.
+</p>
+
+<p>
+	Say goodbye to the ORC and hello to DARTPlan. No more manually tracking what courses fit into your schedule with Excel documents and unnavigable webpages. DARTPlan helps you find the courses that work in your schedule with a simple drag-and-drop!
+</p>
+
+<p>
+	DARTPlan has a lot of exciting features in store for the terms ahead. If you have any ideas for ways to improve the site or other features you'd like to see, let me know at <a href="mailto:support@DARTPlan.com">support@DARTPlan.com</a>.
+</p>
+
+<p>
+	Now, it's time to <a href="{{url_for('frontend.planner', _external = True)}}">find the courses that fit.</a>
+</p>
+
+<p>Regards,</p>
+
+<p>Alex Gerstein<br/>
+<a href="www.dartplan.com">dartplan.com</a></p>

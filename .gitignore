@@ -1,7 +1,8 @@
 *.py[cod]
 *.db
 
-config.py
+# Secret
+instance/
 
 flask
 
@@ -23,6 +24,7 @@ develop-eggs
 lib
 lib64
 venv/
+flask/
 
 # Installer logs
 pip-log.txt
