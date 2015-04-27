@@ -3,13 +3,24 @@ cache: pip
 sudo: false
 python:
 - '2.7'
+before_install:
+- openssl aes-256-cbc -K $encrypted_b5a7b01d0cd0_key -iv $encrypted_b5a7b01d0cd0_iv
+  -in travis.pub.enc -out ~\/.ssh/travis.pub -d
 install:
-  - pip install -r requirements.txt
-  - pip install coveralls
+- pip install -r requirements.txt
+- pip install coveralls
 env:
-  - APP_CONFIG_FILE=testing
+- APP_CONFIG_FILE=testing
 script: python manage.py tests
-after_success: coveralls
+after_success:
+- coveralls
+- if [[ "$TRAVIS_PULL_REQUEST" == false ]] && [[ "$TRAVIS_BRANCH" == production ]];
+  then
+- chmod 600 .ssh/travis.pub
+- ssh-add .ssh/travis.pub
+- git remote add dokku dokku@dartplan.com:dartplan
+- git push dokku production
+- fi
 deploy:
   provider: heroku
   api_key:
@@ -17,4 +28,4 @@ deploy:
   app:
     master: dartplan-staging
   run:
-    - "python manage.py db upgrade"
+  - python manage.py db upgrade
