@@ -4,20 +4,23 @@ sudo: false
 python:
 - '2.7'
 before_install:
-- openssl aes-256-cbc -K $encrypted_b5a7b01d0cd0_key -iv $encrypted_b5a7b01d0cd0_iv
-  -in travis.pub.enc -out ~\/.ssh/travis.pub -d
+- openssl aes-256-cbc -k '$DEPLOY_KEY' -K $encrypted_b5a7b01d0cd0_key -iv $encrypted_b5a7b01d0cd0_iv
+  -in travis.enc -out ~\/.ssh/travis -d
 install:
 - pip install -r requirements.txt
 - pip install coveralls
 env:
-- APP_CONFIG_FILE=testing
+  matrix:
+  - APP_CONFIG_FILE=testing
+  global:
+    secure: KeSjV6DU+TyWqcVZ9is95WatvLZz03s8ZD1UYeQjgUzCXQvOykUbZLoErrM/Cn6eoMNZjrddGQ65OdVap9JMa7cADDXg47C89IkfjJHGkTrXmhdYB3/stAkbYjpS9GHC4oEPLllM/i/FPQtiZFVej9qSRzpjBcT5/P+BO0LC+nQ=
 script: python manage.py tests
 after_success:
 - coveralls
 - if [[ "$TRAVIS_PULL_REQUEST" == false ]] && [[ "$TRAVIS_BRANCH" == production ]];
   then
-- chmod 600 .ssh/travis.pub
-- ssh-add .ssh/travis.pub
+- chmod 600 ~\/.ssh/travis.pub
+- ssh-add ~\/.ssh/travis.pub
 - git remote add dokku dokku@dartplan.com:dartplan
 - git push dokku production
 - fi
