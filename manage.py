@@ -20,7 +20,7 @@ def _make_context():
 
 @manager.command
 def tests():
-    status = subprocess.call("bash test.sh", shell=True)
+    status = subprocess.call("bash ./scripts/test.sh", shell=True)
     sys.exit(status)
 
 
