@@ -5,4 +5,5 @@ if ([ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "production" 
   ssh-add config/deploy_id_rsa
   git remote add dokku dokku@dartplan.com:dartplan
   git push dokku production:master
+  ssh root@dartplan.com "dokku run dartplan python manage.py db upgrade"
 fi

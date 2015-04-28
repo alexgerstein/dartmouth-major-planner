@@ -1,3 +1,4 @@
+import os
 import logging
 
 SECRET_KEY = os.environ['SECRET_KEY']
