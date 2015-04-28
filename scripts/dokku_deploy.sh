@@ -4,5 +4,5 @@ if ([ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "production" 
   eval `ssh-agent -s`
   ssh-add config/deploy_id_rsa
   git remote add dokku dokku@dartplan.com:dartplan
-  git push dokku production
+  git push dokku production:master
 fi
