@@ -32,11 +32,6 @@ def scrape(all=False):
         scrape_update()
 
 
-@manager.command
-def downgrade():
-    status = subprocess.call("python db_downgrade.py", shell=True)
-    sys.exit(status)
-
 manager.add_command('server', Server())
 manager.add_command('shell', Shell(make_context=_make_context))
 manager.add_command('db', MigrateCommand)
