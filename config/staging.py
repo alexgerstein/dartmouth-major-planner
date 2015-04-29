@@ -11,11 +11,6 @@ SQLALCHEMY_NATIVE_UNICODE = False
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
-# email server
-MAIL_SERVER = 'mail.gandi.net'
-MAIL_PORT = 465
-MAIL_USE_TLS = False
-MAIL_USE_SSL = True
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 

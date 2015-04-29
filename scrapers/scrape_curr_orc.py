@@ -206,5 +206,5 @@ def scrape_curr_orc(lock_term_start, lock_term_end, start_dept_name = ""):
 	year = scrape_college_orc(GRAD_DEPT_URL, lock_term_start, lock_term_end, start_dept_name)
 
 	# Repeat for all missed departments
-	for listing in MISSED_UG_LISTINGS[16:]:
+	for listing in MISSED_UG_LISTINGS:
 		search_courses(listing[0], listing[1], listing[2], year, lock_term_start, lock_term_end)
