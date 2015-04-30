@@ -43,11 +43,5 @@ class Term(db.Model):
 
         return False
 
-    @property
-    def serialize(self):
-        return {
-        'term' :    str(self.year)[2:] + self.season
-        }
-
     def __repr__(self):
         return '%s%s' % (str(self.year)[2:], self.season)

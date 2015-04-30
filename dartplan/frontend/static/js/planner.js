@@ -10,24 +10,11 @@ function flash_alert(alert) {
     $('.flash').delay(7000).fadeOut(400);
 }
 
-function getHoursUl(possible_hours, hour) {
-    var hour_text = '<div class="btn-group"><button class="btn dropdown-toggle btn-mini" data-toggle="dropdown"><i class="selected-hour">' + hour + ' </i><span class="caret"></span></button><ul class="dropdown-menu">'
-    $.each(possible_hours, function(key, value) {
-        if (value != hour) {
-            hour_text = hour_text + '<li class="hour"><a>' + value + '</a></li>';
-        }
-    });
-
-    return hour_text + '</ul></div>'
-}
-
 function addCourse(term, hour, possible_hours, offering_id, short_name) {
 
     var obj = ($(".termsBlock").find(term));
 
-    var hour_text = getHoursUl(possible_hours, hour);
-
-    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + offering_id + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons">' + hour_text + '<i class="btn btn-danger btn-small hidden-phone" onclick="removeCourse(event)"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-info-sign"></i></span> </div> </div> </li> </div> </div>');
+    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + offering_id + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons"><i class="btn btn-danger btn-small hidden-phone" onclick="removeCourse(event)"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-info-sign"></i></span> </div> </div> </li> </div> </div>');
 
     var course_desc = null;
 

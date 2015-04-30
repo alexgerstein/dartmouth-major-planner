@@ -27,15 +27,6 @@ class Course(db.Model):
     def is_offering(self, offering):
         return offering in self.offerings
 
-    @property
-    def serialize(self):
-
-        return {
-            'id': self.id,
-            'number': str(self.number),
-            'name': self.name,
-            'full_name': repr(self).encode('ascii', 'ignore')
-        }
 
     def __repr__(self):
         department = Department.query.filter_by(id=self.department_id).first()
