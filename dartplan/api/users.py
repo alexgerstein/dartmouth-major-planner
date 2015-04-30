@@ -11,4 +11,4 @@ class UserAPI(Resource):
         db.session.delete(g.user)
         db.session.commit()
         session.pop('user', None)
-        return redirect(url_for('frontend.index'))
+        return {'result': True}

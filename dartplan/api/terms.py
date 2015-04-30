@@ -3,10 +3,15 @@ from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
 from dartplan.login import login_required
 from dartplan.models import Term
 
+
+class isOn(fields.Raw):
+    def output(self, key, term):
+        return term in g.user.terms
+
 term_fields = {
     'year': fields.Integer,
     'season': fields.String,
-    'on': fields.Boolean(attribute=lambda x: x in g.user.terms)
+    'on': isOn
 }
 
 

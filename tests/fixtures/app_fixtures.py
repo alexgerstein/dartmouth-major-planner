@@ -2,6 +2,7 @@ import pytest
 
 from dartplan import create_app
 from dartplan.database import db as _db
+from tests.factories import user_factories, term_factories
 
 
 @pytest.yield_fixture(scope='session')
@@ -38,9 +39,12 @@ def session(db, request):
     # begin a non-ORM transaction
     transaction = connection.begin()
 
-    options = dict()
+    options = dict(bind=connection)
     session = db.create_scoped_session(options)
     db.session = session
+
+    user_factories.UserFactory._meta.sqlalchemy_session = session
+    term_factories.TermFactory._meta.sqlalchemy_session = session
 
     yield db.session
 
