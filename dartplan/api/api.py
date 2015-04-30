@@ -194,17 +194,19 @@ def findterms():
 
     terms = {}
     for offering in available_registrar_offerings:
+        user_count = User.query.filter(User.courses.contains(offering)).count()
         if offering.term in terms:
-            terms[str(offering.term)] += offering.get_user_count()
+            terms[str(offering.term)] += user_count
         else:
-            terms[str(offering.term)] = offering.get_user_count()
+            terms[str(offering.term)] = user_count
 
     user_terms = {}
     for offering in available_user_offerings:
+        user_count = User.query.filter(User.courses.contains(offering)).count()
         if offering.term in user_terms:
-            user_terms[str(offering.term)] += offering.get_user_count()
+            user_terms[str(offering.term)] += user_count
         else:
-            user_terms[str(offering.term)] = offering.get_user_count()
+            user_terms[str(offering.term)] = user_count
 
     for key, value in terms.iteritems():
         data['terms'].append([key, value])
