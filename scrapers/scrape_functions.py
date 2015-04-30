@@ -615,6 +615,9 @@ def remove_deleted_offerings(timetable_globals):
 def remove_unused_model_instances():
 	hours = Hour.query.all()
 	for hour in hours:
+		if hour.period == "?":
+			continue
+
 		if Offering.query.filter_by(hour = hour).count() == 0:
 			db.session.delete(hour)
 			db.session.commit()
