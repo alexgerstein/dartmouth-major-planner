@@ -1,5 +1,5 @@
 from dartplan.database import db
-from dartplan.models import User, Hour, Term, Course
+from dartplan.models import Hour, Term, Course
 
 
 offering_distribs = db.Table("offering_distribs",
@@ -50,9 +50,6 @@ class Offering(db.Model):
     for offering in Offering.query.filter_by(course_id = self.course_id, term_id = self.term_id).all():
       possible_hours += str(offering.get_hour()) + "; "
     return possible_hours[:-2]
-
-  def get_user_count(self):
-    return User.query.filter(User.courses.contains(self)).count()
 
   def change_period(self, hour):
     self.hour_id = hour.id

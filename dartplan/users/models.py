@@ -1,4 +1,5 @@
 from dartplan.database import db
+from dartplan.models import Offering
 
 
 user_course = db.Table('user_course',
