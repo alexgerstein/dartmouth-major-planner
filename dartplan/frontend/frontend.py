@@ -46,7 +46,7 @@ def generate_terms(grad_year):
     # Add Freshman Fall
     t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
     if t is None:
-        t = Term(grad_year - 4, SEASONS[3])
+        t = Term(year=grad_year - 4, season=SEASONS[3])
         db.session.add(t)
 
     all_terms.append(t)
@@ -55,7 +55,7 @@ def generate_terms(grad_year):
         for season in SEASONS:
             t = Term.query.filter_by(year=grad_year - year_diff, season=season).first()
             if t is None:
-                t = Term(grad_year - year_diff, season)
+                t = Term(year=grad_year - year_diff, season=season)
                 db.session.add(t)
 
             all_terms.append(t)

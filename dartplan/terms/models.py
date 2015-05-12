@@ -12,10 +12,6 @@ class Term(db.Model):
 
     offerings = db.relationship('Offering', backref = 'term', lazy='dynamic')
 
-    def __init__(self, year, season):
-        self.year = year
-        self.season = season
-
     def in_range(self, start_term, end_term):
 
         # Check if year is out of range

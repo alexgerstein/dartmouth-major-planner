@@ -20,10 +20,13 @@ class TestTermAPI(TestBase):
         assert data['term']['on'] == False
 
     def test_take_off_term_already_off(self, test_client, db, user, oldTerm):
+        db.session.commit()
+
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': user.netid}
 
         off = dict(on=False)
+
         take_off = test_client.put('/api/terms/%d' % oldTerm.id, data=off)
         self.check_valid_header_type(take_off.headers)
         assert take_off.status_code == 409
