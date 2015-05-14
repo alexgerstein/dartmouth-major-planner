@@ -19,9 +19,7 @@ class TestTermAPI(TestBase):
         assert term not in user.terms
         assert data['term']['on'] == False
 
-    def test_take_off_term_already_off(self, test_client, db, user, oldTerm):
-        db.session.commit()
-
+    def test_take_off_term_already_off(self, test_client, user, oldTerm):
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': user.netid}
 
@@ -34,3 +32,18 @@ class TestTermAPI(TestBase):
         data = json.loads(take_off.data)
         assert oldTerm not in user.terms
         assert "Term is already marked off." in data['errors']['on'][0]
+
+    def test_enroll_term_already_on(self, test_client, user):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': user.netid}
+
+        term = user.terms.first()
+        on = dict(on=True)
+
+        enroll = test_client.put('/api/terms/%d' % term.id, data=on)
+        self.check_valid_header_type(enroll.headers)
+        assert enroll.status_code == 409
+
+        data = json.loads(enroll.data)
+        assert term in user.terms
+        assert "Term is already marked on." in data['errors']['on'][0]
