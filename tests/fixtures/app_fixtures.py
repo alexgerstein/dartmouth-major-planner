@@ -4,7 +4,7 @@ from dartplan import create_app
 from dartplan.database import db as _db
 from tests.factories import (user_factories, term_factories, course_factories,
                              department_factories, offering_factories,
-                             hour_factories)
+                             hour_factories, distributive_factories)
 
 
 @pytest.yield_fixture(scope='session')
@@ -51,6 +51,7 @@ def session(db, request):
     department_factories.DepartmentFactory._meta.sqlalchemy_session = session
     offering_factories.OfferingFactory._meta.sqlalchemy_session = session
     hour_factories.HourFactory._meta.sqlalchemy_session = session
+    distributive_factories.DistributiveFactory._meta.sqlalchemy_session = session
 
     yield db.session
 

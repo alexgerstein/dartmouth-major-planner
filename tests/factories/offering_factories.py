@@ -18,3 +18,12 @@ class OfferingFactory(SQLAlchemyModelFactory):
 
     added = factory.Iterator(['F'])
     user_added = factory.Iterator(['Y', 'N'])
+
+    @factory.post_generation
+    def distributives(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for distrib in extracted:
+                self.distributives.append(distrib)

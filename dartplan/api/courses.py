@@ -62,6 +62,7 @@ class CourseListAPI(Resource):
             courses = courses.filter(Course.avg_median.in_(MEDIANS[:args.median_id + 1]))
 
         courses = courses.join(Department).order_by('abbr', 'number').all()
+        print Course.query.join(Offering).join(Department).order_by('abbr', 'number').all()
 
         return {'courses': [marshal(course, course_fields)
                             for course in courses]}
