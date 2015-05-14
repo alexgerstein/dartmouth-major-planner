@@ -13,4 +13,4 @@ class CourseFactory(SQLAlchemyModelFactory):
     number = factory.fuzzy.FuzzyDecimal(99.0, precision=1)
     department = factory.SubFactory(DepartmentFactory)
     name = factory.Sequence(lambda n: "Course %d" % n)
-    avg_median = factory.Iterator(['A', 'B', 'C', 'D'])
+    avg_median = factory.fuzzy.FuzzyChoice(['A', 'B', 'C', 'D'])

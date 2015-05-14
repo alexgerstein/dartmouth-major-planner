@@ -1,5 +1,6 @@
 from tests.factories import *
 from dartplan.models import Distributive
+import factory.fuzzy
 
 
 class DistributiveFactory(SQLAlchemyModelFactory):
@@ -7,4 +8,5 @@ class DistributiveFactory(SQLAlchemyModelFactory):
         model = Distributive
 
     id = factory.Sequence(lambda n: n)
-    abbr = factory.Iterator(["INT", "SOC", "NW", "QDS", "TMV", "TLA", "TAS"])
+    abbr = factory.fuzzy.FuzzyChoice(["INT", "SOC", "NW", "QDS",
+                                      "TMV", "TLA", "TAS"])

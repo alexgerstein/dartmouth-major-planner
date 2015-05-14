@@ -18,26 +18,17 @@ class Term(db.Model):
         if (self.year > end_term.year) or (self.year < start_term.year):
             return False
 
-        # Check if year is definitively in the range
-        elif (self.year < end_term.year) and (self.year > start_term.year):
-            return True
-
-        # Check if term is on boundary
-        elif (self.season == start_term.season) and (self.year == start_term.year):
-            return True
-        elif (self.season == end_term.season) and (self.year == end_term.year):
-            return True
-
-        # If year is same as start, check if term fits
+        # If year is same as start, check if season too soon
         elif (self.year == start_term.year):
-            if (SEASONS.index(self.season) > SEASONS.index(start_term.season)):
-                return True
+            if (SEASONS.index(self.season) < SEASONS.index(start_term.season)):
+                return False
 
+        # If year is same as end, check if season too late
         elif (self.year == end_term.year):
-            if (SEASONS.index(self.season) < SEASONS.index(end_term.season)):
-                return True
+            if (SEASONS.index(self.season) > SEASONS.index(end_term.season)):
+                return False
 
-        return False
+        return True
 
     def __repr__(self):
         return '%s%s' % (str(self.year)[2:], self.season)
