@@ -14,11 +14,6 @@ class Course(db.Model):
     offerings = db.relationship('Offering', backref='course')
     avg_median = db.Column(db.String(5))
 
-    def __init__(self, number, name, department):
-        self.name = name
-        self.number = number
-        self.department_id = department
-
     def offer(self, offering):
         if not self.is_offering(offering):
             self.offerings.append(offering)
