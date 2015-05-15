@@ -24,7 +24,7 @@ class getName(fields.Raw):
 
 class getHour(fields.Raw):
     def output(self, key, offering):
-        return str(offering.get_hour())
+        return str(offering.hour)
 
 offering_fields = {
     'id': fields.Integer,
@@ -69,7 +69,8 @@ class OfferingListAPI(Resource):
             db.session.add(offering)
             db.session.commit()
 
-        g.user.take(offering)
+        if offering not in g.user.courses:
+            g.user.courses.append(offering)
 
         return {'offering': marshal(offering, offering_fields)}
 
@@ -92,7 +93,8 @@ class OfferingAPI(Resource):
 
         if args.enrolled is not None:
             if args.enrolled:
-                g.user.take(offering)
+                if offering not in g.user.courses:
+                    g.user.courses.append(offering)
             else:
                 g.user.drop(offering)
 

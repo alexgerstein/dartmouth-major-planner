@@ -216,18 +216,19 @@ def parse_soup(soup, search_term):
             else:
                 print str(offering)
 
-            offering.mark("F")
+            offering.added = "F"
 
             for distrib in distribs:
-                offering.add_distrib(distrib)
-                db.session.commit()
+                if distrib not in offering.distributives:
+                    offering.distributives.append(distrib)
+                    db.session.commit()
 
             # Mark for removal all non-final offerings of the term. If they're still in
             # the timetable, they'll be marked as F again
             old_offerings = Offering.query.filter_by(course = course, term = term).all()
             for old_offering in old_offerings:
                 if old_offering.added != "F":
-                    old_offering.mark("")
+                    old_offering.added = ""
             db.session.commit()
 
 

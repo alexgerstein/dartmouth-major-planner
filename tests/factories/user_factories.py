@@ -19,7 +19,8 @@ class UserFactory(SQLAlchemyModelFactory):
             self.grad_year = extracted
             terms = generate_terms(extracted)
             for term in terms:
-                self.add_term(term)
+                if term not in self.terms:
+                    self.terms.append(term)
 
     @factory.post_generation
     def offerings(self, create, extracted, **kwargs):
@@ -28,4 +29,5 @@ class UserFactory(SQLAlchemyModelFactory):
 
         if extracted:
             for offering in extracted:
-                self.take(offering)
+                if offering not in self.courses:
+                    self.courses.append(offering)

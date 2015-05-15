@@ -27,44 +27,6 @@ class Offering(db.Model):
     added = db.Column(db.String(2))
     user_added = db.Column(db.String(2))
 
-    def get_full_name(self):
-        return str(Course.query.get(self.course_id))
-
-    def get_term(self):
-        return Term.query.get(self.term_id)
-
-    def get_hour(self):
-        return Hour.query.get(self.hour_id)
-
-    def change_period(self, hour):
-        self.hour_id = hour.id
-        db.session.commit()
-        return self
-
-    def add_distrib(self, distrib):
-        if distrib not in self.distributives:
-            self.distributives.append(distrib)
-            db.session.commit()
-            return self
-
-    def change_desc(self, course_desc):
-        self.desc = ""
-        self.desc = course_desc
-        db.session.commit()
-        return self
-
-    def mark(self, string):
-        self.added = string
-        return self
-
-    def mark_empty(self):
-        self.added = ""
-        return self
-
-    def mark_user_added(self):
-        self.user_added = "Y"
-        return self
-
     def __repr__(self):
         course_str = str(self.course)
         return course_str.split(" -")[0]

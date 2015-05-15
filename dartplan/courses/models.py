@@ -14,14 +14,6 @@ class Course(db.Model):
     offerings = db.relationship('Offering', backref='course')
     avg_median = db.Column(db.String(5))
 
-    def offer(self, offering):
-        if not self.is_offering(offering):
-            self.offerings.append(offering)
-            return self
-
-    def is_offering(self, offering):
-        return offering in self.offerings
-
 
     def __repr__(self):
         # Fix number repr if there are no sections (i.e. CS 1.0 should be CS 1)

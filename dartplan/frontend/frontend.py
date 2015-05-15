@@ -32,12 +32,13 @@ def add_terms(terms):
 
     # Clear all terms, start clean
     for term in g.user.terms:
-        g.user.remove_term(term)
-        db.session.commit()
+        g.user.terms.remove(term)
 
     for term in terms:
-        g.user.add_term(term)
-        db.session.commit()
+        if term not in g.user.terms:
+            g.user.terms.append(term)
+
+    db.session.commit()
 
 
 def generate_terms(grad_year):

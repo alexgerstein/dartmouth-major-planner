@@ -40,58 +40,20 @@ class User(db.Model):
         self.email_Dartplan_updates = True
         self.email_course_updates = True
 
-    def take(self, offering):
-        if not self.is_taking(offering):
-            self.courses.append(offering)
-            db.session.commit()
-            return self
-        return None
-
     def drop(self, offering):
-        if self.is_taking(offering):
-
+        if offering in self.courses:
             self.courses.remove(offering)
-            db.session.commit()
 
             # Delete user-added offerings from db
             # if no users take the course anymore
             if offering.user_added == "Y":
                 if not User.query.filter(User.courses.contains(offering)).first():
                     db.session.delete(offering)
-                    db.session.commit()
 
-            return self
-
-        return None
-
-    def switch_hour(self, offering, hour):
-        self.drop(offering)
-
-        o1 = Offering.query.filter_by(course=offering.course,
-                                      term=offering.term, hour=hour).first()
-        if o1 is not None:
-            self.take(o1)
-            return o1.id
-
-        return False
-
-    def is_enrolled(self, term):
-        return term in self.terms
-
-    def add_term(self, term):
-        if not self.is_enrolled(term):
-            self.terms.append(term)
             db.session.commit()
-            return self
-
-    def remove_term(self, term):
-        if self.is_enrolled(term):
-            self.terms.remove(term)
-            db.session.commit()
-            return self
 
     def swap_onterm(self, term):
-        if self.is_enrolled(term):
+        if term in self.terms:
 
             # Remove all courses during new off-term
             for course in self.courses:
@@ -100,13 +62,10 @@ class User(db.Model):
 
             self.terms.remove(term)
         else:
-            self.add_term(term)
+            self.terms.append(term)
+        db.session.commit()
         return self
 
-
-    def is_taking(self, offering):
-        taking = offering in self.courses.all()
-        return taking
 
     def get_id(self):
         return unicode(self.id)
