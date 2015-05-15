@@ -1,9 +1,12 @@
 from flask import g
 from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
+from sqlalchemy.orm.exc import NoResultFound
 
 from dartplan.database import db
 from dartplan.login import login_required
 from dartplan.models import Offering, Course, Term, Hour
+from terms import term_fields
+from courses import course_detail_fields
 
 
 class isEnrolled(fields.Raw):
@@ -13,11 +16,22 @@ class isEnrolled(fields.Raw):
 
         return offering in g.user.courses
 
+
+class getName(fields.Raw):
+    def output(self, key, offering):
+        return str(offering)
+
+
+class getHour(fields.Raw):
+    def output(self, key, offering):
+        return str(offering.get_hour())
+
 offering_fields = {
     'id': fields.Integer,
-    'name': fields.String(attribute=lambda x: x),
-    'hour': fields.String(attribute=lambda x: x.get_hour()),
-    'possible_hours': fields.List(fields.String(attribute=lambda x: x.get_possible_hours())),
+    'name': getName,
+    'term': fields.Nested(term_fields),
+    'hour': getHour,
+    'course': fields.Nested(course_detail_fields),
     'info': fields.String(attribute='desc'),
     'enrolled': isEnrolled
 }
@@ -27,8 +41,7 @@ class OfferingListAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('course_id', type=int)
-        self.reqparse.add_argument('year', type=int)
-        self.reqparse.add_argument('season', type=str)
+        self.reqparse.add_argument('term_id', type=int)
         super(OfferingListAPI, self).__init__()
 
     @login_required
@@ -36,25 +49,27 @@ class OfferingListAPI(Resource):
         args = self.reqparse.parse_args()
 
         course = Course.query.get_or_404(args.course_id)
-        term = Term.query.filter_by(year=args.year, season=args.season).first()
+        term = Term.query.get_or_404(args.term_id)
 
         offering = Offering.query.filter_by(course=course, term=term).first()
 
         if not offering:
-            check_hour = Hour.query.filter_by(period="?").first()
+            try:
+                check_hour = Hour.query.filter_by(period="?").one()
+            except NoResultFound:
+                check_hour = Hour(period="?")
+                db.session.add(check_hour)
+                db.session.commit()
 
-            offering = Offering(course=course.id, term=term.id,
-                                hour=check_hour.id,
+            offering = Offering(course_id=course.id, term_id=term.id,
+                                hour_id=check_hour.id,
                                 desc="***User Added***<br>Consult registrar for more info",
                                 user_added="Y")
 
             db.session.add(offering)
             db.session.commit()
 
-        if offering in g.user.courses:
-            return {"errors": {"enrolled": ["Already enrolled."]}}, 409
-        else:
-            g.user.take(offering)
+        g.user.take(offering)
 
         return {'offering': marshal(offering, offering_fields)}
 
@@ -77,15 +92,10 @@ class OfferingAPI(Resource):
 
         if args.enrolled is not None:
             if args.enrolled:
-                if offering in g.user.courses:
-                    return {"errors": {"enrolled": ["Already enrolled."]}}, 409
-                else:
-                    g.user.take(offering)
+                g.user.take(offering)
             else:
-                if offering not in g.user.courses:
-                    return {"errors":
-                            {"enrolled": ["Already not enrolled."]}}, 409
-                else:
-                    g.user.drop(offering)
+                g.user.drop(offering)
+
+        # print offering
 
         return {'offering': marshal(offering, offering_fields)}

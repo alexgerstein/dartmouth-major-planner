@@ -24,12 +24,10 @@ class Course(db.Model):
 
 
     def __repr__(self):
-        department = Department.query.filter_by(id=self.department_id).first()
-
         # Fix number repr if there are no sections (i.e. CS 1.0 should be CS 1)
         returned_number = self.number
         split_number = str(self.number).split(".")
         if split_number[1] == "0":
             returned_number = split_number[0]
 
-        return '%s %s - %s' % (department.abbr, returned_number, self.name.encode('ascii', 'ignore'))
+        return '%s %s - %s' % (self.department.abbr, returned_number, self.name.encode('ascii', 'ignore'))

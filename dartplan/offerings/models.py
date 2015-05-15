@@ -36,15 +36,6 @@ class Offering(db.Model):
     def get_hour(self):
         return Hour.query.get(self.hour_id)
 
-    def get_course(self):
-        return Course.query.get(self.course_id)
-
-    def get_possible_hours(self):
-        return [offering.get_hour() for offering in Offering.query.filter_by(course_id=self.course_id, term_id=self.term_id).all()]
-
-    def get_user_count(self):
-        return User.query.filter(User.courses.contains(self)).count()
-
     def change_period(self, hour):
         self.hour_id = hour.id
         db.session.commit()
@@ -75,5 +66,5 @@ class Offering(db.Model):
         return self
 
     def __repr__(self):
-        course_str = str(self.get_course())
+        course_str = str(self.course)
         return course_str.split(" -")[0]

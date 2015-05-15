@@ -10,7 +10,7 @@ class Term(db.Model):
     year = db.Column(db.SmallInteger)
     season = db.Column(db.String(15))
 
-    offerings = db.relationship('Offering', backref = 'term', lazy='dynamic')
+    offerings = db.relationship('Offering', backref='term', lazy='dynamic')
 
     def in_range(self, start_term, end_term):
 

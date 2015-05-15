@@ -8,6 +8,8 @@ class TestCourseAPI(TestBase):
     def test_get_course(self, test_client, course):
         get = test_client.get('/api/courses/%d' % course.id)
         self.check_valid_header_type(get.headers)
+        data = json.loads(get.data)
+        assert data['course']['name'] == course.name
 
     def test_get_course_with_official_offering(self, test_client,
                                                course_with_registrar_added_offering):
@@ -37,7 +39,7 @@ class TestCourseListAPI(TestBase):
 
     def test_get_courses_by_dept(self, test_client,
                                  course_with_user_added_offering):
-        query_data = {'department_id': course_with_user_added_offering.department_id}
+        query_data = {'department_id': course_with_user_added_offering.department.id}
         get = test_client.get('/api/courses', query_string=query_data)
         self.check_valid_header_type(get.headers)
         data = json.loads(get.data)
@@ -47,7 +49,7 @@ class TestCourseListAPI(TestBase):
                                  course_with_user_added_offering):
         offering = course_with_user_added_offering.offerings[0]
 
-        query_data = {'term_id': offering.term_id}
+        query_data = {'term_id': offering.term.id}
         get = test_client.get('/api/courses', query_string=query_data)
         self.check_valid_header_type(get.headers)
         data = json.loads(get.data)
@@ -57,7 +59,7 @@ class TestCourseListAPI(TestBase):
                                  course_with_user_added_offering):
         offering = course_with_user_added_offering.offerings[0]
 
-        query_data = {'hour_id': offering.hour_id}
+        query_data = {'hour_id': offering.hour.id}
         get = test_client.get('/api/courses', query_string=query_data)
         self.check_valid_header_type(get.headers)
         data = json.loads(get.data)
@@ -75,8 +77,9 @@ class TestCourseListAPI(TestBase):
 
     def test_get_courses_by_median(self, test_client,
                                    course_with_user_added_offering):
-        query_data = {'median_id': 12}
+        query_data = {'median': course_with_user_added_offering.avg_median}
         get = test_client.get('/api/courses', query_string=query_data)
         self.check_valid_header_type(get.headers)
         data = json.loads(get.data)
+        print course_with_user_added_offering.avg_median
         assert len(data['courses']) == 1

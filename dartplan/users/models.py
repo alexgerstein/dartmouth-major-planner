@@ -56,7 +56,7 @@ class User(db.Model):
             # Delete user-added offerings from db
             # if no users take the course anymore
             if offering.user_added == "Y":
-                if User.query.filter(User.courses.contains(offering)).count() == 0:
+                if not User.query.filter(User.courses.contains(offering)).first():
                     db.session.delete(offering)
                     db.session.commit()
 
@@ -65,18 +65,15 @@ class User(db.Model):
         return None
 
     def switch_hour(self, offering, hour):
-        term = offering.get_term()
-        course = offering.get_course()
-
         self.drop(offering)
 
-        o1 = Offering.query.filter_by(course = course, term = term, hour = hour).first()
+        o1 = Offering.query.filter_by(course=offering.course,
+                                      term=offering.term, hour=hour).first()
         if o1 is not None:
             self.take(o1)
             return o1.id
 
         return False
-
 
     def is_enrolled(self, term):
         return term in self.terms

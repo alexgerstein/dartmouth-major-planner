@@ -1,6 +1,5 @@
 import pytest
-from tests.factories import (course_factories, offering_factories,
-                             distributive_factories)
+from tests.factories import course_factories
 
 
 @pytest.fixture()
@@ -9,22 +8,10 @@ def course(request):
 
 
 @pytest.fixture()
-def course_with_registrar_added_offering(request):
-    course = course_factories.CourseFactory()
-    distrib = distributive_factories.DistributiveFactory()
-    offering = offering_factories.OfferingFactory(user_added="N",
-                                                  course_id=course.id,
-                                                  distributives=[distrib])
-    course.offerings.append(offering)
-    return course
+def course_with_registrar_added_offering(request, registrar_added_offering):
+    return course_factories.CourseFactory(offerings=[registrar_added_offering])
 
 
 @pytest.fixture()
-def course_with_user_added_offering(request):
-    course = course_factories.CourseFactory()
-    distrib = distributive_factories.DistributiveFactory()
-    offering = offering_factories.OfferingFactory(user_added="Y",
-                                                  course_id=course.id,
-                                                  distributives=[distrib])
-    course.offerings.append(offering)
-    return course
+def course_with_user_added_offering(request, user_added_offering):
+    return course_factories.CourseFactory(offerings=[user_added_offering])

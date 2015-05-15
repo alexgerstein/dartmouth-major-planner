@@ -20,3 +20,12 @@ class UserFactory(SQLAlchemyModelFactory):
             terms = generate_terms(extracted)
             for term in terms:
                 self.add_term(term)
+
+    @factory.post_generation
+    def offerings(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for offering in extracted:
+                self.take(offering)

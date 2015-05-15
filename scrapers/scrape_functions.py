@@ -14,7 +14,8 @@ import re, string
 from dartplan import mail
 
 from dartplan.database import db
-from dartplan.models import User, Offering, Course, Department, Hour, Term, Distributive
+from dartplan.models import (Department, Hour, Term, User,
+                             Distributive, Offering, Course)
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
@@ -537,7 +538,7 @@ def remove_deleted_offerings(timetable_globals):
 		all_users = User.query.filter(User.courses.contains(offering)).all()
 
 		# Determine if course had a name update
-		offering_course = offering.get_course()
+		offering_course = offering.course
 		if offering_course:
 			alt_course = Course.query.filter(Course.number == offering_course.number, Course.department_id == offering_course.department_id, Course.name != offering_course.name, Course.name.ilike(offering_course.name + "%")).first()
 			if alt_course:

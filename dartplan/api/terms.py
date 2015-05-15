@@ -6,9 +6,13 @@ from dartplan.models import Term
 
 class isOn(fields.Raw):
     def output(self, key, term):
+        if not g.user:
+            return False
+
         return term in g.user.terms
 
 term_fields = {
+    'id': fields.Integer,
     'year': fields.Integer,
     'season': fields.String,
     'on': isOn
