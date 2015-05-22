@@ -68,7 +68,8 @@ def scrape_anth_course_page(dept_abbreviation, department_course_page, lock_term
             course = Course.query.filter(Course.department == department, Course.name.ilike(title + "%"), Course.number == number).first()
             if course is None:
 
-                course = Course(number = number, name = title, department = department.id)
+                course = Course(number=number, name=title,
+                                department=department)
 
                 db.session.add(course)
                 db.session.commit()
@@ -97,6 +98,8 @@ def scrape_aaas_course_page(dept_abbreviation, department_course_page, lock_term
         # Get term from header
         full_term = course_listings.find('h1', { 'class': 'title'})
         split_term = full_term.text.split()
+        if split_term[0].upper() not in SEASON_NAME:
+            continue
         season = SEASON_NAME[split_term[0].upper()]
         year = split_term[1]
         term = Term.query.filter_by(season = season, year = year).first()
@@ -112,14 +115,17 @@ def scrape_aaas_course_page(dept_abbreviation, department_course_page, lock_term
                 continue
             dept_and_number = split_header.text.split()
             dept = dept_and_number[0]
-            number = float(dept_and_number[1].split("-")[0])
+            try:
+                number = float(dept_and_number[1].split("-")[0])
+            except:
+                continue
 
             title = course_view.find('h3').text
 
             course = Course.query.filter(Course.department == department, Course.name.ilike(title + "%"), Course.number == number).first()
             if course is None:
 
-                course = Course(number = number, name = title, department = department.id)
+                course = Course(number=number, name=title, department=department)
 
                 db.session.add(course)
                 db.session.commit()

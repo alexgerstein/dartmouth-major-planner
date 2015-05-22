@@ -175,7 +175,9 @@ def parse_soup(soup, search_term):
             if split_number:
                 course = Course.query.filter(Course.department == dept, Course.number == float(number + "." + str(section))).first()
                 if not course:
-                    course = Course(department = dept.id, number = float(number + "." + str(section)), name = title)
+                    course = Course(department=dept,
+                                    number=float(number + "." + str(section)),
+                                    name=title)
                     db.session.add(course)
                     db.session.commit()
                     print_alert("COURSE ADDED: " + str(course))
@@ -193,7 +195,8 @@ def parse_soup(soup, search_term):
                 # Otherwise, add the course. It's not ideal to take these course
                 # names since they're often abbreviated, but it will have to do.
                 if not course:
-                    course = Course(department = dept.id, number = float(number), name = title)
+                    course = Course(department=dept, number=float(number),
+                                    name=title)
                     db.session.add(course)
                     db.session.commit()
                     print_alert("COURSE ADDED: " + str(course))
@@ -209,7 +212,8 @@ def parse_soup(soup, search_term):
                 if general_offering:
                     offering_desc = general_offering.desc
 
-                offering = Offering(course = course.id, term = term.id, hour = period.id, desc = offering_desc, user_added = "N")
+                offering = Offering(course=course, term=term, hour=period,
+                                    desc=offering_desc, user_added="N")
                 db.session.add(offering)
                 db.session.commit()
                 print_alert("OFFERING ADDED: " + str(offering) + " in " + str(term))

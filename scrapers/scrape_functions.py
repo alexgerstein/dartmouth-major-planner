@@ -681,7 +681,8 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
 
             # Add offering if not already in database. Otherwise, update the description.
             if o1 is None:
-                o1 = Offering(course = course.id, term = term.id, hour = hour.id, desc = course_desc, user_added = "N")
+                o1 = Offering(course=course, term=term, hour=hour,
+                              desc=course_desc, user_added="N")
 
                 db.session.add(o1)
                 db.session.commit()
