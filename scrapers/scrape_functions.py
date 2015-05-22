@@ -616,14 +616,14 @@ def remove_deleted_offerings(timetable_globals):
 
 # When the scraping is done, delete any hours and courses that don't have any offerings
 def remove_unused_model_instances():
-	hours = Hour.query.all()
-	for hour in hours:
-		if hour.period == "?":
-			continue
+    hours = Hour.query.all()
+    for hour in hours:
+        if hour.period == "?":
+            continue
 
-		if Offering.query.filter_by(hour = hour).count() == 0:
-			db.session.delete(hour)
-			db.session.commit()
+        if Offering.query.filter_by(hour = hour).count() == 0:
+            db.session.delete(hour)
+            db.session.commit()
 
     courses = Course.query.all()
     for course in courses:
