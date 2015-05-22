@@ -9,4 +9,10 @@ def user(request):
 
 @pytest.fixture()
 def enrolled_user(request, offering):
-    return user_factories.UserFactory(offerings=[offering])
+    return user_factories.UserFactory(grad_year=offering.term.year + 1,
+                                      offerings=[offering])
+
+
+@pytest.fixture()
+def enrolled_sole_user(request, user_added_offering):
+    return user_factories.UserFactory(grad_year=user_added_offering.term.year + 1, offerings=[user_added_offering])

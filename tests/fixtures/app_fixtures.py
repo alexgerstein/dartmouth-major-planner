@@ -2,6 +2,7 @@ import pytest
 
 from dartplan import create_app
 from dartplan.database import db as _db
+from dartplan.mail import mail
 from tests.factories import (user_factories, term_factories, course_factories,
                              department_factories, offering_factories,
                              hour_factories, distributive_factories)
@@ -64,3 +65,9 @@ def session(db, request):
 def test_client(app, request):
     with app.test_client() as client:
         yield client
+
+
+@pytest.yield_fixture()
+def outbox(request):
+    with mail.record_messages() as outbox:
+        yield outbox

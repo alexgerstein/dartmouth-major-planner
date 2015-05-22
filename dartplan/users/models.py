@@ -1,7 +1,6 @@
 from dartplan.database import db
 from dartplan.models import Offering
 
-
 user_course = db.Table('user_course',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('offering_id', db.Integer, db.ForeignKey('offering.id'))

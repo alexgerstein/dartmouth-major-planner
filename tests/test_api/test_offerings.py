@@ -54,3 +54,18 @@ class TestOfferingAPI(TestBase):
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert not data['offering']['enrolled']
+
+    def test_put_unenroll_sole_user_added(self, test_client,
+                                          enrolled_sole_user):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': enrolled_sole_user.netid}
+
+        offering = enrolled_sole_user.courses.first()
+        data = {'enrolled': False}
+        r = test_client.put('/api/offerings/%d' % offering.id, data=data)
+        self.check_valid_header_type(r.headers)
+        data = json.loads(r.data)
+        assert not data['offering']['enrolled']
+
+        r = test_client.get('/api/offerings/%d' % offering.id)
+        assert r.status_code == 404
