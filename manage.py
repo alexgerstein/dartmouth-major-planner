@@ -3,6 +3,7 @@ import sys
 import subprocess
 from dartplan import create_app
 from dartplan.database import db
+from dartplan.models import *
 from scrapers.scrape_all import scrape_all
 from scrapers.scrape_update import scrape_update
 from flask.ext.script import Manager, Shell, Server
@@ -15,7 +16,9 @@ manager = Manager(app)
 def _make_context():
     """Return context dict for a shell session so you can access
     app, db, and the User model by default."""
-    return {'app': app, 'db': db}
+    return {'app': app, 'db': db, 'User': User, 'Offering': Offering,
+            'Course': Course, 'Hour': Hour, 'Department': Department,
+            'Distributive': Distributive, 'Term': Term}
 
 
 @manager.command

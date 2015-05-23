@@ -1,6 +1,6 @@
 Hey {{user.nickname.split(" ")[0]}},
 
-Remember how you planned to take {{offering}} during {{offering.get_term()}}?
+Remember how you planned to take {{offering}} during {{offering.term}}?
 
 Well...according to some new data, it's now going to be offered as a {{new_hour}}. We updated the time on the DARTPlan for you.
 

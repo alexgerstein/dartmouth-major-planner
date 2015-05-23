@@ -36,7 +36,7 @@ def updated_hour_notification(users, offering, new_hour):
     for user in users:
 
         logger.info("EMAIL UPDATED OFFERING TO %s FROM" % user.nickname)
-        message = create_message("Nice call! %s (%s) now has an actual time." % (str(offering), str(offering.get_term())),
+        message = create_message("Nice call! %s (%s) now has an actual time." % (str(offering), str(offering.term)),
                 ADMINS[0],
                 [user.netid + "@dartmouth.edu"],
                 render_template("updated_hour_email.txt",
@@ -49,7 +49,7 @@ def updated_hour_notification(users, offering, new_hour):
 
 def swapped_course_times(users, offering, other_time):
     for user in users:
-        logger.info("EMAIL SWAPPED OFFERING TO %s ABOUT %s AT %s FOR %s" % (user.nickname, offering, offering.get_hour(), other_time.get_hour()))
+        logger.info("EMAIL SWAPPED OFFERING TO %s ABOUT %s AT %s FOR %s" % (user.nickname, offering, offering.hour, other_time.hour))
         message = create_message("The ol' switcheroo... %s seems to be at a new time." % (str(offering)),
                 ADMINS[0],
                 [user.netid + "@dartmouth.edu"],

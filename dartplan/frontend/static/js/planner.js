@@ -10,28 +10,15 @@ function flash_alert(alert) {
     $('.flash').delay(7000).fadeOut(400);
 }
 
-function getHoursUl(possible_hours, hour) {
-    var hour_text = '<div class="btn-group"><button class="btn dropdown-toggle btn-mini" data-toggle="dropdown"><i class="selected-hour">' + hour + ' </i><span class="caret"></span></button><ul class="dropdown-menu">'
-    $.each(possible_hours, function(key, value) {
-        if (value != hour) {
-            hour_text = hour_text + '<li class="hour"><a>' + value + '</a></li>';
-        }
-    });
-
-    return hour_text + '</ul></div>'
-}
-
 function addCourse(term, hour, possible_hours, offering_id, short_name) {
 
     var obj = ($(".termsBlock").find(term));
 
-    var hour_text = getHoursUl(possible_hours, hour);
-
-    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + offering_id + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons">' + hour_text + '<i class="btn btn-danger btn-small hidden-phone" onclick="removeCourse(event)"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-info-sign"></i></span> </div> </div> </li> </div> </div>');
+    obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + offering_id + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons"><i class="btn btn-danger btn-small hidden-phone" onclick="removeCourse(event)"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-info-sign"></i></span> </div> </div> </li> </div> </div>');
 
     var course_desc = null;
 
-    var posting = $.get("/getCourseInfo",
+    var posting = $.get("/api/getCourseInfo",
         {
             offering: offering_id,
             term: obj.attr('id'),
@@ -85,9 +72,9 @@ function showAvailableSlots(event, ui) {
     var posting;
     var offering = false;
     if (ui.item.parent().parent().parent().hasClass('sortable2')) {
-        posting = $.get('/findterms', { offering: ui.item.attr('id') });
+        posting = $.get('/api/findterms', { offering: ui.item.attr('id') });
     } else {
-        posting = $.get('/findterms', { course: ui.item.attr('id') });
+        posting = $.get('/api/findterms', { course: ui.item.attr('id') });
     }
 
     $(".progress").removeClass("hide");
@@ -178,9 +165,9 @@ function saveCourse(event, ui) {
 
     var posting;
     if (senderclass.indexOf('sortable2') >= 0) {
-        posting = $.post('/savecourse', { offering: course_id, term: term_id });
+        posting = $.post('/api/savecourse', { offering: course_id, term: term_id });
     } else {
-        posting = $.post('/savecourse', { course: course_id, term: term_id });
+        posting = $.post('/api/savecourse', { course: course_id, term: term_id });
     }
 
     posting.fail (function (data) {
@@ -197,7 +184,7 @@ function saveCourse(event, ui) {
 
         if (senderclass.indexOf('sortable2') >= 0) {
             var course_hour = ui.sender.find('li:contains(' + data['name'] + ')').find('.selected-hour').text();
-        	var postremove = $.post('/removecourse', { offering: course_id, term: ui.sender.attr('id'), hour: $.trim(course_hour) })
+        	var postremove = $.post('/api/removecourse', { offering: course_id, term: ui.sender.attr('id'), hour: $.trim(course_hour) })
 
     		$("#" + ui.sender.attr('id') + " li").each(function(index, li) {
     			var course = $(li);
@@ -218,7 +205,7 @@ $(document).on('click', '.dropdown-menu li a', function () {
     var term = $(this).parents('.sortable2').attr('id');
     var offering_id = course_item.attr('id');
 
-    var posting = $.post('/swaphour', { offering: offering_id, term: term, new_hour: new_hour, hour: course_item.find(".dropdown-toggle").text().split(" ")[0] });
+    var posting = $.post('/api/swaphour', { offering: offering_id, term: term, new_hour: new_hour, hour: course_item.find(".dropdown-toggle").text().split(" ")[0] });
 
     posting.fail (function (data) {
         flash_alert("There was an error swapping hours. Please check your internet connection and try again.");
@@ -250,7 +237,7 @@ function removeCourse(event){
     var offering = that.parents("li").attr("id");
     var hour = $.trim(that.parents("li").find(".selected-hour").text());
 
-    var posting = $.post('/removecourse',
+    var posting = $.post('/api/removecourse',
         { offering: offering,
         term: term_id,
         hour:  hour})
@@ -278,7 +265,7 @@ function swap_term(term){
         }
     }
 
-    var post_opposite = $.post('/swapterm', { term: term });
+    var post_opposite = $.post('/api/swapterm', { term: term });
 
     post_opposite.fail (function (data) {
         flash_alert("There was an issue with swapping the term. Please check your internet connection and try again.");
@@ -314,7 +301,7 @@ function showCourses(){
 
 
 
-    var getcourses = $.get('/getcourses', { dept: dept, term: term, hour: hour, distrib: distrib, median: median });
+    var getcourses = $.get('/api/getcourses', { dept: dept, term: term, hour: hour, distrib: distrib, median: median });
 
 
     $(".classesBlock ul.sortable1").empty();
@@ -338,7 +325,7 @@ function showCourses(){
 
 function update_missing_distribs(){
     var missing = $('#missing-distribs')
-    var getmissingdistribs = $.get('/missingdistribs');
+    var getmissingdistribs = $.get('/api/missingdistribs');
     getmissingdistribs.fail(function (data) {
         flash_alert("Oops! We're having trouble with your distribs. Please check your internet connection and try again.");
     })

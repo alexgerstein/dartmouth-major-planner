@@ -33,8 +33,8 @@ def create_app(env=None):
     from dartplan.frontend import frontend
     app.register_blueprint(frontend.bp)
 
-    from dartplan.api import api
-    app.register_blueprint(api.bp)
+    from dartplan.api import bp as api_bp
+    app.register_blueprint(api_bp)
 
     from dartplan.admin import admin
     admin.init_app(app)

@@ -1,4 +1,4 @@
-from flask import g
+from flask import session, redirect, url_for, request
 from flask.ext.admin import Admin
 from flask.ext.admin.contrib.sqla import ModelView
 
@@ -8,7 +8,12 @@ from dartplan.models import User, Course, Offering
 
 class ViewWithValidation(ModelView):
     def is_accessible(self):
-        return g.user.netid == 'd36395d'
+        user = session.get('user')
+        return user and user.get('netid') == 'd36395d'
+
+    def _handle_view(self, name, **kwargs):
+        if not self.is_accessible():
+            return redirect(url_for('flask_cas.login', next=request.url))
 
 
 class ModelViewWithoutCreate(ViewWithValidation):

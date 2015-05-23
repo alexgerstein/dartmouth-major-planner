@@ -2,6 +2,10 @@ import pytest
 
 from dartplan import create_app
 from dartplan.database import db as _db
+from dartplan.mail import mail
+from tests.factories import (user_factories, term_factories, course_factories,
+                             department_factories, offering_factories,
+                             hour_factories, distributive_factories)
 
 
 @pytest.yield_fixture(scope='session')
@@ -38,9 +42,17 @@ def session(db, request):
     # begin a non-ORM transaction
     transaction = connection.begin()
 
-    options = dict()
+    options = dict(bind=connection)
     session = db.create_scoped_session(options)
     db.session = session
+
+    user_factories.UserFactory._meta.sqlalchemy_session = session
+    term_factories.TermFactory._meta.sqlalchemy_session = session
+    course_factories.CourseFactory._meta.sqlalchemy_session = session
+    department_factories.DepartmentFactory._meta.sqlalchemy_session = session
+    offering_factories.OfferingFactory._meta.sqlalchemy_session = session
+    hour_factories.HourFactory._meta.sqlalchemy_session = session
+    distributive_factories.DistributiveFactory._meta.sqlalchemy_session = session
 
     yield db.session
 
@@ -53,3 +65,9 @@ def session(db, request):
 def test_client(app, request):
     with app.test_client() as client:
         yield client
+
+
+@pytest.yield_fixture()
+def outbox(request):
+    with mail.record_messages() as outbox:
+        yield outbox

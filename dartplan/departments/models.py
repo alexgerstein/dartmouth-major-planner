@@ -9,9 +9,5 @@ class Department(db.Model):
 
     courses = db.relationship('Course', backref = 'department')
 
-    def __init__(self, name, abbr):
-        self.name = name
-        self.abbr = abbr
-
     def __repr__(self):
         return '%s' % (self.abbr)
