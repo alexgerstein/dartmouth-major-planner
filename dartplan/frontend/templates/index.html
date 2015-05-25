@@ -2,56 +2,48 @@
 
 {% block content %}
 
-<header class="container-fluid home-anchor">
-	<div class="row-fluid">
-		<div class="span6">
-			<h1 class="animated fadeInLeftBig animation-delay">Find the courses that fit.</h1>
-			<p class="animated fadeInLeftBig animation-delay">Get your D-Plan under control. Click-and-drag for course availability with DARTPlan.</p>
-			<div class="animated fadeInUp buttons-delay"><a id="download-button" class="button hover animated" href="/planner">SIGN IN <br><span style="font-size: 12px"> using your</span> <br> Dartmouth ID</a></div>
+<div class="landing">
+	<div class="landing-main">
+		<div layout="row" layout-align="center">
+			<h1 class="md-display-3">Find the courses that fit.</h1>
 		</div>
-		<div class="span6 animated fadeInRightBig animation-delay">
-			<div class="notebookslider flexslider">
-			  <ul class="slides">
-			    <li style="width: 100%; float:left; margin-right:-100%; position:relative; display: list-item;" class>
-			      <img src="static/img/slide1.jpg" />
-			    </li>
-			    <li style="width: 100%; float:left; margin-right:-100%; position:relative; display: list-item;" class>
-			      <img src="static/img/slide2.jpg" />
-			    </li>
-			    <li style="width: 100%; float:left; margin-right:-100%; position:relative; display: list-item;" class>
-			      <img src="static/img/slide3.jpg" />
-			    </li>
-			  </ul>
-			</div>
+		<div layout="row" layout-align="center">
+			<h3 class="md-title">Get your D-Plan under control. Click-and-drag for course availability with DARTPlan.</h3>
+		</div>
+		<div layout="row" layout-align="center" layout-margin layout-padding>
+			<a href="/planner"><md-button class="md-raised md-accent">Sign in <br> with your Dartmouth ID</md-button></a>
 		</div>
 	</div>
 
-	<section id="counter">
-		<div class="container-fluid">
-			<a href="/planner"><div class="row-fluid">
-				<div class="span8 offset2">
-				<h2>Click here to <br> start using DARTPlan</h2>
-			</div></a>
-		</div>
-	</section>
+  <div class="landing-screenshot" layout="row" layout-align="center center">
+    <img src={{url_for('static', filename='img/slide3.jpg')}}/>
+  </div>
 
-	<section id="info">
-		<div class="row-fluid">
-			<div class="span4">
-				<h3><i class="fa fa-filter"></i> Filter</h3>
-				Search for courses by department, term and period.
-			</div>
-			<div class="span4">
-				<h3><i class="fa fa-plus"></i> Add</h3>
-				Drag a course into your course plan and instantly see when it's offered.
-			</div>
-			<div class="span4">
-				<h3><i class="fa fa-refresh"></i> Update</h3>
-				Revise class sections and off-terms. Your plan will update automatically.
-			</div>
-		</div>
-	</section>
+  <div class="landing-promo" layout="row">
+    <div class="promo" layout="column" flex>
+      <ng-md-icon icon="filter_list" class="promo-logo" size="75px"></ng-md-icon>
+      <div class="md-headline">Filter</div>
+      <h4 class="md-subhead">Search for courses by department, term and period.</h4>
+    </div>
+    <div class="promo" layout="column" flex>
+      <ng-md-icon icon="add" class="promo-logo" size="75px"></ng-md-icon>
+      <div class="md-headline">Add</div>
+      <h4 class="md-subhead">Drag a course into your course plan and instantly see when it's offered.</h4>
+    </div>
+    <div class="promo" layout="column" flex>
+      <ng-md-icon icon="refresh" class="promo-logo" size="75px"></ng-md-icon>
+      <div class="md-headline">Refresh</div>
+      <h4 class="md-subhead">Revise class sections and off-terms. Your plan will update automatically.</h4>
+    </div>
+  </div>
 
-</header>
-
+  <div class="landing-closing">
+    <div layout="row" layout-align="center">
+      <h1 class="md-display-2" flex="45" flex-sm="100">Sign up now to start using DARTplan</h1>
+    </div>
+    <div>
+      <a href="/login"><md-button class="md-raised md-accent">Sign Up</md-button></a>
+    </div>
+  </div>
+</div>
 {% endblock %}

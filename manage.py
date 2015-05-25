@@ -8,6 +8,7 @@ from scrapers.scrape_all import scrape_all
 from scrapers.scrape_update import scrape_update
 from flask.ext.script import Manager, Shell, Server
 from flask.ext.migrate import MigrateCommand
+from flask.ext.assets import ManageAssets
 
 app = create_app(os.environ.get("APP_CONFIG_FILE") or "development")
 manager = Manager(app)
@@ -38,6 +39,7 @@ def scrape(all=False):
 manager.add_command('server', Server())
 manager.add_command('shell', Shell(make_context=_make_context))
 manager.add_command('db', MigrateCommand)
+manager.add_command('assets', ManageAssets)
 
 if __name__ == '__main__':
     manager.run()
