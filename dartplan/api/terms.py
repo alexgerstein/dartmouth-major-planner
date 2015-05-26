@@ -11,10 +11,16 @@ class isOn(fields.Raw):
 
         return term in g.user.terms
 
+
+class getAbbr(fields.Raw):
+    def output(self, key, term):
+        return str(term)
+
 term_fields = {
     'id': fields.Integer,
     'year': fields.Integer,
     'season': fields.String,
+    'abbr': getAbbr,
     'on': isOn
 }
 

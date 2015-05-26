@@ -4,7 +4,7 @@ from flask.ext.restful import Api
 from dartplan.database import db
 from dartplan.models import User
 
-from offerings import OfferingAPI, OfferingListAPI
+from offerings import OfferingAPI, OfferingListAPI, PlanAPI
 from courses import CourseAPI, CourseListAPI
 from terms import TermAPI
 from users import UserAPI
@@ -32,6 +32,7 @@ def fetch_user():
 
 api.add_resource(OfferingListAPI, '/offerings', endpoint='offerings')
 api.add_resource(OfferingAPI, '/offerings/<int:id>', endpoint='offering')
+api.add_resource(PlanAPI, '/plan', endpoint='plan')
 api.add_resource(CourseListAPI, '/courses', endpoint='courses')
 api.add_resource(CourseAPI, '/courses/<int:id>', endpoint='course')
 api.add_resource(TermAPI, '/terms/<int:id>', endpoint='term')

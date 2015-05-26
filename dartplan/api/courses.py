@@ -33,11 +33,11 @@ course_detail_fields = dict(course_fields, **course_detail_fields)
 class CourseListAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('department_id', type=int)
+        self.reqparse.add_argument('dept_id', type=int)
         self.reqparse.add_argument('term_id', type=int)
         self.reqparse.add_argument('hour_id', type=int)
         self.reqparse.add_argument('distrib_id', type=int)
-        self.reqparse.add_argument('median', type=str)
+        self.reqparse.add_argument('median_id', type=int)
         super(CourseListAPI, self).__init__()
 
     def get(self):
@@ -45,8 +45,8 @@ class CourseListAPI(Resource):
 
         courses = Course.query.join(Offering)
 
-        if args.department_id:
-            courses = courses.filter(Course.department_id == args.department_id)
+        if args.dept_id:
+            courses = courses.filter(Course.department_id == args.dept_id)
 
         if args.term_id:
             courses = courses.filter(Offering.term_id == args.term_id)
@@ -58,10 +58,9 @@ class CourseListAPI(Resource):
             distrib = Distributive.query.filter_by(id=args.distrib_id).first()
             courses = courses.filter(Offering.distributives.contains(distrib))
 
-        if args.median:
-            median_index = MEDIANS.index(args.median) + 1
+        if args.median_id:
             courses = courses.filter(Course.avg_median
-                                           .in_(MEDIANS[:median_index]))
+                                           .in_(MEDIANS[:args.median_id]))
 
         courses = courses.join(Department).order_by('abbr', 'number').all()
 

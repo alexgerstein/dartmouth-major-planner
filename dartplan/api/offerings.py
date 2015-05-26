@@ -101,3 +101,13 @@ class OfferingAPI(Resource):
         # print offering
 
         return {'offering': marshal(offering, offering_fields)}
+
+
+class PlanAPI(Resource):
+    @login_required
+    def get(self):
+        offerings = [marshal(offering, offering_fields)
+                     for offering in g.user.courses.all()]
+        terms = [marshal(term, term_fields) for term in g.user.terms.all()]
+
+        return {'offerings': offerings, 'terms': terms}

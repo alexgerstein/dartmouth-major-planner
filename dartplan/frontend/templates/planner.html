@@ -2,94 +2,60 @@
 
 {% block content %}
 
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="row-fluid">
-            <div class="span3">
-                <h2 class="visible-phone">DARTPlan works best in a larger window. If you're on a mobile device, please switch to a computer. If you're already on a computer, please expand your browser. </h2>
-                <div class="edit hidden-phone">
-                    Dept:
-                    <form action="" method="post" name="add">
-                        {{dept_form.hidden_tag()}}
-                        {{dept_form.dept_name}}
-                    </form>
-                    <br/>
-                    Term:
-                    <form action="" method="post" name="add">
-                        {{term_form.hidden_tag()}}
-                        {{term_form.term_name}}
-                    </form>
-                    <br/>
-                    Hour:
-                    <form action="" method="post" name="add">
-                        {{hour_form.hidden_tag()}}
-                        {{hour_form.hour_name}}
-                    </form>
-                    <br/>
-                    Distrib:
-                    <form action="" method="post" name="add">
-                        {{distrib_form.hidden_tag()}}
-                        {{distrib_form.distrib_name}}
-                    </form>
-                    <br/>
-                    Median (min.):
-                    <form action="" method="post" name="add">
-                        {{median_form.hidden_tag()}}
-                        {{median_form.median_name}}
-                    </form>
-
-                    <div class="classesBlock">
-                        <ul id="" class="sortable1 dropfalse" unselectable="on"></ul>
-                    </div>
-
-                    <div id='missing-distribs' class="hide">
-                    </div>
-
-                    <div class="progress progress-striped active hide">
-                      <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                        <span class="sr-only">Searching for terms offered...</span>
-                      </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="span9">
-                <div class="termsBlock">
-                    <div class="flash hide"></div>
-                    {% for term in terms %}
-                        {% if (loop.index + 3) % 4 == 0 %}
-                            <div class="row-fluid">
-                        {% endif %}
-                            <div class="span3 term">
-                                <li class="term-name pin">{{term}}<i class="btn on" style="float: right">On?</i></li>
-                                <ul id="{{ term }}" class="sortable2 droptrue ui-sortable off-term" unselectable="on">
-                                    {% for on_term in on_terms %}
-                                        {% if term == on_term %}
-                                            <script>
-                                                $("#{{term}}").removeClass('off-term');
-                                                $("#{{term}}").siblings('li').find('i').text('Off?');
-                                            </script>
-                                            {% break %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% for course in courses %}
-                                        {% if course.term == term %}
-                                            <script>
-                                                var possible_hours = "{{course.get_possible_hours()}}".split("; ")
-                                                addCourse("#{{term}}", "{{ course.hour }}", possible_hours, "{{ course.id }}", "{{ course }}");
-                                            </script>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            {% if (loop.index + 3) % 4 == 3 %}
-                                </div>
-                            {% endif %}
-                            </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+<div ng-controller="SearchController" class="edit" flex="25">
+    <form class="md-whiteframe-z3" ng-submit="submit()" layout='column' layout-padding layout-margin name="filterCourses">
+      <div layout="row" layout-md="column">
+        <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
+          <md-option ng-value="opt.key" ng-repeat="opt in {{dept_options}}">{[opt.value]}</md-option>
+        </md-select>
+        <md-select ng-model="fields.term_id" placeholder="Term" flex>
+          <md-option ng-value="opt.key" ng-repeat="opt in {{term_options}}">{[opt.value]}</md-option>
+        </md-select>
     </div>
+    <div layout="column">
+        <md-select ng-model="fields.hour_id" placeholder="Hour">
+          <md-option ng-value="opt.key" ng-repeat="opt in {{hour_options}}">{[opt.value]}</md-option>
+        </md-select>
+    </div>
+    <div layout="row" layout-md="column">
+        <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
+          <md-option ng-value="opt.key" ng-repeat="opt in {{distrib_options}}">{[opt.value]}</md-option>
+        </md-select>
+        <md-select ng-model="fields.median_id" placeholder="Median" flex>
+          <md-option ng-value="opt.key" ng-repeat="opt in {{median_options}}">{[opt.value]}</md-option>
+        </md-select>
+    </div>
+    <md-button class="md-raised md-primary" type="submit" flex="15" flex-md="100">Search</md-button>
+    </form>
+
+    <md-list layout-padding layout-margin>
+        <md-progress-linear ng-if="loading" md-mode="indeterminate">Searching</md-progress-linear>
+        <md-list-item class="md-2-line" ng-if="courses && !courses.length && !loading">No courses found.</md-list-item>
+        <md-list-item class="md-2-line" ng-repeat="course in courses">
+            <div class="md-list-item-text">
+                <h3>{[course.full_name]}</h3>
+            </div>
+        </md-list-item>
+    </md-list>
+</div>
+
+<div ng-controller="PlannerController" class="planner" flex="75">
+  <div layout="row" layout-wrap>
+    <section class="term" flex="25" ng-repeat="term in terms">
+      <md-subheader class="md-primary">{[term.abbr]}<i class="btn on" style="float: right">
+          <div ng-show="!term.on">On?</div>
+          <div ng-show="term.on">On?</div>
+      </i></md-subheader>
+      <md-list id="{[term.id ]}" layout-padding>
+        <md-list-item class="md-3-line" ng-if="offering.term === term.abbr" ng-repeat="offering in offerings">
+          <div class="md-list-item-text">
+            <h3>{[offering.name]}</h3>
+          </div>
+        <md-divider></md-divider>
+        </md-list-item>
+      </md-list>
+    </section>
+  </div>
 </div>
 
 <div class="modal hide fade" id="disclaimerModal">
@@ -108,84 +74,59 @@
 
 <script>
 
-    window.onload = function () {
-        $("#dept_name").trigger('change');
-        update_missing_distribs();
-    }
+    // $(document).ready(function() {
+    //     $('.on').click(function() {
+    //         var btn_id = $(this).parents('.term').find('ul').attr('id');
+    //         swap_term(btn_id);
+    //     });
 
-    $(document).ready(function() {
-        $('.on').click(function() {
-            var btn_id = $(this).parents('.term').find('ul').attr('id');
-            swap_term(btn_id);
-        });
+    //     $('#disclaimerModal').modal('show')
+    // });
 
-        $('#disclaimerModal').modal('show')
-    });
+    // $("i[class='popover-trigger']").popover(
+    //         {
+    //             "title":"Course Info",
+    //             "html":true,
+    //             "animation":true,
+    //             "placement":"bottom",
+    //             "trigger":"click"
+    //         });
 
-    $("i[class='popover-trigger']").popover(
-            {
-                "title":"Course Info",
-                "html":true,
-                "animation":true,
-                "placement":"bottom",
-                "trigger":"click"
-            });
+    // $(".sortable1, .sortable2").sortable({
+    //     helper: function(event) {
+    //                 return $(event.target).clone().css({
+    //                     width: $(event.target).width(),
+    //                     height: $(event.target).height(),
+    //                 })
+    //             },
+    //     items: "li:not(.pin)",
+    //     cursor: "crosshair",
+    //     connectWith: '.droptrue',
+    //     opacity: 0.6,
+    //     zIndex: 10000,
+    //     scroll: false,
+    //     receive: saveCourse,
+    //     start: function (event, ui) {
+    //         $(ui.helper).addClass("ui-draggable-helper");
+    //         showAvailableSlots(event, ui);
+    //     },
+    //     stop: function (event, ui) {
+    //         $(this).sortable('cancel');
+    //         clearAvailableSlots(event, ui);
+    //     }
+    // });
 
-    $("#dept_name").change(function () {
-        showCourses();
-    });
+    // $(".sortable1, .sortable2").disableSelection();
 
-    $("#hour_name").change(function () {
-        showCourses();
-    });
-
-    $("#term_name").change(function () {
-        showCourses();
-    });
-
-    $("#distrib_name").change(function () {
-        showCourses();
-    });
-
-    $("#median_name").change(function () {
-        showCourses();
-    });
-
-    $(".sortable1, .sortable2").sortable({
-        helper: function(event) {
-                    return $(event.target).clone().css({
-                        width: $(event.target).width(),
-                        height: $(event.target).height(),
-                    })
-                },
-        items: "li:not(.pin)",
-        cursor: "crosshair",
-        connectWith: '.droptrue',
-        opacity: 0.6,
-        zIndex: 10000,
-        scroll: false,
-        receive: saveCourse,
-        start: function (event, ui) {
-            $(ui.helper).addClass("ui-draggable-helper");
-            showAvailableSlots(event, ui);
-        },
-        stop: function (event, ui) {
-            $(this).sortable('cancel');
-            clearAvailableSlots(event, ui);
-        }
-    });
-
-    $(".sortable1, .sortable2").disableSelection();
-
-    $('body').on('click', function (e) {
-        $('[data-toggle=popover]').each(function () {
-            //the 'is' for buttons that trigger popups
-            //the 'has' for icons within a button that triggers a popup
-            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                $(this).popover('hide');
-            }
-        });
-    });
+    // $('body').on('click', function (e) {
+    //     $('[data-toggle=popover]').each(function () {
+    //         //the 'is' for buttons that trigger popups
+    //         //the 'has' for icons within a button that triggers a popup
+    //         if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+    //             $(this).popover('hide');
+    //         }
+    //     });
+    // });
 
 
 </script>

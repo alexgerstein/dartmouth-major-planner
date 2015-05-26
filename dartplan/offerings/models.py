@@ -1,11 +1,12 @@
 from dartplan.database import db
-from dartplan.models import Hour, Term, Course
 
 
 offering_distribs = db.Table("offering_distribs",
-  db.Column('offering_id', db.Integer, db.ForeignKey("offering.id")),
-  db.Column("distributive_id", db.Integer, db.ForeignKey("distributive.id"))
-)
+                             db.Column('offering_id', db.Integer,
+                                       db.ForeignKey("offering.id")),
+                             db.Column("distributive_id", db.Integer,
+                                       db.ForeignKey("distributive.id"))
+                             )
 
 
 class Offering(db.Model):
@@ -30,3 +31,10 @@ class Offering(db.Model):
     def __repr__(self):
         course_str = str(self.course)
         return course_str.split(" -")[0]
+
+    def get_possible_hours(self):
+        possible_hours = []
+        for offering in Offering.query.filter_by(course_id=self.course_id,
+                                                 term_id=self.term_id).all():
+            possible_hours.append(offering.hour)
+        return possible_hours

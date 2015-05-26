@@ -93,29 +93,15 @@ def planner():
 
     all_terms = generate_terms(g.user.grad_year)
 
-    # Initialize the department selection form
-    dept_form = DeptPickerForm()
-    dept_form.dept_name.choices = [(a.id, a.abbr + " - " + a.name) for a in Department.query.order_by('abbr')]
-    dept_form.dept_name.choices.insert(0, (-1, "Select Department"))
-
-    # Initialize the hour selection form
-    hour_form = HourPickerForm()
-    hour_form.hour_name.choices = [(a.id, a.period) for a in Hour.query.order_by('id')]
-    hour_form.hour_name.choices.insert(0, (-1, "Select Hour"))
-
-    # Initialize the term selection form
-    term_form = TermPickerForm()
-    term_form.term_name.choices = [(a.id, str(a)) for a in all_terms]
-    term_form.term_name.choices.insert(0, (-1, "Select Term"))
-
-    # Initialize the term selection form
-    distrib_form = DistribPickerForm()
-    distrib_form.distrib_name.choices = [(a.id, str(a)) for a in Distributive.query.order_by('abbr')]
-    distrib_form.distrib_name.choices.insert(0, (-1, "Select Distrib"))
-
-    median_form = MedianPickerForm()
-    median_form.median_name.choices = [(index, str(a)) for index, a in enumerate(MEDIANS)]
-    median_form.median_name.choices.insert(0, (-1, 'Select Min. Median'))
+    dept_options = [{'key': dept.id, 'value': str(dept.abbr)}
+                    for dept in Department.query.order_by('abbr')]
+    hour_options = [{'key': hour.id, 'value': str(hour.period)}
+                    for hour in Hour.query.order_by('id')]
+    term_options = [{'key': term.id, 'value': str(term)} for term in all_terms]
+    distrib_options = [{'key': distrib.id, 'value': str(distrib.abbr)}
+                       for distrib in Distributive.query.order_by('abbr')]
+    median_options = [{'key': index, 'value': str(median)}
+                      for index, median in enumerate(MEDIANS)]
 
     # Check if terms aren't in the session
     if g.user.terms.all() == []:
@@ -124,14 +110,12 @@ def planner():
 
     return render_template("planner.html",
                            title='Course Plan',
-                           description='Manage your Dartmouth course plan \
-                           with simple drag-and-drop functionality.',
-                           user=g.user, dept_form=dept_form,
-                           hour_form=hour_form, term_form=term_form,
-                           distrib_form=distrib_form, median_form=median_form,
-                           courses=g.user.courses.order_by('hour_id'),
-                           on_terms=g.user.terms.order_by('year', 'id').all(),
-                           terms=all_terms)
+                           user=g.user, dept_options=dept_options,
+                           hour_options=hour_options,
+                           term_options=term_options,
+                           distrib_options=distrib_options,
+                           median_options=median_options
+                           )
 
 
 # Edit Page to change Name and Graduation Year

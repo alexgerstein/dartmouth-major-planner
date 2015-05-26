@@ -24,9 +24,6 @@
 
           <a class="brand" href="{{ url_for('frontend.index')}}"><span><img src="{{ url_for ('static', filename='img/p-logo-white.png') }}" style="width: 25px; padding: 0 5px;"><b>DART</b>Plan</span></a>
           <span flex></span>
-          <md-button>
-            <a href="{{ url_for('frontend.about') }}">About</a>
-          </md-button>
           {% if user %}
           <md-button>
             <a href="{{ url_for('frontend.planner') }}">My Course Plan</a>
@@ -47,20 +44,23 @@
       </md-toolbar>
     </nav>
 
-    <md-content>
-      {% block content %}{% endblock %}
-    </md-content>
+    <main>
+      <md-content layout="row">
+        {% block content %}{% endblock %}
+      </md-content>
+    </main>
 
-    </div>
-      <div class="footer">
-        <div class="container-fluid">
-          <span><a href="{{ url_for('frontend.about') }}">About</a></span>
-          <span><a href="{{ url_for('frontend.contribute') }}">Contribute</a></span>
-          <span><a href="{{ url_for('frontend.contact') }}">Contact</a></span>
-          <span><a href="http://www.twitter.com/dartplan"><i class="fa fa-twitter"></i> Updates</a></span>
-          <span style="float: right;"><a href="{{ url_for('frontend.disclaimer') }}">Disclaimer</a></span>
+    <md-toolbar>
+      <div class="md-toolbar-tools md-toolbar-tools-bottom">
+        <md-button><a href="{{ url_for('frontend.about') }}">About</a></md-button>
+        <md-button><a href="{{ url_for('frontend.contribute') }}">Contribute</a></md-button>
+        <md-button><a href="{{ url_for('frontend.contact') }}">Contact</a></md-button>
+        <span flex></span>
+        <md-button><a href="{{ url_for('frontend.disclaimer') }}">Disclaimer</a></md-button>
       </div>
-    </div>
+    </md-toolbar>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
     <!-- Angular Material Dependencies -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>

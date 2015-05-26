@@ -15,57 +15,6 @@ function addCourse(term, hour, possible_hours, offering_id, short_name) {
     var obj = ($(".termsBlock").find(term));
 
     obj.append('<div class="row-fluid"> <div class="span12"> <li id="' + offering_id + '" class="ui-state-default draggable"> <div class="row-fluid"> <div class="span12">' + short_name + '<span class="buttons"><i class="btn btn-danger btn-small hidden-phone" onclick="removeCourse(event)"><span class="icon-trash icon-white"></i> <i class="btn btn-info btn-small popover-trigger" data-toggle="popover"><span class="icon-info-sign"></i></span> </div> </div> </li> </div> </div>');
-
-    var course_desc = null;
-
-    var posting = $.get("/api/getCourseInfo",
-        {
-            offering: offering_id,
-            term: obj.attr('id'),
-        })
-
-    posting.fail (function (response) {
-        flash_alert("There was an error loading the course description. Please try reloading the page.");
-        return
-    })
-
-    posting.done(function(response) {
-            $('#' + offering_id).find('.popover-trigger').popover(  {
-                content: response['info'],
-                title: 'Course Info',
-                html: true,
-                placement:function (context, source) {
-                    var position = $(source).position();
-                    var width = window.innerWidth;
-
-                    if (width < 768) {
-                        return "left";
-                    }
-
-                    if (position.left > 900) {
-                        return "left";
-                    }
-
-                    if (position.top < 250){
-                        return "bottom";
-                    }
-
-                    if (position.top > 600){
-                        return "top";
-                    }
-
-                    if (position.left < 800) {
-                        return "right";
-                    }
-
-                    return "left";
-                },
-                delay: {show:500, hide: 100}
-            });
-
-            update_missing_distribs();
-        }
-    )
 };
 
 function showAvailableSlots(event, ui) {
