@@ -1,7 +1,6 @@
-from collections import Counter
 from flask.ext.restful import Resource, fields, marshal, reqparse
 
-from dartplan.models import User, Course, Offering, Department, Distributive
+from dartplan.models import Course, Offering, Department, Distributive
 
 MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B', 'B/B-',
            'B-', 'B-/C+', 'C+', 'C+/C', 'C']
@@ -11,9 +10,11 @@ class getFullName(fields.Raw):
     def output(self, key, course):
         return str(course)
 
+
 term_fields = {
     'term': fields.String,
-    'enrolled': fields.Integer
+    'enrolled': fields.Integer,
+    'user_added': fields.Boolean
 }
 
 course_fields = {
@@ -22,12 +23,6 @@ course_fields = {
     'name': fields.String,
     'full_name': getFullName
 }
-
-course_detail_fields = {
-    'terms': fields.List(fields.Nested(term_fields)),
-    'user_terms': fields.List(fields.Nested(term_fields))
-}
-course_detail_fields = dict(course_fields, **course_detail_fields)
 
 
 class CourseListAPI(Resource):
@@ -71,24 +66,4 @@ class CourseListAPI(Resource):
 class CourseAPI(Resource):
     def get(self, id):
         course = Course.query.get_or_404(id)
-
-        available_user_offerings = Offering.query.filter_by(course=course,
-                                                            user_added="Y") \
-                                                 .all()
-        available_registrar_offerings = Offering.query.filter_by(course=course, user_added="N").all()
-
-        enrolled_counter = Counter()
-        for offering in available_registrar_offerings:
-            enrolled_counter.update({offering.term: User.query.filter(User.courses.contains(offering)).count()})
-
-        course.terms = [{'term': term, 'enrolled': enrolled_counter[term]}
-                        for term in enrolled_counter]
-
-        enrolled_counter = Counter()
-        for offering in available_user_offerings:
-            enrolled_counter.update({offering.term: User.query.filter(User.courses.contains(offering)).count()})
-
-        course.user_terms = [{'term': term, 'enrolled': enrolled_counter[term]}
-                             for term in enrolled_counter]
-
-        return {'course': marshal(course, course_detail_fields)}
+        return {'course': marshal(course, course_fields)}

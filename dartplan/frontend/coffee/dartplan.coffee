@@ -29,32 +29,61 @@ dartplanApp.factory 'SearchService', ['$http', 'Course', ($http, Course) ->
         new Course course for course in result.data.courses
 ]
 
-dartplanApp.factory 'Offering', ['$http', 'Term', ($http, Term) ->
-  class Offering
-    constructor: (options) ->
-      {@id, @name} = options
-      @term = options.term.abbr
-]
-
 dartplanApp.factory 'Term', ['$http', ($http) ->
   class Term
     constructor: (options) ->
       {@id, @abbr} = options
 ]
 
-dartplanApp.factory 'Course', ['$http', ($http) ->
+dartplanApp.factory 'Offering', ['$http', '$rootScope', '$mdToast', 'Term', ($http, $rootScope, $mdToast, Term) ->
+  class Offering
+    constructor: (options) ->
+      {@id, @name, @enrollment} = options
+      @term = new Term options.term
+
+    enroll: ->
+      $http.put("/api/offerings/#{ @id }", {enrolled: true}).then (result) ->
+        $rootScope.$broadcast 'changedCourses'
+        $mdToast.showSimple('Enroll Successful');
+
+]
+
+dartplanApp.factory 'Course', ['$http', 'Offering', ($http, Offering) ->
   class Course
     constructor: (options) ->
       {@id, @full_name} = options
+
+    offerings: ->
+      $http.get("/api/courses/#{ @id }/offerings").then (result) =>
+        new Offering offering for offering in result.data.offerings
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', 'PlanService', ($scope, PlanService) ->
   PlanService.all().then (result) ->
     $scope.offerings = result.offerings
     $scope.terms = result.terms
+
+  $scope.$on 'changedCourses', ->
+    PlanService.all().then (result) ->
+      $scope.offerings = result.offerings
+      $scope.terms = result.terms
 ]
 
-dartplanApp.controller 'SearchController', ['$scope', 'SearchService', ($scope, SearchService) ->
+CourseDialogController = ($scope, $mdDialog) ->
+  $scope.offeringsLoading = true
+
+  $scope.course.offerings().then (offerings) ->
+    $scope.offerings = offerings
+    $scope.offeringsLoading = false
+
+  $scope.enroll = (offering) ->
+    offering.enroll()
+    $mdDialog.hide()
+
+  $scope.cancel = ->
+    $mdDialog.cancel()
+
+dartplanApp.controller 'SearchController', ['$rootScope', '$scope', '$mdDialog', 'SearchService', ($rootScope, $scope, $mdDialog, SearchService) ->
   $scope.fields = {}
 
   $scope.submit = ->
@@ -62,4 +91,20 @@ dartplanApp.controller 'SearchController', ['$scope', 'SearchService', ($scope, 
     SearchService.search($scope.fields).then (courses) ->
       $scope.courses = courses
       $scope.loading = false
+]
+
+dartplanApp.directive 'courseSearchResult', ['$mdDialog', ($mdDialog) ->
+  return {
+    replace: true,
+    templateUrl: 'static/partials/course-search-result.html',
+    controller: ($scope) ->
+      $scope.showCourseTerms = ->
+        $mdDialog.show({
+          controller: CourseDialogController,
+          scope: $scope,
+          preserveScope: true,
+          templateUrl: 'static/partials/course-dialog.html',
+          clickOutsideToClose: true
+        })
+  }
 ]

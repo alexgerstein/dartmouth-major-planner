@@ -18,8 +18,6 @@ class getAbbr(fields.Raw):
 
 term_fields = {
     'id': fields.Integer,
-    'year': fields.Integer,
-    'season': fields.String,
     'abbr': getAbbr,
     'on': isOn
 }

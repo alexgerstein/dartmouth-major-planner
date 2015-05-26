@@ -30,12 +30,8 @@
 
     <md-list layout-padding layout-margin>
         <md-progress-linear ng-if="loading" md-mode="indeterminate">Searching</md-progress-linear>
-        <md-list-item class="md-2-line" ng-if="courses && !courses.length && !loading">No courses found.</md-list-item>
-        <md-list-item class="md-2-line" ng-repeat="course in courses">
-            <div class="md-list-item-text">
-                <h3>{[course.full_name]}</h3>
-            </div>
-        </md-list-item>
+        <md-list-item ng-if="courses && !courses.length && !loading">No courses found.</md-list-item>
+        <course-search-result ng-repeat="course in courses"></course-search-result>
     </md-list>
 </div>
 
@@ -47,12 +43,12 @@
           <div ng-show="term.on">On?</div>
       </i></md-subheader>
       <md-list id="{[term.id ]}" layout-padding>
-        <md-list-item class="md-3-line" ng-if="offering.term === term.abbr" ng-repeat="offering in offerings">
+        <div class="md-3-line" ng-if="offering.term.abbr === term.abbr" ng-repeat="offering in offerings">
           <div class="md-list-item-text">
             <h3>{[offering.name]}</h3>
           </div>
         <md-divider></md-divider>
-        </md-list-item>
+        </div>
       </md-list>
     </section>
   </div>

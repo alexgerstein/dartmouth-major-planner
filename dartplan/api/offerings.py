@@ -4,9 +4,8 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from dartplan.database import db
 from dartplan.login import login_required
-from dartplan.models import Offering, Course, Term, Hour
+from dartplan.models import User, Offering, Course, Term, Hour
 from terms import term_fields
-from courses import course_detail_fields
 
 
 class isEnrolled(fields.Raw):
@@ -15,6 +14,11 @@ class isEnrolled(fields.Raw):
             return False
 
         return offering in g.user.courses
+
+
+class isUserAdded(fields.Raw):
+    def output(self, key, offering):
+        return True if offering.user_added == "Y" else False
 
 
 class getName(fields.Raw):
@@ -26,15 +30,25 @@ class getHour(fields.Raw):
     def output(self, key, offering):
         return str(offering.hour)
 
+
+class getEnrollment(fields.Raw):
+    def output(self, key, offering):
+        return User.query.filter(User.courses.contains(offering)).count()
+
 offering_fields = {
     'id': fields.Integer,
     'name': getName,
     'term': fields.Nested(term_fields),
     'hour': getHour,
-    'course': fields.Nested(course_detail_fields),
     'info': fields.String(attribute='desc'),
-    'enrolled': isEnrolled
+    'enrolled': isEnrolled,
+    'user_added': isUserAdded
 }
+
+offering_detail_fields = {
+    'enrollment': getEnrollment
+}
+offering_detail_fields = dict(offering_fields, **offering_detail_fields)
 
 
 class OfferingListAPI(Resource):
@@ -97,10 +111,17 @@ class OfferingAPI(Resource):
                     g.user.courses.append(offering)
             else:
                 g.user.drop(offering)
-
-        # print offering
+            db.session.commit()
 
         return {'offering': marshal(offering, offering_fields)}
+
+
+class CourseOfferingListAPI(Resource):
+    def get(self, id):
+        course = Course.query.get_or_404(id)
+        offerings = Offering.query.filter_by(course=course).all()
+        return {'offerings': [marshal(offering, offering_detail_fields)
+                              for offering in offerings]}
 
 
 class PlanAPI(Resource):
