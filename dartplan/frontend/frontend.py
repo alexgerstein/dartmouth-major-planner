@@ -10,7 +10,6 @@ from dartplan.models import User, Term, Distributive, Hour, Department
 from dartplan.forms import UserEditForm, DeptPickerForm, HourPickerForm, \
                            TermPickerForm, DistribPickerForm, MedianPickerForm
 
-SEASONS = ["W", "S", "X", "F"]
 MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B',
            'B/B-', 'B-', 'B-/C+', 'C+', 'C+/C', 'C']
 
@@ -41,31 +40,6 @@ def add_terms(terms):
     db.session.commit()
 
 
-def generate_terms(grad_year):
-    all_terms = []
-
-    # Add Freshman Fall
-    t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
-    if t is None:
-        t = Term(year=grad_year - 4, season=SEASONS[3])
-        db.session.add(t)
-
-    all_terms.append(t)
-
-    for year_diff in reversed(range(4)):
-        for season in SEASONS:
-            t = Term.query.filter_by(year=grad_year - year_diff, season=season).first()
-            if t is None:
-                t = Term(year=grad_year - year_diff, season=season)
-                db.session.add(t)
-
-            all_terms.append(t)
-
-    # Remove extra fall
-    all_terms.remove(t)
-
-    return all_terms
-
 
 # Always track if there is a current user signed in
 # If unrecognized user is in, add them to user database
@@ -91,7 +65,7 @@ def fetch_user():
 @year_required
 def planner():
 
-    all_terms = generate_terms(g.user.grad_year)
+    all_terms = g.user.get_all_terms()
 
     dept_options = [{'key': dept.id, 'value': str(dept.abbr)}
                     for dept in Department.query.order_by('abbr')]
@@ -135,8 +109,9 @@ def edit():
         g.user.grad_year = form.grad_year.data
         g.user.email_course_updates = form.course_updates.data
         g.user.email_Dartplan_updates = form.dartplan_updates.data
+        db.session.commit()
 
-        add_terms(generate_terms(form.grad_year.data))
+        add_terms(g.user.get_all_terms())
         db.session.commit()
 
         return redirect(url_for('frontend.planner'))

@@ -16,7 +16,7 @@
     <meta name="description" content="DARTPlan provides a simple way for Dartmouth students to find their ideal course schedule for any term or year.">
 
   </head>
-  <body>
+  <body class="md-theme-default">
     <div layout="column">
       <nav>
         <md-toolbar>
@@ -50,8 +50,8 @@
       </md-content>
     </main>
 
-    <md-toolbar>
-      <div class="md-toolbar-tools md-toolbar-tools-bottom">
+    <md-toolbar class="md-toolbar-bottom">
+      <div class="md-toolbar-tools">
         <md-button><a href="{{ url_for('frontend.about') }}">About</a></md-button>
         <md-button><a href="{{ url_for('frontend.contribute') }}">Contribute</a></md-button>
         <md-button><a href="{{ url_for('frontend.contact') }}">Contact</a></md-button>

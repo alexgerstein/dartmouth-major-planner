@@ -1,10 +1,9 @@
 from dartplan.database import db
 
-SEASONS = ["W", "S", "X", "F"]
-
-
 class Term(db.Model):
     __tablename__ = 'term'
+
+    SEASONS = ["W", "S", "X", "F"]
 
     id = db.Column(db.Integer, primary_key = True)
     year = db.Column(db.SmallInteger)

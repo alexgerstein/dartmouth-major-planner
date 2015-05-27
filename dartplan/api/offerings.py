@@ -6,6 +6,7 @@ from dartplan.database import db
 from dartplan.login import login_required
 from dartplan.models import User, Offering, Course, Term, Hour
 from terms import term_fields
+from courses import course_fields
 
 
 class isEnrolled(fields.Raw):
@@ -42,13 +43,10 @@ offering_fields = {
     'hour': getHour,
     'info': fields.String(attribute='desc'),
     'enrolled': isEnrolled,
-    'user_added': isUserAdded
+    'user_added': isUserAdded,
+    'enrollment': getEnrollment,
+    'course': fields.Nested(course_fields)
 }
-
-offering_detail_fields = {
-    'enrollment': getEnrollment
-}
-offering_detail_fields = dict(offering_fields, **offering_detail_fields)
 
 
 class OfferingListAPI(Resource):
@@ -120,7 +118,7 @@ class CourseOfferingListAPI(Resource):
     def get(self, id):
         course = Course.query.get_or_404(id)
         offerings = Offering.query.filter_by(course=course).all()
-        return {'offerings': [marshal(offering, offering_detail_fields)
+        return {'offerings': [marshal(offering, offering_fields)
                               for offering in offerings]}
 
 
@@ -129,6 +127,6 @@ class PlanAPI(Resource):
     def get(self):
         offerings = [marshal(offering, offering_fields)
                      for offering in g.user.courses.all()]
-        terms = [marshal(term, term_fields) for term in g.user.terms.all()]
+        terms = [marshal(term, term_fields) for term in g.user.get_all_terms()]
 
         return {'offerings': offerings, 'terms': terms}

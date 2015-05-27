@@ -1,5 +1,5 @@
 from dartplan.database import db
-from dartplan.models import Offering
+from dartplan.models import Offering, Term
 
 user_course = db.Table('user_course',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
@@ -46,7 +46,8 @@ class User(db.Model):
             # Delete user-added offerings from db
             # if no users take the course anymore
             if offering.user_added == "Y":
-                if not User.query.filter(User.courses.contains(offering)).first():
+                if not User.query.filter(User.courses.contains(offering)) \
+                                 .first():
                     db.session.delete(offering)
 
             db.session.commit()
@@ -65,6 +66,32 @@ class User(db.Model):
         db.session.commit()
         return self
 
+    def get_all_terms(self):
+        all_terms = []
+
+        # Add Freshman Fall
+        t = Term.query.filter_by(year=self.grad_year - 4,
+                                 season=Term.SEASONS[3]).first()
+        if t is None:
+            t = Term(year=self.grad_year - 4, season=Term.SEASONS[3])
+            db.session.add(t)
+
+        all_terms.append(t)
+
+        for year_diff in reversed(range(4)):
+            for season in Term.SEASONS:
+                t = Term.query.filter_by(year=self.grad_year - year_diff,
+                                         season=season).first()
+                if t is None:
+                    t = Term(year=self.grad_year - year_diff, season=season)
+                    db.session.add(t)
+
+                all_terms.append(t)
+
+        # Remove extra fall
+        all_terms.remove(t)
+
+        return all_terms
 
     def get_id(self):
         return unicode(self.id)

@@ -2,69 +2,68 @@
 
 {% block content %}
 
-<div ng-controller="SearchController" class="edit" flex="25">
-    <form class="md-whiteframe-z3" ng-submit="submit()" layout='column' layout-padding layout-margin name="filterCourses">
-      <div layout="row" layout-md="column">
-        <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
-          <md-option ng-value="opt.key" ng-repeat="opt in {{dept_options}}">{[opt.value]}</md-option>
-        </md-select>
-        <md-select ng-model="fields.term_id" placeholder="Term" flex>
-          <md-option ng-value="opt.key" ng-repeat="opt in {{term_options}}">{[opt.value]}</md-option>
-        </md-select>
-    </div>
-    <div layout="column">
-        <md-select ng-model="fields.hour_id" placeholder="Hour">
-          <md-option ng-value="opt.key" ng-repeat="opt in {{hour_options}}">{[opt.value]}</md-option>
-        </md-select>
-    </div>
-    <div layout="row" layout-md="column">
-        <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
-          <md-option ng-value="opt.key" ng-repeat="opt in {{distrib_options}}">{[opt.value]}</md-option>
-        </md-select>
-        <md-select ng-model="fields.median_id" placeholder="Median" flex>
-          <md-option ng-value="opt.key" ng-repeat="opt in {{median_options}}">{[opt.value]}</md-option>
-        </md-select>
-    </div>
-    <md-button class="md-raised md-primary" type="submit" flex="15" flex-md="100">Search</md-button>
+<div ng-controller="SearchController" layout="column" class="edit" flex="25">
+    <form class="md-whiteframe-z3" ng-submit="submit()" layout-padding layout-margin name="filterCourses" flex="50">
+        <div layout="row" layout-md="column">
+            <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
+              <md-option ng-value="opt.key" ng-repeat="opt in {{dept_options}}">{[opt.value]}</md-option>
+            </md-select>
+            <md-select ng-model="fields.term_id" placeholder="Term" flex>
+              <md-option ng-value="opt.key" ng-repeat="opt in {{term_options}}">{[opt.value]}</md-option>
+            </md-select>
+        </div>
+        <div layout="column">
+            <md-select ng-model="fields.hour_id" placeholder="Hour">
+              <md-option ng-value="opt.key" ng-repeat="opt in {{hour_options}}">{[opt.value]}</md-option>
+            </md-select>
+        </div>
+        <div layout="row" layout-md="column">
+            <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
+              <md-option ng-value="opt.key" ng-repeat="opt in {{distrib_options}}">{[opt.value]}</md-option>
+            </md-select>
+            <md-select ng-model="fields.median_id" placeholder="Median" flex>
+              <md-option ng-value="opt.key" ng-repeat="opt in {{median_options}}">{[opt.value]}</md-option>
+            </md-select>
+        </div>
+        <div layout="row">
+            <md-button class="md-raised md-primary" type="submit" flex>Search</md-button>
+        </div>
     </form>
 
-    <md-list layout-padding layout-margin>
+    <md-list layout-padding layout-margin class="search-results md-whiteframe-z1" flex="45">
         <md-progress-linear ng-if="loading" md-mode="indeterminate">Searching</md-progress-linear>
-        <md-list-item ng-if="courses && !courses.length && !loading">No courses found.</md-list-item>
+        <div ng-if="courses && !courses.length && !loading">No courses found.</div>
         <course-search-result ng-repeat="course in courses"></course-search-result>
     </md-list>
 </div>
 
 <div ng-controller="PlannerController" class="planner" flex="75">
   <div layout="row" layout-wrap>
-    <section class="term" flex="25" ng-repeat="term in terms">
-      <md-subheader class="md-primary">{[term.abbr]}<i class="btn on" style="float: right">
-          <div ng-show="!term.on">On?</div>
-          <div ng-show="term.on">On?</div>
-      </i></md-subheader>
-      <md-list id="{[term.id ]}" layout-padding>
+    <section layout-padding class="term" flex="25" ng-repeat="term in terms">
+      <div class="term-header" layout="row" layout-align="space-between center">
+        <span flex>{[term.abbr]}</span>
+        <span flex></span>
+        <md-button class="md-accent md-raised" ng-click="toggleTerm(term)" ng-switch="term.on" aria-label="Toggle Term Enrollment">
+          <span ng-switch-when="false">On?</span>
+          <span ng-switch-when="true">Off?</span>
+        </md-button>
+      </div>
+      <md-list class="term-courses" ng-style="term.on ? '{}' : {'background-color': 'black'}">
         <div class="md-3-line" ng-if="offering.term.abbr === term.abbr" ng-repeat="offering in offerings">
-          <div class="md-list-item-text">
-            <h3>{[offering.name]}</h3>
+          <div layout="row" class="md-list-item-text">
+            <h3 class="md-body-2">{[offering.name]} ({[offering.hour]})</h3>
+            <span flex></span>
+            <md-button class="md-fab md-mini md-primary" ng-click="showOfferingInfoModal(offering)" aria-label="More Info">
+                ...
+                  <md-tooltip>
+                    More Info
+                  </md-tooltip>
+            </md-button>
           </div>
         <md-divider></md-divider>
         </div>
       </md-list>
     </section>
-  </div>
-</div>
-
-<div class="modal hide fade" id="disclaimerModal">
-  <div class="modal-header">
-    <h3>DISCLAIMER</h3>
-  </div>
-  <div class="modal-body">
-    <p>DARTPlan has no direct affiliation with Dartmouth College.</p>
-    <p>The data provided by this site is unofficial and has no authority over the information provided directly by the College or its underlying departments.</p>
-    <p>Any plans you create on DARTPlan should be verified with the College's available resources, including timetables, advisors, and department listings.</p>
-  </div>
-  <div class="modal-footer">
-    <a class="btn" data-dismiss="modal">Close</a>
   </div>
 </div>
 

@@ -3,10 +3,13 @@
     <md-subheader class="md-sticky-no-effect">{[course.full_name]}</md-subheader>
     <md-list>
         <md-progress-linear ng-if="loading" md-mode="indeterminate">Loading Offerings</md-progress-linear>
-        <md-list-item ng-if="offerings && !offerings.length && !loading">No offerings found.</md-list-item>
+        <div ng-if="!offerings.length && !loading">No offerings found.</div>
         <div ng-repeat="offering in offerings">
           {[offering.term.abbr]} - {[offering.enrollment]} Enrolled
-          <md-button ng-click="enroll(offering)" class="md-primary">Enroll</md-button>
+          <md-button ng-click="toggleEnroll(offering)" class="md-primary" ng-switch="offering.enrolled" aria-label="Switch course enrollment">
+            <span ng-switch-when="true">Drop</span>
+            <span ng-switch-when="false">Enroll</span>
+          </md-button>
         </div>
     </md-list>
   </md-dialog-content>
