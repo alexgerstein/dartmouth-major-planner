@@ -1,25 +1,25 @@
 language: python
 cache: pip
 sudo: false
-python:
-- '2.7'
+python: '2.7'
 before_install:
-- openssl aes-256-cbc -k '' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
+  - openssl aes-256-cbc -k '' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
 install:
-- pip install -r requirements.txt
-- pip install coveralls
+  - pip install -r requirements.txt
+  - pip install coveralls
 env:
   - APP_CONFIG_FILE=testing
-before_script: python manage.py assets build
+before_script:
+  - npm install coffee-script
+  - python manage.py assets build
 script: python manage.py tests
 after_success:
-- coveralls
-- bash ./scripts/dokku_deploy.sh
+  - coveralls
+  - bash ./scripts/dokku_deploy.sh
 deploy:
   provider: heroku
   api_key:
     secure: p9YZXHHWrvcRVKyO7RztsnTLylzqzyirDw9dlVO0xVBcBJuOniz4+zaiKK1f3UQGkzxT1BmRIdp89AJPDYlqTLdgRCbehQ4zKS/kC8NQt81N6uA1tctZnCD4byjEpoXjkZoGMl8mL/sGLTZy6CdGXPwLnQDA9nD0YMrobsAfZ4M=
   app:
     master: dartplan-staging
-  run:
-  - python manage.py db upgrade
+  run: python manage.py db upgrade
