@@ -1,7 +1,6 @@
-from collections import Counter
 from flask.ext.restful import Resource, fields, marshal, reqparse
 
-from dartplan.models import User, Course, Offering, Department, Distributive
+from dartplan.models import Course, Offering, Department, Distributive
 
 MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B', 'B/B-',
            'B-', 'B-/C+', 'C+', 'C+/C', 'C']
@@ -11,11 +10,6 @@ class getFullName(fields.Raw):
     def output(self, key, course):
         return str(course)
 
-term_fields = {
-    'term': fields.String,
-    'enrolled': fields.Integer
-}
-
 course_fields = {
     'id': fields.Integer,
     'number': fields.Float,
@@ -23,21 +17,15 @@ course_fields = {
     'full_name': getFullName
 }
 
-course_detail_fields = {
-    'terms': fields.List(fields.Nested(term_fields)),
-    'user_terms': fields.List(fields.Nested(term_fields))
-}
-course_detail_fields = dict(course_fields, **course_detail_fields)
-
 
 class CourseListAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('department_id', type=int)
+        self.reqparse.add_argument('dept_id', type=int)
         self.reqparse.add_argument('term_id', type=int)
         self.reqparse.add_argument('hour_id', type=int)
         self.reqparse.add_argument('distrib_id', type=int)
-        self.reqparse.add_argument('median', type=str)
+        self.reqparse.add_argument('median_id', type=int)
         super(CourseListAPI, self).__init__()
 
     def get(self):
@@ -45,8 +33,8 @@ class CourseListAPI(Resource):
 
         courses = Course.query.join(Offering)
 
-        if args.department_id:
-            courses = courses.filter(Course.department_id == args.department_id)
+        if args.dept_id:
+            courses = courses.filter(Course.department_id == args.dept_id)
 
         if args.term_id:
             courses = courses.filter(Offering.term_id == args.term_id)
@@ -58,10 +46,9 @@ class CourseListAPI(Resource):
             distrib = Distributive.query.filter_by(id=args.distrib_id).first()
             courses = courses.filter(Offering.distributives.contains(distrib))
 
-        if args.median:
-            median_index = MEDIANS.index(args.median) + 1
+        if args.median_id:
             courses = courses.filter(Course.avg_median
-                                           .in_(MEDIANS[:median_index]))
+                                           .in_(MEDIANS[:args.median_id + 1]))
 
         courses = courses.join(Department).order_by('abbr', 'number').all()
 
@@ -72,24 +59,4 @@ class CourseListAPI(Resource):
 class CourseAPI(Resource):
     def get(self, id):
         course = Course.query.get_or_404(id)
-
-        available_user_offerings = Offering.query.filter_by(course=course,
-                                                            user_added="Y") \
-                                                 .all()
-        available_registrar_offerings = Offering.query.filter_by(course=course, user_added="N").all()
-
-        enrolled_counter = Counter()
-        for offering in available_registrar_offerings:
-            enrolled_counter.update({offering.term: User.query.filter(User.courses.contains(offering)).count()})
-
-        course.terms = [{'term': term, 'enrolled': enrolled_counter[term]}
-                        for term in enrolled_counter]
-
-        enrolled_counter = Counter()
-        for offering in available_user_offerings:
-            enrolled_counter.update({offering.term: User.query.filter(User.courses.contains(offering)).count()})
-
-        course.user_terms = [{'term': term, 'enrolled': enrolled_counter[term]}
-                             for term in enrolled_counter]
-
-        return {'course': marshal(course, course_detail_fields)}
+        return {'course': marshal(course, course_fields)}

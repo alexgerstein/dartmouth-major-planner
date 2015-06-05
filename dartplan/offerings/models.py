@@ -1,11 +1,12 @@
 from dartplan.database import db
-from dartplan.models import Hour, Term, Course
 
 
 offering_distribs = db.Table("offering_distribs",
-  db.Column('offering_id', db.Integer, db.ForeignKey("offering.id")),
-  db.Column("distributive_id", db.Integer, db.ForeignKey("distributive.id"))
-)
+                             db.Column('offering_id', db.Integer,
+                                       db.ForeignKey("offering.id")),
+                             db.Column("distributive_id", db.Integer,
+                                       db.ForeignKey("distributive.id"))
+                             )
 
 
 class Offering(db.Model):

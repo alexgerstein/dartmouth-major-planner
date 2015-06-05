@@ -6,11 +6,9 @@ from functools import wraps
 from dartplan.database import db
 from dartplan.login import login_required
 from dartplan.mail import welcome_notification
-from dartplan.models import User, Term, Distributive, Hour, Department
-from dartplan.forms import UserEditForm, DeptPickerForm, HourPickerForm, \
-                           TermPickerForm, DistribPickerForm, MedianPickerForm
+from dartplan.models import User, Distributive, Hour, Department
+from dartplan.forms import UserEditForm
 
-SEASONS = ["W", "S", "X", "F"]
 MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B',
            'B/B-', 'B-', 'B-/C+', 'C+', 'C+/C', 'C']
 
@@ -41,31 +39,6 @@ def add_terms(terms):
     db.session.commit()
 
 
-def generate_terms(grad_year):
-    all_terms = []
-
-    # Add Freshman Fall
-    t = Term.query.filter_by(year=grad_year - 4, season=SEASONS[3]).first()
-    if t is None:
-        t = Term(year=grad_year - 4, season=SEASONS[3])
-        db.session.add(t)
-
-    all_terms.append(t)
-
-    for year_diff in reversed(range(4)):
-        for season in SEASONS:
-            t = Term.query.filter_by(year=grad_year - year_diff, season=season).first()
-            if t is None:
-                t = Term(year=grad_year - year_diff, season=season)
-                db.session.add(t)
-
-            all_terms.append(t)
-
-    # Remove extra fall
-    all_terms.remove(t)
-
-    return all_terms
-
 
 # Always track if there is a current user signed in
 # If unrecognized user is in, add them to user database
@@ -91,31 +64,17 @@ def fetch_user():
 @year_required
 def planner():
 
-    all_terms = generate_terms(g.user.grad_year)
+    all_terms = g.user.get_all_terms()
 
-    # Initialize the department selection form
-    dept_form = DeptPickerForm()
-    dept_form.dept_name.choices = [(a.id, a.abbr + " - " + a.name) for a in Department.query.order_by('abbr')]
-    dept_form.dept_name.choices.insert(0, (-1, "Select Department"))
-
-    # Initialize the hour selection form
-    hour_form = HourPickerForm()
-    hour_form.hour_name.choices = [(a.id, a.period) for a in Hour.query.order_by('id')]
-    hour_form.hour_name.choices.insert(0, (-1, "Select Hour"))
-
-    # Initialize the term selection form
-    term_form = TermPickerForm()
-    term_form.term_name.choices = [(a.id, str(a)) for a in all_terms]
-    term_form.term_name.choices.insert(0, (-1, "Select Term"))
-
-    # Initialize the term selection form
-    distrib_form = DistribPickerForm()
-    distrib_form.distrib_name.choices = [(a.id, str(a)) for a in Distributive.query.order_by('abbr')]
-    distrib_form.distrib_name.choices.insert(0, (-1, "Select Distrib"))
-
-    median_form = MedianPickerForm()
-    median_form.median_name.choices = [(index, str(a)) for index, a in enumerate(MEDIANS)]
-    median_form.median_name.choices.insert(0, (-1, 'Select Min. Median'))
+    dept_options = [{'key': dept.id, 'value': str(dept.abbr)}
+                    for dept in Department.query.order_by('abbr')]
+    hour_options = [{'key': hour.id, 'value': str(hour.period)}
+                    for hour in Hour.query.order_by('id')]
+    term_options = [{'key': term.id, 'value': str(term)} for term in all_terms]
+    distrib_options = [{'key': distrib.id, 'value': str(distrib.abbr)}
+                       for distrib in Distributive.query.order_by('abbr')]
+    median_options = [{'key': index, 'value': str(median)}
+                      for index, median in enumerate(MEDIANS)]
 
     # Check if terms aren't in the session
     if g.user.terms.all() == []:
@@ -124,14 +83,12 @@ def planner():
 
     return render_template("planner.html",
                            title='Course Plan',
-                           description='Manage your Dartmouth course plan \
-                           with simple drag-and-drop functionality.',
-                           user=g.user, dept_form=dept_form,
-                           hour_form=hour_form, term_form=term_form,
-                           distrib_form=distrib_form, median_form=median_form,
-                           courses=g.user.courses.order_by('hour_id'),
-                           on_terms=g.user.terms.order_by('year', 'id').all(),
-                           terms=all_terms)
+                           user=g.user, dept_options=dept_options,
+                           hour_options=hour_options,
+                           term_options=term_options,
+                           distrib_options=distrib_options,
+                           median_options=median_options
+                           )
 
 
 # Edit Page to change Name and Graduation Year
@@ -151,8 +108,9 @@ def edit():
         g.user.grad_year = form.grad_year.data
         g.user.email_course_updates = form.course_updates.data
         g.user.email_Dartplan_updates = form.dartplan_updates.data
+        db.session.commit()
 
-        add_terms(generate_terms(form.grad_year.data))
+        add_terms(g.user.get_all_terms())
         db.session.commit()
 
         return redirect(url_for('frontend.planner'))
@@ -182,7 +140,8 @@ def settings():
 @bp.route('/index')
 def index():
     return render_template("index.html",
-                           user_count=format(User.query.count(), ",d"))
+                           user_count=format(User.query.count(), ",d"),
+                           user=g.user)
 
 
 @bp.route('/about')

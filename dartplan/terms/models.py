@@ -1,10 +1,9 @@
 from dartplan.database import db
 
-SEASONS = ["W", "S", "X", "F"]
-
-
 class Term(db.Model):
     __tablename__ = 'term'
+
+    SEASONS = ["W", "S", "X", "F"]
 
     id = db.Column(db.Integer, primary_key = True)
     year = db.Column(db.SmallInteger)
@@ -20,12 +19,12 @@ class Term(db.Model):
 
         # If year is same as start, check if season too soon
         elif (self.year == start_term.year):
-            if (SEASONS.index(self.season) < SEASONS.index(start_term.season)):
+            if (self.SEASONS.index(self.season) < self.SEASONS.index(start_term.season)):
                 return False
 
         # If year is same as end, check if season too late
         elif (self.year == end_term.year):
-            if (SEASONS.index(self.season) > SEASONS.index(end_term.season)):
+            if (self.SEASONS.index(self.season) > self.SEASONS.index(end_term.season)):
                 return False
 
         return True

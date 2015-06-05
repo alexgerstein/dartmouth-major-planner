@@ -4,9 +4,9 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from dartplan.database import db
 from dartplan.login import login_required
-from dartplan.models import Offering, Course, Term, Hour
+from dartplan.models import User, Offering, Course, Term, Hour
 from terms import term_fields
-from courses import course_detail_fields
+from courses import course_fields
 
 
 class isEnrolled(fields.Raw):
@@ -15,6 +15,11 @@ class isEnrolled(fields.Raw):
             return False
 
         return offering in g.user.courses
+
+
+class isUserAdded(fields.Raw):
+    def output(self, key, offering):
+        return True if offering.user_added == "Y" else False
 
 
 class getName(fields.Raw):
@@ -26,14 +31,21 @@ class getHour(fields.Raw):
     def output(self, key, offering):
         return str(offering.hour)
 
+
+class getEnrollment(fields.Raw):
+    def output(self, key, offering):
+        return User.query.filter(User.courses.contains(offering)).count()
+
 offering_fields = {
     'id': fields.Integer,
     'name': getName,
     'term': fields.Nested(term_fields),
     'hour': getHour,
-    'course': fields.Nested(course_detail_fields),
     'info': fields.String(attribute='desc'),
-    'enrolled': isEnrolled
+    'enrolled': isEnrolled,
+    'user_added': isUserAdded,
+    'enrollment': getEnrollment,
+    'course': fields.Nested(course_fields)
 }
 
 
@@ -43,6 +55,11 @@ class OfferingListAPI(Resource):
         self.reqparse.add_argument('course_id', type=int)
         self.reqparse.add_argument('term_id', type=int)
         super(OfferingListAPI, self).__init__()
+
+    @login_required
+    def get(self):
+        return {'offerings': [marshal(offering, offering_fields)
+                              for offering in g.user.courses.all()]}
 
     @login_required
     def post(self):
@@ -71,6 +88,7 @@ class OfferingListAPI(Resource):
 
         if offering not in g.user.courses:
             g.user.courses.append(offering)
+            db.session.commit()
 
         return {'offering': marshal(offering, offering_fields)}
 
@@ -92,12 +110,23 @@ class OfferingAPI(Resource):
         offering = Offering.query.get_or_404(id)
 
         if args.enrolled is not None:
+            deleted = False
             if args.enrolled:
                 if offering not in g.user.courses:
                     g.user.courses.append(offering)
             else:
-                g.user.drop(offering)
+                deleted = g.user.drop(offering)
+            db.session.commit()
 
-        # print offering
+            if deleted:
+                return {'offering': None}
 
         return {'offering': marshal(offering, offering_fields)}
+
+
+class CourseOfferingListAPI(Resource):
+    def get(self, id):
+        course = Course.query.get_or_404(id)
+        offerings = Offering.query.filter_by(course=course).all()
+        return {'offerings': [marshal(offering, offering_fields)
+                              for offering in offerings]}

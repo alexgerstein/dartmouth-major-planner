@@ -11,12 +11,23 @@ class isOn(fields.Raw):
 
         return term in g.user.terms
 
+
+class getAbbr(fields.Raw):
+    def output(self, key, term):
+        return str(term)
+
 term_fields = {
     'id': fields.Integer,
-    'year': fields.Integer,
-    'season': fields.String,
+    'abbr': getAbbr,
     'on': isOn
 }
+
+
+class TermListAPI(Resource):
+    @login_required
+    def get(self):
+        return {'terms': [marshal(term, term_fields)
+                          for term in g.user.get_all_terms()]}
 
 
 class TermAPI(Resource):

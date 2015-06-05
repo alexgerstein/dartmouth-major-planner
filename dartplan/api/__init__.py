@@ -4,9 +4,10 @@ from flask.ext.restful import Api
 from dartplan.database import db
 from dartplan.models import User
 
-from offerings import OfferingAPI, OfferingListAPI
+from offerings import (OfferingAPI, OfferingListAPI,
+                       CourseOfferingListAPI)
 from courses import CourseAPI, CourseListAPI
-from terms import TermAPI
+from terms import TermAPI, TermListAPI
 from users import UserAPI
 
 bp = Blueprint('api', __name__)
@@ -34,5 +35,8 @@ api.add_resource(OfferingListAPI, '/offerings', endpoint='offerings')
 api.add_resource(OfferingAPI, '/offerings/<int:id>', endpoint='offering')
 api.add_resource(CourseListAPI, '/courses', endpoint='courses')
 api.add_resource(CourseAPI, '/courses/<int:id>', endpoint='course')
+api.add_resource(CourseOfferingListAPI, '/courses/<int:id>/offerings',
+                 endpoint='course_offerings')
+api.add_resource(TermListAPI, '/terms', endpoint='terms')
 api.add_resource(TermAPI, '/terms/<int:id>', endpoint='term')
 api.add_resource(UserAPI, '/user', endpoint='user')

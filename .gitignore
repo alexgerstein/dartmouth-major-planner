@@ -44,3 +44,8 @@ nosetests.xml
 
 # Temporary
 tmp/
+
+# Compiled Static Files
+dartplan/frontend/static/js
+dartplan/frontend/static/css
+dartplan/frontend/static/.webassets-cache

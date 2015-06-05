@@ -24,9 +24,9 @@ def welcome_notification(user):
     message = create_message("%s, Welcome to DARTPlan!" % user.nickname.split(" ")[0],
         ADMINS[0],
         [user.netid + "@dartmouth.edu"],
-        render_template("welcome_email.txt",
+        render_template("emails/welcome_email.txt",
             user=user),
-        render_template("welcome_email.html",
+        render_template("emails/welcome_email.html",
             user=user))
 
     mail.send(message)
@@ -39,9 +39,9 @@ def updated_hour_notification(users, offering, new_hour):
         message = create_message("Nice call! %s (%s) now has an actual time." % (str(offering), str(offering.term)),
                 ADMINS[0],
                 [user.netid + "@dartmouth.edu"],
-                render_template("updated_hour_email.txt",
+                render_template("emails/updated_hour_email.txt",
                     user=user, offering=offering, new_hour=new_hour),
-                render_template("updated_hour_email.html",
+                render_template("emails/updated_hour_email.html",
                     user=user, offering=offering, new_hour=new_hour))
 
         mail.send(message)
@@ -53,9 +53,9 @@ def swapped_course_times(users, offering, other_time):
         message = create_message("The ol' switcheroo... %s seems to be at a new time." % (str(offering)),
                 ADMINS[0],
                 [user.netid + "@dartmouth.edu"],
-                render_template("swapped_email.txt",
+                render_template("emails/swapped_email.txt",
                     user=user, old_offering=offering, new_offering=other_time),
-                render_template("swapped_email.html",
+                render_template("emails/swapped_email.html",
                     user=user, old_offering=offering, new_offering=other_time))
 
         mail.send(message)
@@ -67,9 +67,9 @@ def deleted_offering_notification(users, offering, term, hour):
         message = create_message("Oh no! %s is no longer offered when you thought it would be." % (str(offering)),
                 ADMINS[0],
                 [user.netid + "@dartmouth.edu"],
-                render_template("deleted_email.txt",
+                render_template("emails/deleted_email.txt",
                     user=user, offering=offering, term=term, hour=hour),
-                render_template("deleted_email.html",
+                render_template("emails/deleted_email.html",
                     user=user, offering=offering, term=term, hour=hour))
 
         mail.send(message)
