@@ -10,6 +10,7 @@ install:
 - pip install coveralls
 env:
   - APP_CONFIG_FILE=testing
+before_script: python manage.py assets build
 script: python manage.py tests
 after_success:
 - coveralls
