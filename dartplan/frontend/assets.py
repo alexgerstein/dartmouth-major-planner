@@ -1,8 +1,6 @@
 import os
 from flask.ext import assets
-from webassets.filter import get_filter
-
-pyscss = get_filter('pyscss', style="compressed")
+from webassets.filter.pyscss import PyScss
 
 js_dartplan = assets.Bundle("dartplan.coffee",
                             "terms.coffee",
@@ -14,7 +12,7 @@ js_dartplan = assets.Bundle("dartplan.coffee",
                             output="js/dartplan.js")
 
 css_dartplan = assets.Bundle("dartplan.sass",
-                             filters=(pyscss,),
+                             filters=PyScss(style="compressed"),
                              output="css/dartplan.css")
 
 
