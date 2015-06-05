@@ -3,46 +3,33 @@
 
 {% block content %}
 
+<div layout="row">
+    <span flex></span>
+    <form ng-controller="UserFormController" class="form-horizontal" action="" method="post" name="edit">
+        <h1>Edit Your Profile</h1>
 
-<div class="container-fluid">
-<h1>Edit Your Profile</h1>
-
-<div class="well">
-    <form class="form-horizontal" action="" method="post" name="edit">
         {{form.hidden_tag()}}
-        <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="nickname">Your name:</label>
-            <div class="controls">
-                {{form.nickname(maxlength = 64, class = "span4")}}
-                {% for error in form.errors.nickname %}
-                <span style="help-inline">[{{error}}]</span><br>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="grad_year">Your graduating year:</label>
-            <div class="controls">
-                {{ form.grad_year(maxlength = 4, minlength = 4, class = "span4") }}
-                {% for error in form.errors.grad_year %}
-                    <span class="help-inline">[{{error}}]</span><br>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="dartplan_updates">Email Preferences: </br>(Receive an email when...)</label>
-            <div class="controls">
-                 {{ form.course_updates() }} The registrar updates a course you plan on taking<br/>
-
-                {{ form.dartplan_updates() }} DARTPlan releases a new feature
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <input class="btn btn-primary" type="submit" value="Save Changes">
+        <md-input-container>
+            <label for="nickname">Your name:</label>
+            <input name="nickname" ng-model="user.nickname" type="text" md-maxlength="64" required>
+        </md-input-container>
+        <md-input-container>
+            <label for="grad_year">Your graduating year:</label>
+            <input name="grad_year" ng-model="user.grad_year" type="number" md-maxlength="4" minlength="4">
+        </md-input-container>
+        <md-input-container>
+            <label for="email_course_updates">Email me about course updates</label>
+            <input type="checkbox" name="email_course_updates" ng-model="user.email_course_updates" aria-label="Receive updates on your courses">
+        </md-input-container>
+        <md-input-container>
+            <label for="email_Dartplan_updates">Email me about DARTPlan updates</label>
+            <input type="checkbox" name="email_Dartplan_updates" ng-model="user.email_Dartplan_updates" aria-label="Receive updates when dartplan releases a new feature">
+        </md-input-container>
+        <md-input-container>
+            <md-button class="md-raised md-primary" type="submit" flex>Save Changes</md-button>
 <!--                 <a href="/api/user" class="btn btn-danger">Delete Account</a> -->
-            </div>
-        </div>
+        </md-input-container>
     </form>
-
+    <span flex></span>
 </div>
 {% endblock %}

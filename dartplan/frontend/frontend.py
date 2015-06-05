@@ -106,8 +106,8 @@ def edit():
             welcome_notification(g.user)
 
         g.user.grad_year = form.grad_year.data
-        g.user.email_course_updates = form.course_updates.data
-        g.user.email_Dartplan_updates = form.dartplan_updates.data
+        g.user.email_course_updates = form.email_course_updates.data
+        g.user.email_Dartplan_updates = form.email_Dartplan_updates.data
         db.session.commit()
 
         add_terms(g.user.get_all_terms())
@@ -118,22 +118,13 @@ def edit():
         # Reset form to current entries
         form.nickname.data = g.user.nickname
         form.grad_year.data = g.user.grad_year
-        form.course_updates.data = g.user.email_course_updates
-        form.dartplan_updates.data = g.user.email_Dartplan_updates
+        form.email_course_updates.data = g.user.email_course_updates
+        form.email_Dartplan_updates.data = g.user.email_Dartplan_updates
     return render_template('edit.html',
                            form=form, title='Edit Profile',
                            description="Change the nickname, graduation year, \
                            and email setting for your DARTPlan account.",
                            user=g.user)
-
-
-# Settings redirect's to user's own profile page
-@bp.route('/settings')
-@login_required
-def settings():
-    return render_template('user.html', title='Settings',
-                           description="View the settings for your DARTPlan \
-                           account.", user=g.user)
 
 
 @bp.route('/')

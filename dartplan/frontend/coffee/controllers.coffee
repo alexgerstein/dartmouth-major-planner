@@ -91,3 +91,8 @@ dartplanApp.controller 'SearchController', ['$rootScope', '$scope', '$mdDialog',
       $scope.courses = courses
       $scope.loading = false
 ]
+
+dartplanApp.controller 'UserFormController', ['$scope', 'UsersService', ($scope, UsersService) ->
+  UsersService.get().then (user) ->
+    $scope.user = user
+]

@@ -2,6 +2,7 @@ import os
 from flask.ext import assets
 
 js_dartplan = assets.Bundle("dartplan.coffee",
+                            "users.coffee",
                             "terms.coffee",
                             "courses.coffee",
                             "offerings.coffee",
