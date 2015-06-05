@@ -1,6 +1,5 @@
 from tests.factories import *
 from dartplan.models import User
-from dartplan.frontend.frontend import generate_terms
 
 
 class UserFactory(SQLAlchemyModelFactory):
@@ -17,7 +16,7 @@ class UserFactory(SQLAlchemyModelFactory):
 
         if extracted:
             self.grad_year = extracted
-            terms = generate_terms(extracted)
+            terms = self.get_all_terms()
             for term in terms:
                 if term not in self.terms:
                     self.terms.append(term)

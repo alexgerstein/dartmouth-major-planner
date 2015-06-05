@@ -31,10 +31,3 @@ class Offering(db.Model):
     def __repr__(self):
         course_str = str(self.course)
         return course_str.split(" -")[0]
-
-    def get_possible_hours(self):
-        possible_hours = []
-        for offering in Offering.query.filter_by(course_id=self.course_id,
-                                                 term_id=self.term_id).all():
-            possible_hours.append(offering.hour)
-        return possible_hours

@@ -10,13 +10,6 @@ class getFullName(fields.Raw):
     def output(self, key, course):
         return str(course)
 
-
-term_fields = {
-    'term': fields.String,
-    'enrolled': fields.Integer,
-    'user_added': fields.Boolean
-}
-
 course_fields = {
     'id': fields.Integer,
     'number': fields.Float,
@@ -55,7 +48,7 @@ class CourseListAPI(Resource):
 
         if args.median_id:
             courses = courses.filter(Course.avg_median
-                                           .in_(MEDIANS[:args.median_id]))
+                                           .in_(MEDIANS[:args.median_id + 1]))
 
         courses = courses.join(Department).order_by('abbr', 'number').all()
 

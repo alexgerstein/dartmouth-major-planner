@@ -6,9 +6,8 @@ from functools import wraps
 from dartplan.database import db
 from dartplan.login import login_required
 from dartplan.mail import welcome_notification
-from dartplan.models import User, Term, Distributive, Hour, Department
-from dartplan.forms import UserEditForm, DeptPickerForm, HourPickerForm, \
-                           TermPickerForm, DistribPickerForm, MedianPickerForm
+from dartplan.models import User, Distributive, Hour, Department
+from dartplan.forms import UserEditForm
 
 MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B',
            'B/B-', 'B-', 'B-/C+', 'C+', 'C+/C', 'C']

@@ -19,12 +19,12 @@ class Term(db.Model):
 
         # If year is same as start, check if season too soon
         elif (self.year == start_term.year):
-            if (SEASONS.index(self.season) < SEASONS.index(start_term.season)):
+            if (self.SEASONS.index(self.season) < self.SEASONS.index(start_term.season)):
                 return False
 
         # If year is same as end, check if season too late
         elif (self.year == end_term.year):
-            if (SEASONS.index(self.season) > SEASONS.index(end_term.season)):
+            if (self.SEASONS.index(self.season) > self.SEASONS.index(end_term.season)):
                 return False
 
         return True
