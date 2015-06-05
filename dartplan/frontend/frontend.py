@@ -137,29 +137,16 @@ def index():
 
 @bp.route('/about')
 def about():
-    return render_template("about.html")
+    return render_template("about.html",
+                           user=g.user)
 
 
-@bp.route('/about/contact')
-def contact():
-    return render_template("contact.html")
-
-
-@bp.route('/about/donate')
-def donate():
-    return render_template("donate.html")
-
-
-@bp.route('/about/contribute')
-def contribute():
-    return render_template("contribute.html")
-
-
-@bp.route('/about/disclaimer')
+@bp.route('/disclaimer')
 def disclaimer():
-    return render_template("disclaimer.html")
+    return render_template("disclaimer.html",
+                           user=g.user)
 
 
-@bp.errorhandler(404)
+@bp.app_errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
