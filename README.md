@@ -22,8 +22,7 @@ Currently at [www.dartplan.com](http://www.dartplan.com). DartmouthID required.
 
 ## Run Locally
 1. Start up a local server: ```python manage.py server```
-2. Start up the scraper: ```python manage.py scrape [--all]```
-  a. ```--all``` scrapes old ORCs as well as the current ORC and Timetable.
+2. Start up the scraper: ```python manage.py scrape [--all]``` NOTE: ```--all``` scrapes old ORCs as well as the current ORC and Timetable.
 
 ## Tests
 * To run the basic unittests, run ```python manage.py tests```.
