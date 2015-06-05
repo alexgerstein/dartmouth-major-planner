@@ -10,7 +10,7 @@ js_dartplan = assets.Bundle("dartplan.coffee",
                             filters="coffeescript,rjsmin",
                             output="js/dartplan.js")
 
-css_dartplan = assets.Bundle("dartplan.sass",
+css_dartplan = assets.Bundle("dartplan.scss",
                              filters="pyscss,cssmin",
                              output="css/dartplan.css")
 
@@ -19,9 +19,9 @@ def init_app(app):
     webassets = assets.Environment(app)
     webassets.url = app.static_url_path
 
-    # Tell flask-assets where to look for our coffeescript and sass files.
+    # Tell flask-assets where to look for our coffeescript and scss files.
     webassets.load_path = [
-        os.path.join(os.path.dirname(__file__), 'sass'),
+        os.path.join(os.path.dirname(__file__), 'scss'),
         os.path.join(os.path.dirname(__file__), 'coffee'),
     ]
 
