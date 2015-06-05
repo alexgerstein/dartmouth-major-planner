@@ -5,14 +5,12 @@ python: '2.7'
 before_install:
   - openssl aes-256-cbc -k '' -in config/deploy_id_rsa_enc_travis -d -a -out config/deploy_id_rsa \
 install:
+  - gem install sass
+  - npm install coffee-script
   - pip install -r requirements.txt
   - pip install coveralls
 env:
   - APP_CONFIG_FILE=testing
-before_script:
-  - gem install sass
-  - npm install coffee-script
-  - python manage.py assets build
 script: python manage.py tests
 after_success:
   - coveralls
