@@ -10,6 +10,7 @@ install:
 env:
   - APP_CONFIG_FILE=testing
 before_script:
+  - gem install sass
   - npm install coffee-script
   - python manage.py assets build
 script: python manage.py tests
