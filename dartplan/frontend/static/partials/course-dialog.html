@@ -4,13 +4,14 @@
     <md-progress-linear ng-show="offeringsLoading || customTermsLoading" md-mode="indeterminate">Loading Offerings</md-progress-linear>
     <md-list ng-show="!offeringsLoading && !customTermsLoading">
         <div ng-if="!offerings.length && !offeringsLoading">No offerings found.</div>
-        <md-list-item ng-if="!offeringsLoading" ng-repeat="offering in offerings | orderBy:['term.id', 'hour']">
+        <md-list-item ng-if="!offeringsLoading" ng-repeat="offering in offerings | orderBy:['term.id', 'hour']" layout="row">
           {[offering.term.abbr]} ({[offering.hour]}) - {[offering.enrollment]} Enrolled
-          <ng-md-icon icon="warning" ng-if="offering.user_added" style="fill: white">
+          <ng-md-icon icon="warning" ng-if="offering.user_added" style="fill: orange">
             <md-tooltip>
-              This offering was added by a user and does not appear in the ORC. Please check the registrar for official availability.
+              Unofficial Course Offering
             </md-tooltip>
           </ng-md-icon>
+          <span flex></span>
           <md-button ng-click="toggleEnroll(offering)" class="md-primary" ng-switch="offering.enrolled" aria-label="Switch course enrollment">
             <span ng-switch-when="true">Drop</span>
             <span ng-switch-when="false">Enroll</span>
