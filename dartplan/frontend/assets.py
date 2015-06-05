@@ -1,5 +1,8 @@
 import os
 from flask.ext import assets
+from webassets.filter import get_filter
+
+sass = get_filter('sass', style="compressed")
 
 js_dartplan = assets.Bundle("dartplan.coffee",
                             "terms.coffee",
@@ -7,11 +10,11 @@ js_dartplan = assets.Bundle("dartplan.coffee",
                             "offerings.coffee",
                             "controllers.coffee",
                             "directives.coffee",
-                            filters="coffeescript",
+                            filters="coffeescript,rjsmin",
                             output="js/dartplan.js")
 
 css_dartplan = assets.Bundle("dartplan.sass",
-                             filters="sass",
+                             filters=(sass,),
                              output="css/dartplan.css")
 
 
