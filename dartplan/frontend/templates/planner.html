@@ -40,19 +40,7 @@
 
     <div ng-controller="PlannerController" class="planner" flex="100" flex-gt-md="75">
       <div layout="row" layout-wrap>
-        <section layout-padding class="term" flex="100" flex-gt-sm="50" flex-gt-md="25" ng-repeat="term in terms">
-          <div class="term-header" layout-padding layout="row" layout-align="space-between center">
-            <span>{[term.abbr]}</span>
-            <span flex></span>
-            <md-button class="md-accent" ng-click="toggleTerm(term)" ng-switch="term.on" aria-label="Toggle Term Enrollment">
-              <span ng-switch-when="false">On?</span>
-              <span ng-switch-when="true">Off?</span>
-            </md-button>
-          </div>
-          <md-list class="term-courses" ng-style="term.on ? '{}' : {'background-color': 'black'}">
-            <term-offering class="md-3-line" ng-if="offering.term.abbr === term.abbr" ng-repeat="offering in offerings"></term-offering>
-          </md-list>
-        </section>
+        <planner-term ng-repeat="term in terms"></planner-term>
       </div>
     </div>
 </div>

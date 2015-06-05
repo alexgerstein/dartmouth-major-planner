@@ -13,3 +13,9 @@ dartplanApp.directive 'termOffering', ->
     templateUrl: 'static/partials/term-offering.html',
     controller: CourseDialogLauncherController
   }
+
+dartplanApp.directive 'plannerTerm', ->
+  return {
+    replace: true,
+    templateUrl: 'static/partials/planner-term.html',
+  }
