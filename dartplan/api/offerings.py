@@ -110,12 +110,16 @@ class OfferingAPI(Resource):
         offering = Offering.query.get_or_404(id)
 
         if args.enrolled is not None:
+            deleted = False
             if args.enrolled:
                 if offering not in g.user.courses:
                     g.user.courses.append(offering)
             else:
-                g.user.drop(offering)
+                deleted = g.user.drop(offering)
             db.session.commit()
+
+            if deleted:
+                return {'offering': None}
 
         return {'offering': marshal(offering, offering_fields)}
 

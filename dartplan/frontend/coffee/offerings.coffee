@@ -27,4 +27,5 @@ dartplanApp.factory 'OfferingsService', ['$http', '$rootScope', '$mdToast', 'Off
       $http.post("/api/offerings", {course_id: course_id, term_id: term_id}).then (result) ->
         $rootScope.$broadcast 'changedCourses'
         $mdToast.showSimple('Successfully changed course enrollment.');
+        new Offering result.data.offering
 ]

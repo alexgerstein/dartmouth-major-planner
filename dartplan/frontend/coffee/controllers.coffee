@@ -36,36 +36,47 @@ OfferingInfoDialogController = ($scope, $mdDialog) ->
   $scope.cancel = ->
     $mdDialog.cancel()
 
-CourseDialogController = ($scope, $mdDialog, OfferingsService) ->
+CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, course) ->
+
+  $scope.custom = {}
+  $scope.course = course;
+  $scope.offeringsLoading = true
+  $scope.customTermsLoading = true
+  OfferingsService.getCourseOfferings($scope.course.id).then (offerings) ->
+    $scope.offerings = offerings
+    $scope.offeringsLoading = false
+
+  TermsService.getUserTerms().then (terms) ->
+    $scope.customUserTerms = terms
+    $scope.customTermsLoading = false
+
   $scope.toggleEnroll = (offering) ->
-    OfferingsService.toggle(offering.id, !offering.enrolled)
-    $mdDialog.hide()
+    offering.enrolled = !offering.enrolled
+    if offering.user_added and offering.enrolled
+      OfferingsService.enrollCustomOffering(offering.course.id, offering.term.id)
+    else
+      OfferingsService.toggle(offering.id, offering.enrolled)
 
   $scope.enrollCustomOffering = ->
-    OfferingsService.enrollCustomOffering($scope.course.id, $scope.custom.term_id)
-    $mdDialog.hide()
+    existingOffering = ($scope.offerings.filter (i) -> i.term.id.toString() is $scope.custom.term_id)[0]
+
+    if existingOffering and !existingOffering.user_added
+      $scope.toggleEnroll(existingOffering)
+    else
+      OfferingsService.enrollCustomOffering($scope.course.id, $scope.custom.term_id).then (offering) ->
+        if !existingOffering
+          $scope.offerings.push offering
+        else
+          existingOffering.enrolled = true
 
   $scope.cancel = ->
     $mdDialog.cancel()
 
-CourseDialogLauncherController = ($scope, $mdDialog, OfferingsService, TermsService) ->
-  $scope.custom = {}
-
+CourseDialogLauncherController = ($scope, $mdDialog) ->
   $scope.showTermModal = (course) ->
-    $scope.course = course
-    $scope.offeringsLoading = true
-    $scope.customTermsLoading = true
-    OfferingsService.getCourseOfferings(course.id).then (offerings) ->
-      $scope.offerings = offerings
-      $scope.offeringsLoading = false
-
-    TermsService.getUserTerms().then (terms) ->
-      $scope.customUserTerms = terms
-      $scope.customTermsLoading = false
-
     $mdDialog.show({
       controller: CourseDialogController,
-      scope: $scope,
+      locals: { course: course },
       preserveScope: true,
       templateUrl: 'static/partials/course-dialog.html',
       clickOutsideToClose: true

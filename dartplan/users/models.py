@@ -40,6 +40,7 @@ class User(db.Model):
         self.email_course_updates = True
 
     def drop(self, offering):
+        deleted = False
         if offering in self.courses:
             self.courses.remove(offering)
 
@@ -49,8 +50,10 @@ class User(db.Model):
                 if not User.query.filter(User.courses.contains(offering)) \
                                  .first():
                     db.session.delete(offering)
+                    deleted = True
 
             db.session.commit()
+        return deleted
 
     def swap_onterm(self, term):
         if term in self.terms:
