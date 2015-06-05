@@ -20,11 +20,14 @@
     <div layout="column" layout-fill>
       <md-toolbar>
         <div class="md-toolbar-tools">
-          <a class="brand" href="{{ url_for('frontend.index')}}"><span><img src="{{ url_for ('static', filename='img/p-logo-white.png') }}" style="width: 25px; padding: 0 5px;"><b>DART</b>Plan</span></a>
+          <a class="brand" href="{{ url_for('frontend.index')}}" layout="row" layout-align="start center">
+            <img src="{{ url_for ('static', filename='img/p-logo-white.png') }}" style="width: 50px; padding: 0 5px;">
+            <span hide show-gt-sm><b>DART</b>Plan</span>
+          </a>
           <span flex></span>
           {% if user %}
           <md-button>
-            <a href="{{ url_for('frontend.planner') }}">My Course Plan</a>
+            <a href="{{ url_for('frontend.planner') }}">My Plan</a>
           </md-button>
           <md-button>
             <a href="{{ url_for('frontend.edit') }}">Settings</a>
