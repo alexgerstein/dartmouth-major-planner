@@ -6,6 +6,15 @@ from . import TestBase
 
 class TestUserAPI(TestBase):
 
+    def test_get_user(self, test_client, user):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': user.netid}
+
+        r = test_client.get('/api/user')
+        self.check_valid_header_type(r.headers)
+        data = json.loads(r.data)
+        assert data['user']['nickname'] == user.nickname
+
     def test_delete_user(self, test_client, user):
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': user.netid}
