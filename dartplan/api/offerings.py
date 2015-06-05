@@ -57,6 +57,11 @@ class OfferingListAPI(Resource):
         super(OfferingListAPI, self).__init__()
 
     @login_required
+    def get(self):
+        return {'offerings': [marshal(offering, offering_fields)
+                              for offering in g.user.courses.all()]}
+
+    @login_required
     def post(self):
         args = self.reqparse.parse_args()
 
@@ -83,6 +88,7 @@ class OfferingListAPI(Resource):
 
         if offering not in g.user.courses:
             g.user.courses.append(offering)
+            db.session.commit()
 
         return {'offering': marshal(offering, offering_fields)}
 
@@ -120,13 +126,3 @@ class CourseOfferingListAPI(Resource):
         offerings = Offering.query.filter_by(course=course).all()
         return {'offerings': [marshal(offering, offering_fields)
                               for offering in offerings]}
-
-
-class PlanAPI(Resource):
-    @login_required
-    def get(self):
-        offerings = [marshal(offering, offering_fields)
-                     for offering in g.user.courses.all()]
-        terms = [marshal(term, term_fields) for term in g.user.get_all_terms()]
-
-        return {'offerings': offerings, 'terms': terms}

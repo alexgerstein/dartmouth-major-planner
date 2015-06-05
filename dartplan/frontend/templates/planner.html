@@ -2,128 +2,59 @@
 
 {% block content %}
 
-<div ng-controller="SearchController" layout="column" class="edit" flex="25">
-    <form class="md-whiteframe-z3" ng-submit="submit()" layout-padding layout-margin name="filterCourses" flex="50">
-        <div layout="row" layout-md="column">
-            <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
-              <md-option ng-value="opt.key" ng-repeat="opt in {{dept_options}}">{[opt.value]}</md-option>
-            </md-select>
-            <md-select ng-model="fields.term_id" placeholder="Term" flex>
-              <md-option ng-value="opt.key" ng-repeat="opt in {{term_options}}">{[opt.value]}</md-option>
-            </md-select>
-        </div>
-        <div layout="column">
-            <md-select ng-model="fields.hour_id" placeholder="Hour">
-              <md-option ng-value="opt.key" ng-repeat="opt in {{hour_options}}">{[opt.value]}</md-option>
-            </md-select>
-        </div>
-        <div layout="row" layout-md="column">
-            <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
-              <md-option ng-value="opt.key" ng-repeat="opt in {{distrib_options}}">{[opt.value]}</md-option>
-            </md-select>
-            <md-select ng-model="fields.median_id" placeholder="Median" flex>
-              <md-option ng-value="opt.key" ng-repeat="opt in {{median_options}}">{[opt.value]}</md-option>
-            </md-select>
-        </div>
-        <div layout="row">
-            <md-button class="md-raised md-primary" type="submit" flex>Search</md-button>
-        </div>
-    </form>
+<div layout-gt-md="row">
+    <div ng-controller="SearchController" layout-md="row" class="edit" flex="100" flex-gt-md="25">
+        <form class="md-whiteframe-z3" ng-submit="submit()" layout-md="column" layout-padding layout-margin name="filterCourses" flex="50">
+            <div layout="row">
+                <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
+                  <md-option ng-value="opt.key" ng-repeat="opt in {{dept_options}}">{[opt.value]}</md-option>
+                </md-select>
+                <md-select ng-model="fields.term_id" placeholder="Term" flex>
+                  <md-option ng-value="opt.key" ng-repeat="opt in {{term_options}}">{[opt.value]}</md-option>
+                </md-select>
+            </div>
+            <div layout="row">
+                <md-select ng-model="fields.hour_id" placeholder="Hour" flex>
+                  <md-option ng-value="opt.key" ng-repeat="opt in {{hour_options}}">{[opt.value]}</md-option>
+                </md-select>
+            </div>
+            <div layout="row">
+                <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
+                  <md-option ng-value="opt.key" ng-repeat="opt in {{distrib_options}}">{[opt.value]}</md-option>
+                </md-select>
+                <md-select ng-model="fields.median_id" placeholder="Median" flex>
+                  <md-option ng-value="opt.key" ng-repeat="opt in {{median_options}}">{[opt.value]}</md-option>
+                </md-select>
+            </div>
+            <div layout="row">
+                <md-button class="md-raised md-primary" type="submit" flex>Search</md-button>
+            </div>
+        </form>
 
-    <md-list layout-padding layout-margin class="search-results md-whiteframe-z1" flex="45">
-        <md-progress-linear ng-if="loading" md-mode="indeterminate">Searching</md-progress-linear>
-        <div ng-if="courses && !courses.length && !loading">No courses found.</div>
-        <course-search-result ng-repeat="course in courses"></course-search-result>
-    </md-list>
-</div>
+        <md-list layout-padding layout-margin class="search-results md-whiteframe-z1" flex="100" flex-md="50">
+            <md-progress-linear ng-if="loading" md-mode="indeterminate">Searching</md-progress-linear>
+            <div ng-if="courses && !courses.length && !loading">No courses found.</div>
+            <course-search-result ng-repeat="course in courses"></course-search-result>
+        </md-list>
+    </div>
 
-<div ng-controller="PlannerController" class="planner" flex="75">
-  <div layout="row" layout-wrap>
-    <section layout-padding class="term" flex="25" ng-repeat="term in terms">
-      <div class="term-header" layout="row" layout-align="space-between center">
-        <span flex>{[term.abbr]}</span>
-        <span flex></span>
-        <md-button class="md-accent md-raised" ng-click="toggleTerm(term)" ng-switch="term.on" aria-label="Toggle Term Enrollment">
-          <span ng-switch-when="false">On?</span>
-          <span ng-switch-when="true">Off?</span>
-        </md-button>
-      </div>
-      <md-list class="term-courses" ng-style="term.on ? '{}' : {'background-color': 'black'}">
-        <div class="md-3-line" ng-if="offering.term.abbr === term.abbr" ng-repeat="offering in offerings">
-          <div layout="row" class="md-list-item-text">
-            <h3 class="md-body-2">{[offering.name]} ({[offering.hour]})</h3>
+    <div ng-controller="PlannerController" class="planner" flex="100" flex-gt-md="75">
+      <div layout="row" layout-wrap>
+        <section layout-padding class="term" flex="100" flex-gt-sm="50" flex-gt-md="25" ng-repeat="term in terms">
+          <div class="term-header" layout-padding layout="row" layout-align="space-between center">
+            <span>{[term.abbr]}</span>
             <span flex></span>
-            <md-button class="md-fab md-mini md-primary" ng-click="showOfferingInfoModal(offering)" aria-label="More Info">
-                ...
-                  <md-tooltip>
-                    More Info
-                  </md-tooltip>
+            <md-button class="md-accent" ng-click="toggleTerm(term)" ng-switch="term.on" aria-label="Toggle Term Enrollment">
+              <span ng-switch-when="false">On?</span>
+              <span ng-switch-when="true">Off?</span>
             </md-button>
           </div>
-        <md-divider></md-divider>
-        </div>
-      </md-list>
-    </section>
-  </div>
+          <md-list class="term-courses" ng-style="term.on ? '{}' : {'background-color': 'black'}">
+            <term-offering class="md-3-line" ng-if="offering.term.abbr === term.abbr" ng-repeat="offering in offerings"></term-offering>
+          </md-list>
+        </section>
+      </div>
+    </div>
 </div>
-
-<script>
-
-    // $(document).ready(function() {
-    //     $('.on').click(function() {
-    //         var btn_id = $(this).parents('.term').find('ul').attr('id');
-    //         swap_term(btn_id);
-    //     });
-
-    //     $('#disclaimerModal').modal('show')
-    // });
-
-    // $("i[class='popover-trigger']").popover(
-    //         {
-    //             "title":"Course Info",
-    //             "html":true,
-    //             "animation":true,
-    //             "placement":"bottom",
-    //             "trigger":"click"
-    //         });
-
-    // $(".sortable1, .sortable2").sortable({
-    //     helper: function(event) {
-    //                 return $(event.target).clone().css({
-    //                     width: $(event.target).width(),
-    //                     height: $(event.target).height(),
-    //                 })
-    //             },
-    //     items: "li:not(.pin)",
-    //     cursor: "crosshair",
-    //     connectWith: '.droptrue',
-    //     opacity: 0.6,
-    //     zIndex: 10000,
-    //     scroll: false,
-    //     receive: saveCourse,
-    //     start: function (event, ui) {
-    //         $(ui.helper).addClass("ui-draggable-helper");
-    //         showAvailableSlots(event, ui);
-    //     },
-    //     stop: function (event, ui) {
-    //         $(this).sortable('cancel');
-    //         clearAvailableSlots(event, ui);
-    //     }
-    // });
-
-    // $(".sortable1, .sortable2").disableSelection();
-
-    // $('body').on('click', function (e) {
-    //     $('[data-toggle=popover]').each(function () {
-    //         //the 'is' for buttons that trigger popups
-    //         //the 'has' for icons within a button that triggers a popup
-    //         if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-    //             $(this).popover('hide');
-    //         }
-    //     });
-    // });
-
-
-</script>
 
 {% endblock %}

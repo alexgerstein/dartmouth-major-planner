@@ -141,7 +141,8 @@ def settings():
 @bp.route('/index')
 def index():
     return render_template("index.html",
-                           user_count=format(User.query.count(), ",d"))
+                           user_count=format(User.query.count(), ",d"),
+                           user=g.user)
 
 
 @bp.route('/about')

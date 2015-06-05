@@ -1,16 +1,25 @@
 <md-dialog>
   <md-dialog-content class="sticky-container">
     <md-subheader class="md-sticky-no-effect">{[course.full_name]}</md-subheader>
-    <md-list>
-        <md-progress-linear ng-if="loading" md-mode="indeterminate">Loading Offerings</md-progress-linear>
-        <div ng-if="!offerings.length && !loading">No offerings found.</div>
-        <div ng-repeat="offering in offerings">
-          {[offering.term.abbr]} - {[offering.enrollment]} Enrolled
+    <md-progress-linear ng-show="offeringsLoading || customTermsLoading" md-mode="indeterminate">Loading Offerings</md-progress-linear>
+    <md-list ng-show="!offeringsLoading && !customTermsLoading">
+        <div ng-if="!offerings.length && !offeringsLoading">No offerings found.</div>
+        <md-list-item ng-if="!offeringsLoading" ng-repeat="offering in offerings | orderBy:['term.id', 'hour']">
+          {[offering.term.abbr]} ({[offering.hour]}) - {[offering.enrollment]} Enrolled
+          <ng-md-icon icon="warning" ng-if="offering.user_added" style="fill: white">
+            <md-tooltip>
+              This offering was added by a user and does not appear in the ORC. Please check the registrar for official availability.
+            </md-tooltip>
+          </ng-md-icon>
           <md-button ng-click="toggleEnroll(offering)" class="md-primary" ng-switch="offering.enrolled" aria-label="Switch course enrollment">
             <span ng-switch-when="true">Drop</span>
             <span ng-switch-when="false">Enroll</span>
           </md-button>
-        </div>
+        </md-list-item>
+        <md-select ng-model="custom.term_id" aria-label="Select custom term for course" placeholder="Other">
+          <md-option ng-repeat="term in customUserTerms" value="{[term.id]}">{[term.abbr]}</md-option>
+        </md-select>
+        <md-button class="md-primary" type="submit" ng-click="enrollCustomOffering()" aria-label="Add custom term">Enroll</md-button>
     </md-list>
   </md-dialog-content>
   <div class="md-actions" layout="row">

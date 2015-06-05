@@ -23,6 +23,13 @@ term_fields = {
 }
 
 
+class TermListAPI(Resource):
+    @login_required
+    def get(self):
+        return {'terms': [marshal(term, term_fields)
+                          for term in g.user.get_all_terms()]}
+
+
 class TermAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
