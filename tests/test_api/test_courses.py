@@ -67,5 +67,4 @@ class TestCourseListAPI(TestBase):
         get = test_client.get('/api/courses', query_string=query_data)
         self.check_valid_header_type(get.headers)
         data = json.loads(get.data)
-        print course_with_user_added_offering.avg_median
         assert len(data['courses']) == 1
