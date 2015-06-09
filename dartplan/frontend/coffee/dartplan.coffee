@@ -8,6 +8,6 @@ class config
 
     $mdThemingProvider.theme 'default'
       .primaryPalette 'green'
-      .accentPalette 'orange'
+      .accentPalette 'amber'
 
 dartplanApp.config config
