@@ -19,8 +19,8 @@ from dartplan.models import (Department, Hour, Term, User,
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
-UG_DEPT_URL = "/en/2014/orc/Departments-Programs-Undergraduate"
-GRAD_DEPT_URL = "/en/2014/orc/Departments-Programs-Graduate"
+UG_DEPT_URL = "/en/2015/orc/Departments-Programs-Undergraduate"
+GRAD_DEPT_URL = "/en/2015/orc/Departments-Programs-Graduate"
 
 # Timetable Setup
 TIMETABLE_BASE = "http://oracle-www.dartmouth.edu/dart/groucho/timetable.subject_search?distribradio=alldistribs&subjectradio=allsubjects&termradio=selectterms&hoursradio=allhours&terms=no_value&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&sortorder=dept&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=Subject+Area(s)"
@@ -127,7 +127,7 @@ def scan_topics_offerings(course_soup, course, dept, year, lock_term_start, lock
 def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, old_category, new_category):
 
     # "Asian and Middle Eastern Languages" and "Russian": Different formatting of language courses
-    if (d1.abbr == "ARAB") or (d1.abbr == "HEBR") or (d1.abbr == "CHIN") or (d1.abbr == "JAPN") or (d1.abbr == "RUSS"):
+    if (d1.abbr == "ARAB") or (d1.abbr == "HEBR") or (d1.abbr == "CHIN") or (d1.abbr == "JAPN") or (d1.abbr == "RUSS") or (d1.abbr == "AMES"):
         if (len(stripped_offering) < 3) and (terms_offered == []):
             c1 = Course.query.filter_by(department = d1, number = stripped_offering).first()
             stripped_offering = ""
@@ -153,14 +153,6 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
     elif (d1.abbr == "EARS"):
         if (c1.number == "70"):
             stripped_offering = ""
-
-    elif (d1.abbr == "ENGL"):
-        if (int(c1.number) == 85):
-            print "INSIDE"
-            if ("2A;16S" in stripped_offering):
-                possible_hour = Hour.query.filter_by(period = "2A").first()
-                hours_offered.append(possible_hour)
-                stripped_offering = "16S"
 
     # "Government": Misplaced colon
     elif (d1.abbr == "GOVT"):
@@ -223,9 +215,13 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
     elif "." in stripped_offering:
         stripped_offering = ""
 
-    stripped_offering = check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category)
 
+    stripped_offering = check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category)
     stripped_offering = check_misplaced_comma(stripped_offering, hours_offered,terms_offered)
+    stripped_offering = check_misplaced_semicolon(stripped_offering, hours_offered, terms_offered)
+
+    if stripped_offering == 'TBD':
+        stripped_offering = 'Arrange'
 
     return stripped_offering, c1
 
@@ -376,7 +372,7 @@ def store_offerings(offering_info, c1, d1, distribs, info_soup, year, desc_html,
 
         # Check if word is in the format of a time slot. If so, create it and
         # append
-        if re.search('[0-9][0-9]?:[0-9][0-9]', stripped_offering) or re.search('[0-9]-[0-9]', stripped_offering):
+        if re.search('[0-9][0-9]?:[0-9][0-9]', stripped_offering) or re.search('[0-9]-[0-9]', stripped_offering) or re.search('[0-9][0-9]?[AP][M]-[0-9][0-9]?[AP][M]', stripped_offering):
             possible_hour = Hour(period = stripped_offering)
             db.session.add(possible_hour)
             db.session.commit()
@@ -407,6 +403,19 @@ def store_offerings(offering_info, c1, d1, distribs, info_soup, year, desc_html,
 
     # Now that loop has been exited, add then clear any remaining combinations
     terms_offered, hours_offered, new_category = add_offerings(c1, terms_offered, hours_offered, distribs, desc_html, lock_term_start, lock_term_end)
+
+
+# Generalized Check for missing space between hours and terms
+def check_misplaced_semicolon(stripped_offering, hours_offered, terms_offered):
+
+    if re.search('[0-9][0-9]?[A-Z]?;[0-9][0-9][A-Z]', stripped_offering):
+        hour, term = stripped_offering.split(';')
+        possible_hour = Hour.query.filter_by(period = hour).first()
+        hours_offered.append(possible_hour)
+        stripped_offering = term
+
+    return stripped_offering
+
 
 # Generalized check for missing space between terms and hours
 def check_misplaced_colon(stripped_offering, hours_offered, terms_offered, old_category, new_category):

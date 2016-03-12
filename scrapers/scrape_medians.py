@@ -79,7 +79,7 @@ def store_term_medians(link):
     r = requests.get(MEDIAN_BASE_URL + link)
     orig_soup = BeautifulSoup(r.content, from_encoding=r.encoding)
 
-    table = orig_soup.find('div', {'class': 'b6'}).find('tbody')
+    table = orig_soup.find('tbody')
 
     for offering in table.find_all('tr'):
         store_offering_median(offering)
