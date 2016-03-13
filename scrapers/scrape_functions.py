@@ -559,7 +559,11 @@ def remove_deleted_offerings(timetable_globals):
                 print_alert("UPDATED NAME: " + repr(offering_course.name) + " to " + repr(alt_course.name))
 
         if offering.term is not None:
-            if offering.term.in_range(start_term, latest_term):
+            hour = offering.hour
+            term = offering.term
+            desc = offering.desc
+
+            if term.in_range(start_term, latest_term):
 
                 # Determine if course is offered at another time during the term
                 other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.added == "F").first()
@@ -569,21 +573,22 @@ def remove_deleted_offerings(timetable_globals):
                         if other_time not in user.courses:
                             user.courses.append(other_time)
 
-                    if str(offering.hour) != str(other_time.hour):
-                        if offering.term == latest_term:
+                    if str(hour) != str(other_time.hour):
+                        if term == latest_term:
                             # emails.swapped_course_times(emailed_users, offering, other_time)
                             print "EMAIL 1"
-                    print_alert('SWAPPED (from not F): ' + repr(offering.term) + " " + repr(offering) + " at " + repr(offering.hour) + "with " + repr(other_time.hour))
+                    print_alert('SWAPPED (from not F): ' + repr(term) + " " + desc + " at " + repr(hour) + "with " + repr(other_time.hour))
                 else:
-                    if offering.term == latest_term:
+                    if term == latest_term:
                         print "EMAIL 2"
                         # emails.deleted_offering_notification(emailed_users, offering, offering.term, offering.hour)
-                    print_alert('DELETED (from not F): ' + repr(offering.term) + " " + repr(offering))
+                    print_alert('DELETED (from not F): ' + term + " " + desc)
 
                     for user in all_users:
                         user.drop(offering)
 
-                db.session.delete(offering)
+                if offering:
+                    db.session.delete(offering)
                 db.session.commit()
 
     # Delete offerings that were not found during the scrape
