@@ -577,12 +577,12 @@ def remove_deleted_offerings(timetable_globals):
                         if term == latest_term:
                             # emails.swapped_course_times(emailed_users, offering, other_time)
                             print "EMAIL 1"
-                    print_alert('SWAPPED (from not F): ' + repr(term) + " " + desc + " at " + repr(hour) + "with " + repr(other_time.hour))
+                    print_alert('SWAPPED (from not F): ' + repr(term) + " " + repr(desc) + " at " + repr(hour) + "with " + repr(other_time.hour))
                 else:
                     if term == latest_term:
                         print "EMAIL 2"
                         # emails.deleted_offering_notification(emailed_users, offering, offering.term, offering.hour)
-                    print_alert('DELETED (from not F): ' + term + " " + desc)
+                    print_alert('DELETED (from not F): ' + repr(term) + " " + repr(desc))
 
                     for user in all_users:
                         user.drop(offering)
