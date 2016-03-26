@@ -16,7 +16,7 @@ manager = Manager(app)
 
 def _make_context():
     """Return context dict for a shell session so you can access
-    app, db, and the User model by default."""
+    app, db, and the models by default."""
     return {'app': app, 'db': db, 'User': User, 'Offering': Offering,
             'Course': Course, 'Hour': Hour, 'Department': Department,
             'Distributive': Distributive, 'Term': Term}

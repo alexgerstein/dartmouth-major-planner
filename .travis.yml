@@ -14,13 +14,13 @@ script: python manage.py tests
 after_success:
   - coveralls
   - bash ./scripts/dokku_deploy.sh
-deploy:
-  provider: heroku
-  api_key:
-    secure: p9YZXHHWrvcRVKyO7RztsnTLylzqzyirDw9dlVO0xVBcBJuOniz4+zaiKK1f3UQGkzxT1BmRIdp89AJPDYlqTLdgRCbehQ4zKS/kC8NQt81N6uA1tctZnCD4byjEpoXjkZoGMl8mL/sGLTZy6CdGXPwLnQDA9nD0YMrobsAfZ4M=
-  app:
-    master: dartplan-staging
-  run:
-    - python manage.py db upgrade
-    - python manage.py assets clean
-    - python manage.py assets build
+# deploy:
+#   provider: heroku
+#   api_key:
+#     secure: p9YZXHHWrvcRVKyO7RztsnTLylzqzyirDw9dlVO0xVBcBJuOniz4+zaiKK1f3UQGkzxT1BmRIdp89AJPDYlqTLdgRCbehQ4zKS/kC8NQt81N6uA1tctZnCD4byjEpoXjkZoGMl8mL/sGLTZy6CdGXPwLnQDA9nD0YMrobsAfZ4M=
+#   app:
+#     master: dartplan-staging
+#   run:
+#     - python manage.py db upgrade
+#     - python manage.py assets clean
+#     - python manage.py assets build
