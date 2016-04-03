@@ -19,11 +19,14 @@ class TestOfferingListAPI(TestBase):
             sess['user'] = {'netid': user.netid}
 
         term = user.terms.first()
+        plan = user.plans.first()
         data = {'course_id': course.id, 'term_id': term.id}
         r = test_client.post('/api/offerings', data=data)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert data['offering']['term']['id'] == term.id
+        assert user.courses.count() == 1
+        assert plan.offerings.count() == 1
 
 
 class TestOfferingAPI(TestBase):
@@ -51,7 +54,9 @@ class TestOfferingAPI(TestBase):
         r = test_client.put('/api/offerings/%d' % offering.id, data=data)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
-        assert data['offering']['enrolled']
+        assert data['offering']['enrolled'] is True
+        assert user.courses.count() == 1
+        assert user.plans.first().offerings.count() == 1
 
     def test_put_unenroll(self, test_client, enrolled_user):
         with test_client.session_transaction() as sess:
@@ -63,6 +68,8 @@ class TestOfferingAPI(TestBase):
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert not data['offering']['enrolled']
+        assert enrolled_user.courses.count() == 0
+        assert enrolled_user.plans.first().offerings.count() == 0
 
     def test_put_unenroll_sole_user_added(self, test_client,
                                           enrolled_sole_user):
@@ -85,6 +92,4 @@ class TestCourseOfferingListAPI(TestBase):
         r = test_client.get('/api/courses/%d/offerings' % offering.course.id)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
-        print data
-        print str(offering)
         assert data['offerings'][0]['name'] == str(offering)

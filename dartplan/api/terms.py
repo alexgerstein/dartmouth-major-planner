@@ -6,10 +6,7 @@ from dartplan.models import Term
 
 class isOn(fields.Raw):
     def output(self, key, term):
-        if not g.user:
-            return False
-
-        return term in g.user.terms
+        return g.user and term in g.user.terms
 
 
 class getAbbr(fields.Raw):
@@ -49,5 +46,9 @@ class TermAPI(Resource):
                 return {"errors": {"on": ["Term is already marked off."]}}, 409
 
             g.user.swap_onterm(term)
+
+            plan = g.user.plans.first()
+            if plan:
+                plan.swap_onterm(term)
 
         return {'term': marshal(term, term_fields)}

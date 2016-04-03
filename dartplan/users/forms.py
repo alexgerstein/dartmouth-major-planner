@@ -4,10 +4,12 @@ from wtforms.validators import Required, NumberRange
 
 
 class UserEditForm(Form):
-    nickname = TextField('nickname', validators = [Required()])
-    grad_year = IntegerField('Graduating Year', validators = [Required(), NumberRange(min=2009, max=2099)])
-    email_Dartplan_updates = BooleanField("DARTPlan Updates", default = True)
-    email_course_updates = BooleanField("Your Planner Updates", default = True)
+    nickname = TextField('nickname', validators=[Required()])
+    grad_year = IntegerField('Graduating Year',
+                             validators=[Required(), NumberRange(min=2009,
+                                                                 max=2099)])
+    email_Dartplan_updates = BooleanField("DARTPlan Updates", default=True)
+    email_course_updates = BooleanField("Your Planner Updates", default=True)
 
     def __init__(self, original_nickname, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)

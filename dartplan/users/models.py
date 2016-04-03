@@ -1,21 +1,23 @@
 from dartplan.database import db
-from dartplan.models import Offering, Term
+from dartplan.models import Term
 
 user_course = db.Table('user_course',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('offering_id', db.Integer, db.ForeignKey('offering.id'))
-)
+                       db.Column('user_id', db.Integer,
+                                 db.ForeignKey('user.id')),
+                       db.Column('offering_id', db.Integer,
+                                 db.ForeignKey('offering.id')))
 
 user_terms = db.Table("user_terms",
-    db.Column('user_id', db.Integer, db.ForeignKey("user.id")),
-    db.Column("term_id", db.Integer, db.ForeignKey("term.id"))
-)
+                      db.Column('user_id', db.Integer,
+                                db.ForeignKey("user.id")),
+                      db.Column("term_id", db.Integer,
+                                db.ForeignKey("term.id")))
 
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key = True)
-    netid = db.Column(db.String(15), index = True, unique=True)
+    id = db.Column(db.Integer, primary_key=True)
+    netid = db.Column(db.String(15), index=True, unique=True)
     full_name = db.Column(db.String(200))
     nickname = db.Column(db.String(64))
     grad_year = db.Column(db.SmallInteger)
@@ -23,14 +25,15 @@ class User(db.Model):
     email_course_updates = db.Column(db.Boolean)
     email_Dartplan_updates = db.Column(db.Boolean)
 
-    terms = db.relationship("Term",
-        secondary=user_terms,
-        lazy='dynamic')
+    terms = db.relationship('Term',
+                            secondary=user_terms, lazy='dynamic')
 
     courses = db.relationship('Offering',
-        secondary=user_course,
-        backref ='users',
-        lazy = 'dynamic')
+                              secondary=user_course, backref='users',
+                              lazy='dynamic')
+
+    plans = db.relationship('Plan', lazy='dynamic',
+                            cascade='all, delete-orphan')
 
     def __init__(self, full_name, netid):
         self.full_name = full_name
@@ -38,6 +41,12 @@ class User(db.Model):
         self.nickname = full_name
         self.email_Dartplan_updates = True
         self.email_course_updates = True
+
+    def enroll(self, offering):
+        if offering not in self.courses:
+            self.courses.append(offering)
+            db.session.commit()
+        return self
 
     def drop(self, offering):
         deleted = False

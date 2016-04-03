@@ -11,15 +11,12 @@ from courses import course_fields
 
 class isEnrolled(fields.Raw):
     def output(self, key, offering):
-        if not g.user:
-            return False
-
-        return offering in g.user.courses
+        return g.user and (offering in g.user.courses)
 
 
 class isUserAdded(fields.Raw):
     def output(self, key, offering):
-        return True if offering.user_added == "Y" else False
+        return offering.user_added == "Y"
 
 
 class getName(fields.Raw):
@@ -90,6 +87,13 @@ class OfferingListAPI(Resource):
             g.user.courses.append(offering)
             db.session.commit()
 
+        # Mirror on plans until we do the backfill
+        plan = g.user.plans.first()
+        if plan:
+            if offering not in plan.offerings:
+                plan.offerings.append(offering)
+                db.session.commit()
+
         return {'offering': marshal(offering, offering_fields)}
 
 
@@ -110,17 +114,26 @@ class OfferingAPI(Resource):
         offering = Offering.query.get_or_404(id)
 
         if args.enrolled is not None:
-            deleted = False
             if args.enrolled:
-                if offering not in g.user.courses:
-                    g.user.courses.append(offering)
+                g.user.enroll(offering)
+
+                # Mirror onto plan until we do the backfill
+                plan = g.user.plans.first()
+                if plan:
+                    plan.enroll(offering)
+
             else:
+                # Mirror onto plan until we do the backfill
+                plan = g.user.plans.first()
+                if plan:
+                    plan.drop(offering)
+                    db.session.commit()
+
                 deleted = g.user.drop(offering)
-            db.session.commit()
+                db.session.commit()
 
-            if deleted:
-                return {'offering': None}
-
+                if deleted:
+                    return {'offering': None}
         return {'offering': marshal(offering, offering_fields)}
 
 

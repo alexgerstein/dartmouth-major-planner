@@ -1,5 +1,5 @@
 from tests.factories import *
-from dartplan.models import User
+from dartplan.models import User, Plan
 
 
 class UserFactory(SQLAlchemyModelFactory):
@@ -16,10 +16,16 @@ class UserFactory(SQLAlchemyModelFactory):
 
         if extracted:
             self.grad_year = extracted
+            plan = Plan(grad_year=extracted, user_id=self.id)
+            self.plans.append(plan)
+
             terms = self.get_all_terms()
             for term in terms:
                 if term not in self.terms:
                     self.terms.append(term)
+
+                if term not in plan.terms:
+                    plan.terms.append(term)
 
     @factory.post_generation
     def offerings(self, create, extracted, **kwargs):
@@ -27,6 +33,10 @@ class UserFactory(SQLAlchemyModelFactory):
             return
 
         if extracted:
+            plan = self.plans.first()
             for offering in extracted:
                 if offering not in self.courses:
                     self.courses.append(offering)
+
+                if plan and offering not in plan.offerings:
+                    plan.offerings.append(offering)

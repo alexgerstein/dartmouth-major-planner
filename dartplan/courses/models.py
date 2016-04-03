@@ -1,5 +1,4 @@
 from dartplan.database import db
-from dartplan.models import Department
 
 
 class Course(db.Model):
@@ -13,7 +12,6 @@ class Course(db.Model):
 
     offerings = db.relationship('Offering', backref='course')
     avg_median = db.Column(db.String(5))
-
 
     def __repr__(self):
         # Fix number repr if there are no sections (i.e. CS 1.0 should be CS 1)

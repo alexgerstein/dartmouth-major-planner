@@ -29,9 +29,12 @@ class TestTermAPI(TestBase):
         self.check_valid_header_type(take_off.headers)
 
         data = json.loads(take_off.data)
+        plan = enrolled_user.plans.first()
         assert term not in enrolled_user.terms
         assert course is not enrolled_user.courses.first()
-        assert data['term']['on'] == False
+        assert term not in plan.terms
+        assert course not in plan.offerings
+        assert data['term']['on'] is False
 
     def test_take_off_term_already_off(self, test_client, user, oldTerm):
         with test_client.session_transaction() as sess:
@@ -56,8 +59,10 @@ class TestTermAPI(TestBase):
         self.check_valid_header_type(enroll.headers)
 
         data = json.loads(enroll.data)
+        plan = user.plans.first()
         assert oldTerm in user.terms
-        assert data['term']['on'] == True
+        assert oldTerm in plan.terms
+        assert data['term']['on'] is True
 
     def test_enroll_term_already_on(self, test_client, user):
         with test_client.session_transaction() as sess:

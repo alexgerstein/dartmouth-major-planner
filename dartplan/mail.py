@@ -24,10 +24,8 @@ def welcome_notification(user):
     message = create_message("%s, Welcome to DARTPlan!" % user.nickname.split(" ")[0],
         ADMINS[0],
         [user.netid + "@dartmouth.edu"],
-        render_template("emails/welcome_email.txt",
-            user=user),
-        render_template("emails/welcome_email.html",
-            user=user))
+        render_template("emails/welcome_email.txt", user=user),
+        render_template("emails/welcome_email.html", user=user))
 
     mail.send(message)
 

@@ -2,6 +2,7 @@ import pytest
 import json
 
 from . import TestBase
+from dartplan.models import Plan
 
 
 class TestUserAPI(TestBase):
@@ -29,3 +30,6 @@ class TestUserAPI(TestBase):
         get = test_client.delete('/api/user')
         assert "login" in get.data
         assert get.status_code == 302
+
+        # Plan should no longer exist
+        assert Plan.query.count() == 0
