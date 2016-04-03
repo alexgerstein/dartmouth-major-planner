@@ -58,6 +58,10 @@ def fetch_user():
             db.session.add(g.user)
             db.session.commit()
 
+            plan = Plan(user_id=g.user.id)
+            db.session.add(plan)
+            db.session.commit()
+
             return (redirect(url_for('frontend.edit')))
     else:
         g.user = None

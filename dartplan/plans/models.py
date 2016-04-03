@@ -20,6 +20,7 @@ class Plan(db.Model):
     title = db.Column(db.String(100), default='Default')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    user = db.relationship('User')
     terms = db.relationship("Term",
                             secondary=plan_terms, lazy='dynamic')
 
