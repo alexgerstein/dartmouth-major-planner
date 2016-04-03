@@ -6,7 +6,7 @@ from functools import wraps
 from dartplan.database import db
 from dartplan.login import login_required
 from dartplan.mail import welcome_notification
-from dartplan.models import User, Distributive, Hour, Department
+from dartplan.models import User, Plan, Distributive, Hour, Department
 from dartplan.forms import UserEditForm
 
 MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B',
@@ -27,17 +27,23 @@ def year_required(fn):
 
 # If graduation year changes for user, adjusts terms in planner
 def add_terms(terms):
-
     # Clear all terms, start clean
     for term in g.user.terms:
         g.user.terms.remove(term)
 
+    plan = g.user.plans.first()
+    if plan:
+        for term in plan.terms:
+            plan.terms.remove(term)
+
     for term in terms:
         if term not in g.user.terms:
             g.user.terms.append(term)
+        if plan:
+            if term not in plan.terms:
+                plan.terms.append(term)
 
     db.session.commit()
-
 
 
 # Always track if there is a current user signed in
@@ -50,6 +56,10 @@ def fetch_user():
         if g.user is None:
             g.user = User(session['user']['name'], session['user']['netid'])
             db.session.add(g.user)
+            db.session.commit()
+
+            plan = Plan(user_id=g.user.id)
+            db.session.add(plan)
             db.session.commit()
 
             return (redirect(url_for('frontend.edit')))

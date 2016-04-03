@@ -2,12 +2,13 @@ from flask import Blueprint, g, session, redirect, url_for
 from flask.ext.restful import Api
 
 from dartplan.database import db
-from dartplan.models import User
+from dartplan.models import User, Plan
 
 from offerings import (OfferingAPI, OfferingListAPI,
                        CourseOfferingListAPI)
 from courses import CourseAPI, CourseListAPI
 from terms import TermAPI, TermListAPI
+from plans import PlanAPI
 from users import UserAPI
 
 bp = Blueprint('api', __name__)
@@ -26,6 +27,10 @@ def fetch_user():
             db.session.add(g.user)
             db.session.commit()
 
+            plan = Plan(user_id=g.user.id)
+            db.session.add(plan)
+            db.session.commit()
+
             return (redirect(url_for('frontend.edit')))
     else:
         g.user = None
@@ -39,4 +44,5 @@ api.add_resource(CourseOfferingListAPI, '/courses/<int:id>/offerings',
                  endpoint='course_offerings')
 api.add_resource(TermListAPI, '/terms', endpoint='terms')
 api.add_resource(TermAPI, '/terms/<int:id>', endpoint='term')
+api.add_resource(PlanAPI, '/plans/<int:id>', endpoint='plan')
 api.add_resource(UserAPI, '/user', endpoint='user')

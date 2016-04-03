@@ -2,6 +2,7 @@ import pytest
 import json
 
 from . import TestBase
+from dartplan.models import Plan
 
 
 class TestUserAPI(TestBase):
@@ -23,9 +24,12 @@ class TestUserAPI(TestBase):
         delete = test_client.delete('/api/user')
         self.check_valid_header_type(delete.headers)
         data = json.loads(delete.data)
-        assert data['result'] == True
+        assert data['result'] is True
 
         # Dummy user should no longer be logged in
         get = test_client.delete('/api/user')
         assert "login" in get.data
         assert get.status_code == 302
+
+        # Plan should no longer exist
+        assert Plan.query.count() == 0
