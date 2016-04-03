@@ -45,5 +45,5 @@ class UserFactory(SQLAlchemyModelFactory):
                 if offering not in self.courses:
                     self.courses.append(offering)
 
-                if plan and offering not in plan.offerings:
+                if offering not in plan.offerings:
                     plan.offerings.append(offering)

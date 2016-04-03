@@ -83,16 +83,12 @@ class OfferingListAPI(Resource):
             db.session.add(offering)
             db.session.commit()
 
-        if offering not in g.user.courses:
-            g.user.courses.append(offering)
-            db.session.commit()
+        g.user.enroll(offering)
 
         # Mirror on plans until we do the backfill
         plan = g.user.plans.first()
         if plan:
-            if offering not in plan.offerings:
-                plan.offerings.append(offering)
-                db.session.commit()
+            plan.enroll(offering)
 
         return {'offering': marshal(offering, offering_fields)}
 
@@ -127,10 +123,8 @@ class OfferingAPI(Resource):
                 plan = g.user.plans.first()
                 if plan:
                     plan.drop(offering)
-                    db.session.commit()
 
                 deleted = g.user.drop(offering)
-                db.session.commit()
 
                 if deleted:
                     return {'offering': None}
