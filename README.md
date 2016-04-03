@@ -25,7 +25,7 @@ Currently at [www.dartplan.com](http://www.dartplan.com). DartmouthID required.
 2. Start up the scraper: ```python manage.py scrape [--all]``` NOTE: ```--all``` scrapes old ORCs as well as the current ORC and Timetable.
 
 ## Tests
-* To run the basic unittests, run ```python manage.py tests```.
+* To run the basic unittests, run ```python manage.py test```.
 
 ## License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.

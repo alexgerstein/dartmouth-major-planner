@@ -1,4 +1,5 @@
 from dartplan.database import db
+from dartplan.models import Term
 
 plan_offerings = db.Table('plan_offerings',
                           db.Column('plan_id', db.Integer,
@@ -29,13 +30,21 @@ class Plan(db.Model):
                                 lazy='dynamic')
 
     def drop(self, offering):
+        deleted = False
         if offering in self.offerings:
             self.offerings.remove(offering)
             db.session.commit()
-        return self
+
+        # Delete user-added offerings from db
+        # if no users take the course anymore
+        if not Plan.query.filter(Plan.offerings.contains(offering)).first():
+            if offering.user_added == 'Y':
+                db.session.delete(offering)
+                deleted = True
+        return deleted
 
     def enroll(self, offering):
-        if offering not in self.offerings:
+        if offering not in self.offerings.all():
             self.offerings.append(offering)
             db.session.commit()
         return self
@@ -52,5 +61,46 @@ class Plan(db.Model):
         db.session.commit()
         return self
 
+    def reset_terms(self):
+        terms = self._get_all_terms()
+
+        # Clear all terms, start clean
+        for term in self.terms:
+            self.terms.remove(term)
+
+        for term in terms:
+            self.terms.append(term)
+
+        db.session.commit()
+        return self
+
+    def _get_all_terms(self):
+        all_terms = []
+
+        # Add Freshman Fall
+        t = Term.query.filter_by(year=self.user.grad_year - 4,
+                                 season=Term.SEASONS[3]).first()
+        if t is None:
+            t = Term(year=self.user.grad_year - 4, season=Term.SEASONS[3])
+            db.session.add(t)
+
+        all_terms.append(t)
+
+        for year_diff in reversed(range(4)):
+            for season in Term.SEASONS:
+                t = Term.query.filter_by(year=self.user.grad_year - year_diff,
+                                         season=season).first()
+                if t is None:
+                    t = Term(year=self.user.grad_year - year_diff,
+                             season=season)
+                    db.session.add(t)
+
+                all_terms.append(t)
+
+        # Remove extra fall
+        all_terms.remove(t)
+
+        return all_terms
+
     def __repr__(self):
-        return 'Plan %d (User %d): %s' % (self.id, self.user_id, self.title)
+        return 'Plan %s (User %s)' % (self.title, self.user, )

@@ -1,7 +1,10 @@
 dartplanApp = angular.module 'dartplanApp', ['ngMaterial', 'ngMdIcons']
 
 class config
-  constructor: ($interpolateProvider, $mdThemingProvider) ->
+  constructor: ($httpProvider, $interpolateProvider, $mdThemingProvider) ->
+    $httpProvider.defaults.headers
+      .common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
+
     $interpolateProvider
       .startSymbol '{['
       .endSymbol ']}'

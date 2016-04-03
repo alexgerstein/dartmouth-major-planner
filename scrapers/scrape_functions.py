@@ -5,17 +5,16 @@
 import os
 import imp
 
-from html5lib import HTMLParser, treebuilders
 import unicodedata
 from bs4 import BeautifulSoup
 import requests
-import re, string
+import re
+import string
 
 from dartplan import mail
 
 from dartplan.database import db
-from dartplan.models import (Department, Hour, Term, User,
-                             Distributive, Offering, Course)
+from dartplan.models import Hour, Term, Plan, Distributive, Offering, Course
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
@@ -80,7 +79,7 @@ def is_number(s):
 def remove_erroneous_user_adds():
     offerings = Offering.query.filter_by(user_added = "Y").all()
     for offering in offerings:
-        if User.query.filter(User.courses.contains(offering)).count() == 0:
+        if Plan.query.filter(Plan.offerings.contains(offering)).count() == 0:
             db.session.delete(offering)
             db.session.commit()
 
@@ -543,8 +542,7 @@ def remove_deleted_offerings(timetable_globals):
     deleted_offerings = Offering.query.filter(Offering.added != "F").all()
     for offering in deleted_offerings:
 
-        emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
-        all_users = User.query.filter(User.courses.contains(offering)).all()
+        affected_plans = Plan.query.filter(Plan.offerings.contains(offering))
 
         # Determine if course had a name update
         offering_course = offering.course
@@ -565,13 +563,14 @@ def remove_deleted_offerings(timetable_globals):
 
             if term.in_range(start_term, latest_term):
 
-                # Determine if course is offered at another time during the term
+                # Determine if course is offered at another
+                # time during the term
                 other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.added == "F").first()
                 if other_time:
-                    for user in all_users:
-                        user.drop(offering)
-                        if other_time not in user.courses:
-                            user.courses.append(other_time)
+                    for plan in affected_plans:
+                        plan.drop(offering)
+                        if other_time not in plan.offerings:
+                            plan.enroll(other_time)
 
                     if str(hour) != str(other_time.hour):
                         if term == latest_term:
@@ -584,8 +583,8 @@ def remove_deleted_offerings(timetable_globals):
                         # emails.deleted_offering_notification(emailed_users, offering, offering.term, offering.hour)
                     print_alert('DELETED (from not F): ' + repr(term) + " " + repr(desc))
 
-                    for user in all_users:
-                        user.drop(offering)
+                    for plan in affected_plans:
+                        plan.drop(offering)
 
                 if offering:
                     db.session.delete(offering)
@@ -595,8 +594,7 @@ def remove_deleted_offerings(timetable_globals):
     deleted_offerings = Offering.query.filter_by(added = "", user_added = "N").all()
     for offering in deleted_offerings:
 
-        emailed_users = User.query.filter(User.courses.contains(offering), User.email_course_updates == True).all()
-        all_users = User.query.filter(User.courses.contains(offering)).all()
+        affected_plans = Plan.query.filter(Plan.offerings.contains(offering))
 
         # Ignore if ORC data from the higher-priority timetable
         if offering.term is not None:
@@ -605,10 +603,10 @@ def remove_deleted_offerings(timetable_globals):
                 # Determine if course is offered at another time during the term
                 other_time = Offering.query.filter(Offering.course_id == offering.course_id, Offering.term_id == offering.term_id, Offering.hour_id != offering.hour_id).first()
                 if other_time:
-                    for user in all_users:
-                        user.drop(offering)
-                        if other_time not in user.courses:
-                            user.courses.append(other_time)
+                    for plan in affected_plans:
+                        plan.drop(offering)
+                        if other_time not in plan.offerings:
+                            plan.enroll(other_time)
 
                     if str(offering.hour) != str(other_time.hour):
                         print "EMAIL 3"
@@ -619,8 +617,8 @@ def remove_deleted_offerings(timetable_globals):
                     # emails.deleted_offering_notification(emailed_users, offering, offering.term, offering.hour)
                     print_alert("DELETED: " + repr(offering.term) + " " + repr(offering))
 
-                    for user in all_users:
-                        user.drop(offering)
+                    for plan in affected_plans:
+                        plan.drop(offering)
 
                 db.session.delete(offering)
                 db.session.commit()
@@ -674,7 +672,7 @@ def add_offerings(course, terms_offered, hours_offered, distribs, course_desc, l
             unknown_hour = Hour.query.filter_by(period = "?").first()
             o1 = Offering.query.filter_by(course_id = course.id, term_id = term.id, hour_id = unknown_hour.id).first()
             if o1 is not None:
-                users = User.query.filter(User.email_course_updates == True, User.courses.contains(o1)).all()
+                plans = Plan.query.filter(Plan.offerings.contains(o1)).all()
 
                 o1.hour = hour
                 print_alert("Updated user_added: " + repr(o1))

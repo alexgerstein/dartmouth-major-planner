@@ -8,7 +8,8 @@
     <form ng-controller="UserFormController" class="form-horizontal" action="" method="post" name="edit">
         <h1>Edit Your Profile</h1>
 
-        {{form.hidden_tag()}}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
         <md-input-container>
             <label for="nickname">Your name:</label>
             <input name="nickname" ng-model="user.nickname" type="text" md-maxlength="64" required>

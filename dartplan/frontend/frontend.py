@@ -25,27 +25,6 @@ def year_required(fn):
     return wrapper
 
 
-# If graduation year changes for user, adjusts terms in planner
-def add_terms(terms):
-    # Clear all terms, start clean
-    for term in g.user.terms:
-        g.user.terms.remove(term)
-
-    plan = g.user.plans.first()
-    if plan:
-        for term in plan.terms:
-            plan.terms.remove(term)
-
-    for term in terms:
-        if term not in g.user.terms:
-            g.user.terms.append(term)
-        if plan:
-            if term not in plan.terms:
-                plan.terms.append(term)
-
-    db.session.commit()
-
-
 # Always track if there is a current user signed in
 # If unrecognized user is in, add them to user database
 @bp.before_request
@@ -73,23 +52,22 @@ def fetch_user():
 @login_required
 @year_required
 def planner():
+    plan = g.user.plans.first()
 
-    all_terms = g.user.get_all_terms()
+    # Check if terms aren't in the session
+    if plan.terms.count() == 0:
+        plan.reset_terms()
 
     dept_options = [{'key': dept.id, 'value': str(dept.abbr)}
                     for dept in Department.query.order_by('abbr')]
     hour_options = [{'key': hour.id, 'value': str(hour.period)}
                     for hour in Hour.query.order_by('id')]
-    term_options = [{'key': term.id, 'value': str(term)} for term in all_terms]
+    term_options = [{'key': term.id, 'value': str(term)}
+                    for term in plan.terms]
     distrib_options = [{'key': distrib.id, 'value': str(distrib.abbr)}
                        for distrib in Distributive.query.order_by('abbr')]
     median_options = [{'key': index, 'value': str(median)}
                       for index, median in enumerate(MEDIANS)]
-
-    # Check if terms aren't in the session
-    if g.user.terms.all() == []:
-        add_terms(all_terms)
-        db.session.commit()
 
     return render_template("planner.html",
                            title='Course Plan',
@@ -105,31 +83,20 @@ def planner():
 @bp.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
-    form = UserEditForm(g.user.nickname)
+    form = UserEditForm(obj=g.user)
 
     if form.validate_on_submit():
-
-        g.user.nickname = form.nickname.data
-
         # Send welcome email if new user
         if g.user.grad_year is None:
             welcome_notification(g.user)
 
-        g.user.grad_year = form.grad_year.data
-        g.user.email_course_updates = form.email_course_updates.data
-        g.user.email_Dartplan_updates = form.email_Dartplan_updates.data
+        form.populate_obj(g.user)
         db.session.commit()
 
-        add_terms(g.user.get_all_terms())
-        db.session.commit()
+        plan = g.user.plans.first()
+        plan.reset_terms()
 
         return redirect(url_for('frontend.planner'))
-    else:
-        # Reset form to current entries
-        form.nickname.data = g.user.nickname
-        form.grad_year.data = g.user.grad_year
-        form.email_course_updates.data = g.user.email_course_updates
-        form.email_Dartplan_updates.data = g.user.email_Dartplan_updates
     return render_template('edit.html',
                            form=form, title='Edit Profile',
                            description="Change the nickname, graduation year, \

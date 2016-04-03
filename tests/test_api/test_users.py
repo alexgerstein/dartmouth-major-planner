@@ -16,9 +16,9 @@ class TestUserAPI(TestBase):
         data = json.loads(r.data)
         assert data['user']['nickname'] == user.nickname
 
-    def test_delete_user(self, test_client, user):
+    def test_delete_user(self, test_client, plan):
         with test_client.session_transaction() as sess:
-            sess['user'] = {'netid': user.netid}
+            sess['user'] = {'netid': plan.user.netid}
 
         # Remove dummy user
         delete = test_client.delete('/api/user')

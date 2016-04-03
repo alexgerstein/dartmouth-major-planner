@@ -15,6 +15,7 @@
 
     <meta name="description" content="DARTPlan provides a simple way for Dartmouth students to find their ideal course schedule for any term or year.">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
   </head>
   <body class="md-theme-default">
     <div layout="column" layout-fill>
@@ -82,6 +83,5 @@
     ga('send', 'pageview');
 
     </script>
-
   </body>
 </html>

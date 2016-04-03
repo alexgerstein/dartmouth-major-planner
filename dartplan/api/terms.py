@@ -6,7 +6,8 @@ from dartplan.models import Term
 
 class isOn(fields.Raw):
     def output(self, key, term):
-        return g.user and term in g.user.terms
+        plan = g.user and g.user.plans.first()
+        return plan and term in plan.terms
 
 
 class getAbbr(fields.Raw):
@@ -23,8 +24,8 @@ term_fields = {
 class TermListAPI(Resource):
     @login_required
     def get(self):
-        return {'terms': [marshal(term, term_fields)
-                          for term in g.user.get_all_terms()]}
+        plan = g.user.plans.first()
+        return {'terms': [marshal(term, term_fields) for term in plan.terms]}
 
 
 class TermAPI(Resource):
@@ -38,17 +39,14 @@ class TermAPI(Resource):
         args = self.reqparse.parse_args()
 
         term = Term.query.get_or_404(id)
+        plan = g.user.plans.first()
 
         if args.on is not None:
-            if args.on and term in g.user.terms:
+            if args.on and term in plan.terms:
                 return {"errors": {"on": ["Term is already marked on."]}}, 409
-            elif not args.on and term not in g.user.terms:
+            elif not args.on and term not in plan.terms:
                 return {"errors": {"on": ["Term is already marked off."]}}, 409
 
-            g.user.swap_onterm(term)
-
-            plan = g.user.plans.first()
-            if plan:
-                plan.swap_onterm(term)
+            plan.swap_onterm(term)
 
         return {'term': marshal(term, term_fields)}
