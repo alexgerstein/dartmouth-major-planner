@@ -27,26 +27,21 @@ def year_required(fn):
 
 # If graduation year changes for user, adjusts terms in planner
 def add_terms(terms):
-    # Start creating plans
-    plan = g.user.plans.first()
-    if not plan:
-        plan = Plan(user_id=g.user.id, title='Default')
-    plan.grad_year = g.user.grad_year
-    db.session.add(plan)
-    db.session.commit()
-
     # Clear all terms, start clean
     for term in g.user.terms:
         g.user.terms.remove(term)
 
-    for term in plan.terms:
-        plan.terms.remove(term)
+    plan = g.user.plans.first()
+    if plan:
+        for term in plan.terms:
+            plan.terms.remove(term)
 
     for term in terms:
         if term not in g.user.terms:
             g.user.terms.append(term)
-        if term not in plan.terms:
-            plan.terms.append(term)
+        if plan:
+            if term not in plan.terms:
+                plan.terms.append(term)
 
     db.session.commit()
 

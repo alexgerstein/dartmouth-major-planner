@@ -2,7 +2,7 @@ from flask import Blueprint, g, session, redirect, url_for
 from flask.ext.restful import Api
 
 from dartplan.database import db
-from dartplan.models import User
+from dartplan.models import User, Plan
 
 from offerings import (OfferingAPI, OfferingListAPI,
                        CourseOfferingListAPI)
@@ -25,6 +25,10 @@ def fetch_user():
         if g.user is None:
             g.user = User(session['user']['name'], session['user']['netid'])
             db.session.add(g.user)
+            db.session.commit()
+
+            plan = Plan(user_id=g.user.id)
+            db.session.add(plan)
             db.session.commit()
 
             return (redirect(url_for('frontend.edit')))

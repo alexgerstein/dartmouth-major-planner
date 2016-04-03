@@ -24,7 +24,7 @@ class TestUserAPI(TestBase):
         delete = test_client.delete('/api/user')
         self.check_valid_header_type(delete.headers)
         data = json.loads(delete.data)
-        assert data['result'] == True
+        assert data['result'] is True
 
         # Dummy user should no longer be logged in
         get = test_client.delete('/api/user')

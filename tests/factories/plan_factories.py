@@ -1,10 +1,11 @@
 from tests.factories import *
 from dartplan.models import Plan
-import factory.fuzzy
+
+from user_factories import UserFactory
 
 
 class PlanFactory(SQLAlchemyModelFactory):
     class Meta:
         model = Plan
 
-    grad_year = factory.fuzzy.FuzzyInteger(2015, 2020)
+    user = factory.SubFactory(UserFactory)

@@ -16,8 +16,11 @@ class UserFactory(SQLAlchemyModelFactory):
 
         if extracted:
             self.grad_year = extracted
-            plan = Plan(grad_year=extracted, user_id=self.id)
-            self.plans.append(plan)
+
+            plan = self.plans.first()
+            if not plan:
+                plan = Plan(user_id=self.id)
+                self.plans.append(plan)
 
             terms = self.get_all_terms()
             for term in terms:
@@ -34,6 +37,10 @@ class UserFactory(SQLAlchemyModelFactory):
 
         if extracted:
             plan = self.plans.first()
+            if not plan:
+                plan = Plan(user_id=self.id)
+                self.plans.append(plan)
+
             for offering in extracted:
                 if offering not in self.courses:
                     self.courses.append(offering)

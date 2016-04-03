@@ -19,7 +19,6 @@ class Plan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), default='Default')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    grad_year = db.Column(db.SmallInteger)
 
     terms = db.relationship("Term",
                             secondary=plan_terms, lazy='dynamic')
