@@ -68,9 +68,8 @@ class User(db.Model):
         if term in self.terms:
 
             # Remove all courses during new off-term
-            for course in self.courses:
-                if course.term is term:
-                    self.drop(course)
+            for course in self.courses.filter_by(term=term):
+                self.drop(course)
 
             self.terms.remove(term)
         else:

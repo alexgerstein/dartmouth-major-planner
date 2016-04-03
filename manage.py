@@ -6,6 +6,7 @@ from dartplan.database import db
 from dartplan.models import *
 from scrapers.scrape_all import scrape_all
 from scrapers.scrape_update import scrape_update
+from scripts.backfill_plans import run_backfill
 from flask.ext.script import Manager, Shell, Server
 from flask.ext.migrate import MigrateCommand
 from flask.ext.assets import ManageAssets
@@ -35,6 +36,11 @@ def scrape(all=False):
         scrape_all()
     else:
         scrape_update()
+
+
+@manager.command
+def backfill():
+    run_backfill()
 
 
 manager.add_command('server', Server())
