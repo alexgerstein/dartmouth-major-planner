@@ -43,9 +43,8 @@ class Plan(db.Model):
     def swap_onterm(self, term):
         if term in self.terms:
             # Remove all courses during new off-term
-            for offering in self.offerings:
-                if offering.term is term:
-                    self.drop(offering)
+            for offering in self.offerings.filter_by(term=term):
+                self.drop(offering)
 
             self.terms.remove(term)
         else:

@@ -9,6 +9,7 @@ omit =
     dartplan/frontend/*
     tests/*
     scrapers/*
+    scripts/*
     manage.py
     dartplan/login.py
     db_*
