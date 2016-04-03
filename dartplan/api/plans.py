@@ -9,7 +9,7 @@ from offerings import offering_fields
 plan_fields = {
     'title': fields.String,
     'terms': fields.List(fields.Nested(term_fields)),
-    'courses': fields.List(fields.Nested(offering_fields))
+    'offerings': fields.List(fields.Nested(offering_fields))
 }
 
 
