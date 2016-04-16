@@ -7,7 +7,7 @@ dartplanApp.factory 'Term', ->
 
 dartplanApp.factory 'TermsService', ['$http', '$rootScope', '$mdToast', 'Term', ($http, $rootScope, $mdToast, Term) ->
   new class Terms
-    getUserTerms: ->
+    getPlanTerms: ->
       $http.get('/api/terms').then (result) ->
         new Term term for term in result.data.terms
 

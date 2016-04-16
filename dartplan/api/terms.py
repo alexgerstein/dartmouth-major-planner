@@ -25,7 +25,7 @@ class TermListAPI(Resource):
     @login_required
     def get(self):
         plan = g.user.plans.first()
-        return {'terms': [marshal(term, term_fields) for term in plan.terms]}
+        return {'terms': [marshal(term, term_fields) for term in plan._get_all_terms()]}
 
 
 class TermAPI(Resource):

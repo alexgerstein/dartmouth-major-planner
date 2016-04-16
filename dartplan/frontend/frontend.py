@@ -63,7 +63,7 @@ def planner():
     hour_options = [{'key': hour.id, 'value': str(hour.period)}
                     for hour in Hour.query.order_by('id')]
     term_options = [{'key': term.id, 'value': str(term)}
-                    for term in plan.terms]
+                    for term in plan._get_all_terms()]
     distrib_options = [{'key': distrib.id, 'value': str(distrib.abbr)}
                        for distrib in Distributive.query.order_by('abbr')]
     median_options = [{'key': index, 'value': str(median)}

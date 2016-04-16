@@ -3,6 +3,7 @@ from flask.ext import assets
 
 js_dartplan = assets.Bundle("dartplan.coffee",
                             "users.coffee",
+                            "plans.coffee",
                             "terms.coffee",
                             "courses.coffee",
                             "offerings.coffee",

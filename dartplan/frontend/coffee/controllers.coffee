@@ -1,16 +1,10 @@
 dartplanApp = angular.module 'dartplanApp'
 
-dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'TermsService', 'OfferingsService', ($scope, $mdDialog, $sce, TermsService, OfferingsService) ->
+dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
 
   render = ->
-    $scope.term = []
-    $scope.offerings = []
-
-    TermsService.getUserTerms().then (terms) ->
-      $scope.terms = terms
-
-    OfferingsService.getEnrolled().then (offerings) ->
-      $scope.offerings = offerings
+    PlansService.getPlan().then (plan) ->
+      $scope.plan = plan
 
   render()
 
@@ -46,7 +40,7 @@ CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, cou
     $scope.offerings = offerings
     $scope.offeringsLoading = false
 
-  TermsService.getUserTerms().then (terms) ->
+  TermsService.getPlanTerms().then (terms) ->
     $scope.customUserTerms = terms
     $scope.customTermsLoading = false
 

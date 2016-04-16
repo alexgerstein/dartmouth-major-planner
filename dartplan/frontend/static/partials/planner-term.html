@@ -8,6 +8,6 @@
     </md-button>
   </div>
   <md-list class="term-courses" ng-style="term.on ? '{}' : {'background-color': 'black'}">
-    <term-offering class="md-3-line" ng-if="offering.term.abbr === term.abbr" ng-repeat="offering in offerings"></term-offering>
+    <term-offering class="md-3-line" ng-if="offering.term.id === term.id" ng-repeat="offering in plan.offerings"></term-offering>
   </md-list>
 </section>

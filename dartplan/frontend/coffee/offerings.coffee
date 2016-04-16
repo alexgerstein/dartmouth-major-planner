@@ -10,10 +10,6 @@ dartplanApp.factory 'Offering', ['Term', 'Course', (Term, Course) ->
 
 dartplanApp.factory 'OfferingsService', ['$http', '$rootScope', '$mdToast', 'Offering', ($http, $rootScope, $mdToast, Offering) ->
   new class Offerings
-    getEnrolled: ->
-      $http.get('/api/offerings').then (result) ->
-        new Offering offering for offering in result.data.offerings
-
     getCourseOfferings: (id) ->
       $http.get("/api/courses/#{ id }/offerings").then (result) =>
         new Offering offering for offering in result.data.offerings
