@@ -10,7 +10,3 @@ class UserEditForm(Form):
                                                                  max=2099)])
     email_Dartplan_updates = BooleanField("DARTPlan Updates", default=True)
     email_course_updates = BooleanField("Your Planner Updates", default=True)
-
-    def __init__(self, original_nickname, *args, **kwargs):
-        Form.__init__(self, *args, **kwargs)
-        self.original_nickname = original_nickname

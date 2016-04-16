@@ -3,10 +3,9 @@ from dartplan.models import Distributive
 import factory.fuzzy
 
 
-class DistributiveFactory(SQLAlchemyModelFactory):
+class DistributiveFactory(BaseFactory):
     class Meta:
         model = Distributive
 
-    id = factory.Sequence(lambda n: n)
     abbr = factory.fuzzy.FuzzyChoice(["INT", "SOC", "NW", "QDS",
                                       "TMV", "TLA", "TAS"])

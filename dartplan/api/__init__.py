@@ -44,5 +44,5 @@ api.add_resource(CourseOfferingListAPI, '/courses/<int:id>/offerings',
                  endpoint='course_offerings')
 api.add_resource(TermListAPI, '/terms', endpoint='terms')
 api.add_resource(TermAPI, '/terms/<int:id>', endpoint='term')
-api.add_resource(PlanAPI, '/plans/<int:id>', endpoint='plan')
+api.add_resource(PlanAPI, '/plan', endpoint='plan')
 api.add_resource(UserAPI, '/user', endpoint='user')

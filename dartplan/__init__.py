@@ -34,6 +34,9 @@ def create_app(env=None):
     app.register_blueprint(frontend.bp)
     assets.init_app(app)
 
+    from dartplan.csrf import csrf
+    csrf.init_app(app)
+
     from dartplan.api import bp as api_bp
     app.register_blueprint(api_bp)
 

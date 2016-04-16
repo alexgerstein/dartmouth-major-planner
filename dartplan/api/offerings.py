@@ -4,14 +4,15 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from dartplan.database import db
 from dartplan.login import login_required
-from dartplan.models import User, Offering, Course, Term, Hour
+from dartplan.models import Plan, Offering, Course, Term, Hour
 from terms import term_fields
 from courses import course_fields
 
 
 class isEnrolled(fields.Raw):
     def output(self, key, offering):
-        return g.user and (offering in g.user.courses)
+        plan = g.user and g.user.plans.first()
+        return plan and (offering in plan.offerings)
 
 
 class isUserAdded(fields.Raw):
@@ -31,7 +32,7 @@ class getHour(fields.Raw):
 
 class getEnrollment(fields.Raw):
     def output(self, key, offering):
-        return User.query.filter(User.courses.contains(offering)).count()
+        return Plan.query.filter(Plan.offerings.contains(offering)).count()
 
 offering_fields = {
     'id': fields.Integer,
@@ -55,8 +56,9 @@ class OfferingListAPI(Resource):
 
     @login_required
     def get(self):
+        plan = g.user.plans.first()
         return {'offerings': [marshal(offering, offering_fields)
-                              for offering in g.user.courses.all()]}
+                              for offering in plan.offerings.all()]}
 
     @login_required
     def post(self):
@@ -83,9 +85,6 @@ class OfferingListAPI(Resource):
             db.session.add(offering)
             db.session.commit()
 
-        g.user.enroll(offering)
-
-        # Mirror on plans until we do the backfill
         plan = g.user.plans.first()
         if plan:
             plan.enroll(offering)
@@ -111,9 +110,6 @@ class OfferingAPI(Resource):
 
         if args.enrolled is not None:
             if args.enrolled:
-                g.user.enroll(offering)
-
-                # Mirror onto plan until we do the backfill
                 plan = g.user.plans.first()
                 if plan:
                     plan.enroll(offering)
@@ -121,10 +117,9 @@ class OfferingAPI(Resource):
             else:
                 # Mirror onto plan until we do the backfill
                 plan = g.user.plans.first()
+                deleted = False
                 if plan:
-                    plan.drop(offering)
-
-                deleted = g.user.drop(offering)
+                    deleted = plan.drop(offering)
 
                 if deleted:
                     return {'offering': None}

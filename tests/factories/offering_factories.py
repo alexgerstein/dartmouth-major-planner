@@ -6,11 +6,9 @@ from course_factories import CourseFactory
 import factory.fuzzy
 
 
-class OfferingFactory(SQLAlchemyModelFactory):
+class OfferingFactory(BaseFactory):
     class Meta:
         model = Offering
-
-    id = factory.Sequence(lambda n: n)
 
     term = factory.SubFactory(TermFactory)
     hour = factory.SubFactory(HourFactory)

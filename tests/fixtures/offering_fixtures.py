@@ -3,17 +3,23 @@ from tests.factories import offering_factories
 
 
 @pytest.fixture()
-def offering(request, distrib):
-    return offering_factories.OfferingFactory(distributives=[distrib])
+def offering(db, distrib):
+    offering = offering_factories.OfferingFactory(distributives=[distrib])
+    db.session.commit()
+    return offering
 
 
 @pytest.fixture()
-def user_added_offering(request, distrib):
-    return offering_factories.OfferingFactory(user_added="Y",
-                                              distributives=[distrib])
+def user_added_offering(db, distrib):
+    offering = offering_factories.OfferingFactory(user_added="Y",
+                                                  distributives=[distrib])
+    db.session.commit()
+    return offering
 
 
 @pytest.fixture()
-def registrar_added_offering(request, distrib):
-    return offering_factories.OfferingFactory(user_added="N",
-                                              distributives=[distrib])
+def registrar_added_offering(db, distrib):
+    offering = offering_factories.OfferingFactory(user_added="N",
+                                                  distributives=[distrib])
+    db.session.commit()
+    return offering

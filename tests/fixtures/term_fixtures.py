@@ -3,10 +3,14 @@ from tests.factories import term_factories
 
 
 @pytest.fixture()
-def term(request):
-    return term_factories.TermFactory()
+def term(db):
+    term = term_factories.TermFactory()
+    db.session.commit()
+    return term
 
 
 @pytest.fixture()
-def oldTerm(request):
-    return term_factories.TermFactory(year=1999)
+def oldTerm(db):
+    term = term_factories.TermFactory(year=1999)
+    db.session.commit()
+    return term
