@@ -2,6 +2,7 @@ import os
 import logging
 
 SECRET_KEY = os.environ['SECRET_KEY']
+WTF_CSRF_SECRET_KEY = os.environ['WTF_CSRF_SECRET_KEY']
 
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
