@@ -4,7 +4,7 @@ import logging
 basedir = os.path.abspath(os.path.dirname('manage.py'))
 
 DEBUG = False
-WTF_CSRF_ENABLED = False
+WTF_CSRF_ENABLED = True
 SECRET_KEY = 'youll-never-guess'
 WTF_CSRF_SECRET_KEY = 'youll-never-guess'
 
