@@ -24,14 +24,16 @@ class TestTermAPI(TestBase):
 
         offering = plan_with_offering.offerings.first()
         term = offering.term
+
         off = dict(on=False)
         take_off = test_client.put('/api/terms/%d' % term.id, data=off)
         self.check_valid_header_type(take_off.headers)
 
         data = json.loads(take_off.data)
+
+        assert data['term']['on'] is False
         assert term not in plan_with_offering.terms
         assert offering not in plan_with_offering.offerings
-        assert data['term']['on'] is False
 
     def test_take_off_term_already_off(self, test_client, plan, oldTerm):
         with test_client.session_transaction() as sess:
