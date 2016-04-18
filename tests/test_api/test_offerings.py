@@ -9,7 +9,7 @@ class TestOfferingListAPI(TestBase):
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': plan_with_offering.user.netid}
 
-        r = test_client.get('/api/offerings')
+        r = test_client.get('/api/plans/%d/offerings' % plan_with_offering.id)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         offering = plan_with_offering.offerings.first()
@@ -21,7 +21,7 @@ class TestOfferingListAPI(TestBase):
 
         term = plan.terms.first()
         data = {'course_id': course.id, 'term_id': term.id}
-        r = test_client.post('/api/offerings', data=data)
+        r = test_client.post('/api/plans/%d/offerings' % plan.id, data=data)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert data['offering']['term']['id'] == term.id
@@ -29,8 +29,9 @@ class TestOfferingListAPI(TestBase):
 
 
 class TestOfferingAPI(TestBase):
-    def test_get_offering(self, test_client, offering):
-        r = test_client.get('/api/offerings/%d' % offering.id)
+    def test_get_offering(self, test_client, offering, plan):
+        r = test_client.get('/api/plans/%d/offerings/%d' % (plan.id,
+                                                            offering.id))
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert data['offering']['name'] == str(offering)
@@ -39,7 +40,8 @@ class TestOfferingAPI(TestBase):
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': plan.user.netid}
 
-        r = test_client.get('/api/offerings/%d' % offering.id)
+        r = test_client.get('/api/plans/%d/offerings/%d' % (plan.id,
+                                                            offering.id))
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert not data['offering']['enrolled']
@@ -50,7 +52,9 @@ class TestOfferingAPI(TestBase):
 
         data = {'enrolled': True}
 
-        r = test_client.put('/api/offerings/%d' % offering.id, data=data)
+        r = test_client.put('/api/plans/%d/offerings/%d' % (plan.id,
+                                                            offering.id),
+                            data=data)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert data['offering']['enrolled'] is True
@@ -62,7 +66,8 @@ class TestOfferingAPI(TestBase):
 
         offering = plan_with_offering.offerings.first()
         data = {'enrolled': False}
-        r = test_client.put('/api/offerings/%d' % offering.id, data=data)
+        r = test_client.put('/api/plans/%d/offerings/%d' %
+                            (plan_with_offering.id, offering.id), data=data)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert not data['offering']['enrolled']
@@ -75,7 +80,9 @@ class TestOfferingAPI(TestBase):
 
         offering = plan_with_user_added_offering.offerings.first()
         data = {'enrolled': False}
-        r = test_client.put('/api/offerings/%d' % offering.id, data=data)
+        r = test_client.put('/api/plans/%d/offerings/%d' %
+                            (plan_with_user_added_offering.id, offering.id),
+                            data=data)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert data['offering'] is None

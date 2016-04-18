@@ -1,29 +1,25 @@
-{% extends "base.html" %}
-
-{% block content %}
-
 <div layout-gt-md="row">
     <div ng-controller="SearchController" layout-md="row" class="edit" flex="100" flex-gt-md="25">
         <form class="md-whiteframe-z3" ng-submit="submit()" layout-md="column" layout-padding layout-margin name="filterCourses" flex="50">
             <div layout="row">
                 <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
-                  <md-option ng-value="opt.key" ng-repeat="opt in {{dept_options}}">{[opt.value]}</md-option>
+                  <md-option ng-value="opt.id" ng-repeat="opt in department_options">{[opt.abbr]}</md-option>
                 </md-select>
                 <md-select ng-model="fields.term_id" placeholder="Term" flex>
-                  <md-option ng-value="opt.key" ng-repeat="opt in {{term_options}}">{[opt.value]}</md-option>
+                  <md-option ng-value="opt.id" ng-repeat="opt in term_options">{[opt.abbr]}</md-option>
                 </md-select>
             </div>
             <div layout="row">
                 <md-select ng-model="fields.hour_id" placeholder="Hour" flex>
-                  <md-option ng-value="opt.key" ng-repeat="opt in {{hour_options}}">{[opt.value]}</md-option>
+                  <md-option ng-value="opt.id" ng-repeat="opt in hour_options">{[opt.period]}</md-option>
                 </md-select>
             </div>
             <div layout="row">
                 <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
-                  <md-option ng-value="opt.key" ng-repeat="opt in {{distrib_options}}">{[opt.value]}</md-option>
+                  <md-option ng-value="opt.id" ng-repeat="opt in distributive_options">{[opt.abbr]}</md-option>
                 </md-select>
                 <md-select ng-model="fields.median_id" placeholder="Median" flex>
-                  <md-option ng-value="opt.key" ng-repeat="opt in {{median_options}}">{[opt.value]}</md-option>
+                  <md-option ng-value="opt.id" ng-repeat="opt in median_options">{[opt.value]}</md-option>
                 </md-select>
             </div>
             <div layout="row">
@@ -44,5 +40,3 @@
       </div>
     </div>
 </div>
-
-{% endblock %}

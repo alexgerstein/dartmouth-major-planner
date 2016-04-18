@@ -1,9 +1,23 @@
-dartplanApp = angular.module 'dartplanApp', ['ngMaterial', 'ngMdIcons']
+dartplanApp = angular.module 'dartplanApp', ['ngRoute', 'ngMaterial', 'ngMdIcons']
 
 class config
-  constructor: ($httpProvider, $interpolateProvider, $mdThemingProvider) ->
+  constructor: ($httpProvider, $routeProvider, $locationProvider, $interpolateProvider, $mdThemingProvider) ->
     $httpProvider.defaults.headers
       .common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
+
+    $routeProvider.
+    when("/plans/:id",
+      {
+        templateUrl: '/static/partials/planner.html',
+        controller: 'MainController',
+        controllerAs: 'main'
+      }
+    )
+
+    $locationProvider.html5Mode({
+      enabled: true,
+      requireBase: false
+    })
 
     $interpolateProvider
       .startSymbol '{['
@@ -12,5 +26,7 @@ class config
     $mdThemingProvider.theme 'default'
       .primaryPalette 'green'
       .accentPalette 'amber'
+
+
 
 dartplanApp.config config

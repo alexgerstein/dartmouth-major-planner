@@ -8,6 +8,10 @@ from offerings import (OfferingAPI, OfferingListAPI,
                        CourseOfferingListAPI)
 from courses import CourseAPI, CourseListAPI
 from terms import TermAPI, TermListAPI
+from hours import HourListAPI
+from departments import DepartmentListAPI
+from distributives import DistributiveListAPI
+from medians import MedianListAPI
 from plans import PlanAPI
 from users import UserAPI
 
@@ -36,13 +40,21 @@ def fetch_user():
         g.user = None
 
 
-api.add_resource(OfferingListAPI, '/offerings', endpoint='offerings')
-api.add_resource(OfferingAPI, '/offerings/<int:id>', endpoint='offering')
+api.add_resource(OfferingListAPI, '/plans/<int:plan_id>/offerings',
+                 endpoint='offerings')
+api.add_resource(OfferingAPI, '/plans/<int:plan_id>/offerings/<int:id>',
+                 endpoint='offering')
 api.add_resource(CourseListAPI, '/courses', endpoint='courses')
 api.add_resource(CourseAPI, '/courses/<int:id>', endpoint='course')
 api.add_resource(CourseOfferingListAPI, '/courses/<int:id>/offerings',
                  endpoint='course_offerings')
-api.add_resource(TermListAPI, '/terms', endpoint='terms')
-api.add_resource(TermAPI, '/terms/<int:id>', endpoint='term')
-api.add_resource(PlanAPI, '/plan', endpoint='plan')
+api.add_resource(DistributiveListAPI, '/distributives',
+                 endpoint='distributives')
+api.add_resource(DepartmentListAPI, '/departments', endpoint='departments')
+api.add_resource(HourListAPI, '/hours', endpoint='hours')
+api.add_resource(MedianListAPI, '/medians', endpoint='medians')
+api.add_resource(TermListAPI, '/plans/<int:plan_id>/terms', endpoint='terms')
+api.add_resource(TermAPI, '/plans/<int:plan_id>/terms/<int:id>',
+                 endpoint='term')
+api.add_resource(PlanAPI, '/plans/<int:id>', endpoint='plan')
 api.add_resource(UserAPI, '/user', endpoint='user')

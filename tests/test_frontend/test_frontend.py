@@ -16,7 +16,6 @@ class TestHomePage:
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': 'd36395d', 'name': 'Alex Gerstein'}
 
-        data = dict(enrolled=True)
-        rv = test_client.put('/api/offerings/%d' % offering.id, data)
+        rv = test_client.get('/api/plans/1')
         rv.status_code == 303
         assert User.query.filter_by(netid='d36395d').first()

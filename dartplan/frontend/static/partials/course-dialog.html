@@ -12,7 +12,7 @@
             </md-tooltip>
           </ng-md-icon>
           <span flex></span>
-          <md-button ng-click="toggleEnroll(offering)" class="md-primary" ng-switch="offering.enrolled" aria-label="Switch course enrollment">
+          <md-button ng-click="toggleEnroll(plan_id, offering)" class="md-primary" ng-switch="offering.enrolled" aria-label="Switch course enrollment">
             <span ng-switch-when="true">Drop</span>
             <span ng-switch-when="false">Enroll</span>
           </md-button>
@@ -20,7 +20,7 @@
         <md-select ng-model="custom.term_id" aria-label="Select custom term for course" placeholder="Other">
           <md-option ng-repeat="term in customUserTerms" value="{[term.id]}">{[term.abbr]}</md-option>
         </md-select>
-        <md-button class="md-primary" type="submit" ng-click="enrollCustomOffering()" aria-label="Add custom term">Enroll</md-button>
+        <md-button class="md-primary" type="submit" ng-click="enrollCustomOffering(plan_id)" aria-label="Add custom term">Enroll</md-button>
     </md-list>
   </md-dialog-content>
   <div class="md-actions" layout="row">

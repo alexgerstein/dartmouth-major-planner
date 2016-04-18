@@ -1,7 +1,7 @@
 from flask import g
 from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
 from dartplan.login import login_required
-from dartplan.models import Term
+from dartplan.models import Plan, Term
 
 
 class isOn(fields.Raw):
@@ -23,8 +23,8 @@ term_fields = {
 
 class TermListAPI(Resource):
     @login_required
-    def get(self):
-        plan = g.user.plans.first()
+    def get(self, plan_id):
+        plan = Plan.query.get_or_404(plan_id)
         return {'terms': [marshal(term, term_fields) for term in plan._get_all_terms()]}
 
 
@@ -35,11 +35,11 @@ class TermAPI(Resource):
         super(TermAPI, self).__init__()
 
     @login_required
-    def put(self, id):
+    def put(self, plan_id, id):
         args = self.reqparse.parse_args()
 
         term = Term.query.get_or_404(id)
-        plan = g.user.plans.first()
+        plan = Plan.query.get_or_404(plan_id)
 
         if args.on is not None:
             if args.on and term in plan.terms:

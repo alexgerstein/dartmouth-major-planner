@@ -10,7 +10,7 @@ dartplanApp.factory 'Plan', ['Term', 'Offering', (Term, Offering) ->
 
 dartplanApp.factory 'PlansService', ['$http', 'Plan', ($http, Plan) ->
   new class Plans
-    getPlan: ->
-      $http.get('/api/plan').then (result) ->
+    getPlan: (id) ->
+      $http.get("/api/plans/#{id}").then (result) ->
         new Plan result.data.plan
 ]

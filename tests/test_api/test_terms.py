@@ -9,7 +9,7 @@ class TestTermListAPI(TestBase):
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': plan.user.netid}
 
-        r = test_client.get('/api/terms')
+        r = test_client.get('/api/plans/%d/terms' % plan.id)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
 
@@ -26,7 +26,8 @@ class TestTermAPI(TestBase):
         term = offering.term
 
         off = dict(on=False)
-        take_off = test_client.put('/api/terms/%d' % term.id, data=off)
+        take_off = test_client.put('/api/plans/%d/terms/%d' %
+                                   (plan_with_offering.id, term.id), data=off)
         self.check_valid_header_type(take_off.headers)
 
         data = json.loads(take_off.data)
@@ -41,7 +42,9 @@ class TestTermAPI(TestBase):
 
         off = dict(on=False)
 
-        take_off = test_client.put('/api/terms/%d' % oldTerm.id, data=off)
+        take_off = test_client.put('/api/plans/%d/terms/%d' % (plan.id,
+                                                               oldTerm.id),
+                                   data=off)
         self.check_valid_header_type(take_off.headers)
         assert take_off.status_code == 409
 
@@ -54,7 +57,9 @@ class TestTermAPI(TestBase):
             sess['user'] = {'netid': plan.user.netid}
 
         on = dict(on=True)
-        enroll = test_client.put('/api/terms/%d' % oldTerm.id, data=on)
+        enroll = test_client.put('/api/plans/%d/terms/%d' % (plan.id,
+                                                             oldTerm.id),
+                                 data=on)
         self.check_valid_header_type(enroll.headers)
 
         data = json.loads(enroll.data)
@@ -68,7 +73,8 @@ class TestTermAPI(TestBase):
         term = plan.terms.first()
         on = dict(on=True)
 
-        enroll = test_client.put('/api/terms/%d' % term.id, data=on)
+        enroll = test_client.put('/api/plans/%d/terms/%d' % (plan.id, term.id),
+                                 data=on)
         self.check_valid_header_type(enroll.headers)
         assert enroll.status_code == 409
 
