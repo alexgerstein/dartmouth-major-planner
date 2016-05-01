@@ -5,10 +5,10 @@ from functools import wraps
 
 from dartplan.database import db
 from dartplan.login import login_required
+from dartplan.authorization import plan_owned_by_user
 from dartplan.mail import welcome_notification
-from dartplan.models import User, Plan, Distributive, Hour, Department
+from dartplan.models import User, Plan
 from dartplan.forms import UserEditForm
-
 
 
 # Wrapper to make sure students can't view planner without giving it its range
@@ -43,7 +43,6 @@ def fetch_user():
     else:
         g.user = None
 
-
 # Default planner page for signed in users
 @bp.route('/planner', methods=['GET'])
 @login_required
@@ -54,6 +53,7 @@ def planner():
 
 
 @bp.route('/plans/<int:plan_id>', methods=['GET'])
+@plan_owned_by_user
 @login_required
 @year_required
 def plan(plan_id):
@@ -117,3 +117,8 @@ def disclaimer():
 @bp.app_errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
+
+
+@bp.app_errorhandler(401)
+def unauthorized(error):
+    return render_template('401.html'), 401

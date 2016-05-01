@@ -1,5 +1,6 @@
 from flask import g
 from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
+from dartplan.authorization import plan_owned_by_user
 from dartplan.login import login_required
 from dartplan.models import Plan, Term
 
@@ -22,6 +23,7 @@ term_fields = {
 
 
 class TermListAPI(Resource):
+    @plan_owned_by_user
     @login_required
     def get(self, plan_id):
         plan = Plan.query.get_or_404(plan_id)
@@ -34,6 +36,7 @@ class TermAPI(Resource):
         self.reqparse.add_argument('on', type=inputs.boolean)
         super(TermAPI, self).__init__()
 
+    @plan_owned_by_user
     @login_required
     def put(self, plan_id, id):
         args = self.reqparse.parse_args()

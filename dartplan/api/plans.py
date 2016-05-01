@@ -1,6 +1,7 @@
 from flask import g
 from flask.ext.restful import Resource, marshal, fields
 
+from dartplan.authorization import plan_owned_by_user
 from dartplan.login import login_required
 from dartplan.models import Plan
 
@@ -20,6 +21,7 @@ plan_fields = {
 
 
 class PlanAPI(Resource):
+    @plan_owned_by_user
     @login_required
     def get(self, id):
         plan = Plan.query.get_or_404(id)

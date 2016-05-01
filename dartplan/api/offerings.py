@@ -2,6 +2,7 @@ from flask import g
 from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
 from sqlalchemy.orm.exc import NoResultFound
 
+from dartplan.authorization import plan_owned_by_user
 from dartplan.database import db
 from dartplan.login import login_required
 from dartplan.models import Plan, Offering, Course, Term, Hour
@@ -54,12 +55,14 @@ class OfferingListAPI(Resource):
         self.reqparse.add_argument('term_id', type=int)
         super(OfferingListAPI, self).__init__()
 
+    @plan_owned_by_user
     @login_required
     def get(self, plan_id):
         plan = Plan.query.get_or_404(plan_id)
         return {'offerings': [marshal(offering, offering_fields)
                               for offering in plan.offerings.all()]}
 
+    @plan_owned_by_user
     @login_required
     def post(self, plan_id):
         args = self.reqparse.parse_args()
@@ -98,10 +101,12 @@ class OfferingAPI(Resource):
         self.reqparse.add_argument('enrolled', type=inputs.boolean)
         super(OfferingAPI, self).__init__()
 
+    @plan_owned_by_user
     def get(self, plan_id, id):
         offering = Offering.query.get_or_404(id)
         return {'offering': marshal(offering, offering_fields)}
 
+    @plan_owned_by_user
     @login_required
     def put(self, plan_id, id):
         args = self.reqparse.parse_args()
