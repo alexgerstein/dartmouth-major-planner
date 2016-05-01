@@ -35,7 +35,6 @@ OfferingInfoDialogController = ($scope, $mdDialog) ->
     $mdDialog.cancel()
 
 CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, course, plan_id) ->
-  debugger
   $scope.custom = {}
   $scope.course = course
   $scope.plan_id = plan_id
@@ -50,7 +49,6 @@ CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, cou
     $scope.customTermsLoading = false
 
   $scope.toggleEnroll = (plan_id, offering) ->
-    debugger
     offering.enrolled = !offering.enrolled
     if offering.user_added and offering.enrolled
       OfferingsService.enrollCustomOffering(plan_id, offering.course.id, offering.term.id)
@@ -74,7 +72,6 @@ CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, cou
 
 CourseDialogLauncherController = ($scope, $mdDialog) ->
   $scope.showTermModal = (course) ->
-    debugger
     $mdDialog.show({
       controller: CourseDialogController,
       locals: { course: course, plan_id: $scope.plan_id },
