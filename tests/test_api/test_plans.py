@@ -10,7 +10,7 @@ class TestPlanAPI(TestBase):
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': plan_with_offering.user.netid}
 
-        r = test_client.get('/api/plan')
+        r = test_client.get('/api/plans/%d' % plan_with_offering.id)
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         plan_data = data['plan']

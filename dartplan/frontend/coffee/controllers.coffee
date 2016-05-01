@@ -1,15 +1,19 @@
 dartplanApp = angular.module 'dartplanApp'
 
+dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$routeParams', ($scope, $route, $location, $routeParams) ->
+  $scope.plan_id = $routeParams.id
+]
+
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
 
   render = ->
-    PlansService.getPlan().then (plan) ->
+    PlansService.getPlan($scope.plan_id).then (plan) ->
       $scope.plan = plan
 
   render()
 
   $scope.toggleTerm = (term) =>
-    TermsService.toggle(term.id, !term.on)
+    TermsService.toggle($scope.plan_id, term.id, !term.on)
 
   $scope.$on 'changedCourses', =>
     render()
@@ -21,7 +25,7 @@ dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'Pla
           controller: OfferingInfoDialogController,
           scope: $scope,
           preserveScope: true,
-          templateUrl: 'static/partials/offering-info-dialog.html',
+          templateUrl: '/static/partials/offering-info-dialog.html',
           clickOutsideToClose: true
         })
 ]
@@ -30,34 +34,34 @@ OfferingInfoDialogController = ($scope, $mdDialog) ->
   $scope.cancel = ->
     $mdDialog.cancel()
 
-CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, course) ->
-
+CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, course, plan_id) ->
   $scope.custom = {}
-  $scope.course = course;
+  $scope.course = course
+  $scope.plan_id = plan_id
   $scope.offeringsLoading = true
   $scope.customTermsLoading = true
   OfferingsService.getCourseOfferings($scope.course.id).then (offerings) ->
     $scope.offerings = offerings
     $scope.offeringsLoading = false
 
-  TermsService.getPlanTerms().then (terms) ->
+  TermsService.getPlanTerms($scope.plan_id).then (terms) ->
     $scope.customUserTerms = terms
     $scope.customTermsLoading = false
 
-  $scope.toggleEnroll = (offering) ->
+  $scope.toggleEnroll = (plan_id, offering) ->
     offering.enrolled = !offering.enrolled
     if offering.user_added and offering.enrolled
-      OfferingsService.enrollCustomOffering(offering.course.id, offering.term.id)
+      OfferingsService.enrollCustomOffering(plan_id, offering.course.id, offering.term.id)
     else
-      OfferingsService.toggle(offering.id, offering.enrolled)
+      OfferingsService.toggle(plan_id, offering.id, offering.enrolled)
 
-  $scope.enrollCustomOffering = ->
+  $scope.enrollCustomOffering = (plan_id) ->
     existingOffering = ($scope.offerings.filter (i) -> i.term.id.toString() is $scope.custom.term_id)[0]
 
     if existingOffering and !existingOffering.user_added
-      $scope.toggleEnroll(existingOffering)
+      $scope.toggleEnroll(plan_id, existingOffering)
     else
-      OfferingsService.enrollCustomOffering($scope.course.id, $scope.custom.term_id).then (offering) ->
+      OfferingsService.enrollCustomOffering(plan_id, $scope.course.id, $scope.custom.term_id).then (offering) ->
         if !existingOffering
           $scope.offerings.push offering
         else
@@ -70,14 +74,25 @@ CourseDialogLauncherController = ($scope, $mdDialog) ->
   $scope.showTermModal = (course) ->
     $mdDialog.show({
       controller: CourseDialogController,
-      locals: { course: course },
+      locals: { course: course, plan_id: $scope.plan_id },
       preserveScope: true,
-      templateUrl: 'static/partials/course-dialog.html',
+      templateUrl: '/static/partials/course-dialog.html',
       clickOutsideToClose: true
     })
 
-dartplanApp.controller 'SearchController', ['$rootScope', '$scope', '$mdDialog', 'CourseService', ($rootScope, $scope, $mdDialog, CourseService) ->
+dartplanApp.controller 'SearchController', ['$rootScope', '$scope', '$mdDialog', 'TermsService', 'HoursService', 'DepartmentsService', 'DistributivesService', 'MediansService', 'CourseService',  ($rootScope, $scope, $mdDialog, TermsService, HoursService, DepartmentsService, DistributivesService, MediansService, CourseService) ->
   $scope.fields = {}
+
+  TermsService.getPlanTerms($scope.plan_id).then (terms) ->
+    $scope.term_options = terms
+  HoursService.getAll().then (hours) ->
+    $scope.hour_options = hours
+  MediansService.getAll().then (medians) ->
+    $scope.median_options = medians
+  DepartmentsService.getAll().then (departments) ->
+    $scope.department_options = departments
+  DistributivesService.getAll().then (distributives) ->
+    $scope.distributive_options = distributives
 
   $scope.submit = ->
     $scope.loading = true

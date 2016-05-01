@@ -1,7 +1,9 @@
 from flask import g
 from flask.ext.restful import Resource, marshal, fields
 
+from dartplan.authorization import plan_owned_by_user
 from dartplan.login import login_required
+from dartplan.models import Plan
 
 from terms import term_fields
 from offerings import offering_fields
@@ -19,6 +21,8 @@ plan_fields = {
 
 
 class PlanAPI(Resource):
+    @plan_owned_by_user
     @login_required
-    def get(self):
-        return {'plan': marshal(g.user.plans.first(), plan_fields)}
+    def get(self, id):
+        plan = Plan.query.get_or_404(id)
+        return {'plan': marshal(plan, plan_fields)}

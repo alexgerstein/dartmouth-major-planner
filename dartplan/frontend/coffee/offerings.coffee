@@ -14,13 +14,13 @@ dartplanApp.factory 'OfferingsService', ['$http', '$rootScope', '$mdToast', 'Off
       $http.get("/api/courses/#{ id }/offerings").then (result) =>
         new Offering offering for offering in result.data.offerings
 
-    toggle: (id, enrolled) ->
-      $http.put("/api/offerings/#{ id }", {'enrolled': enrolled}).then (result) ->
+    toggle: (plan_id, id, enrolled) ->
+      $http.put("/api/plans/#{plan_id}/offerings/#{id}", {'enrolled': enrolled}).then (result) ->
         $rootScope.$broadcast 'changedCourses'
         $mdToast.showSimple('Successfully changed course enrollment.');
 
-    enrollCustomOffering: (course_id, term_id) ->
-      $http.post("/api/offerings", {course_id: course_id, term_id: term_id}).then (result) ->
+    enrollCustomOffering: (plan_id, course_id, term_id) ->
+      $http.post("/api/plans/#{plan_id}/offerings", {course_id: course_id, term_id: term_id}).then (result) ->
         $rootScope.$broadcast 'changedCourses'
         $mdToast.showSimple('Successfully changed course enrollment.');
         new Offering result.data.offering

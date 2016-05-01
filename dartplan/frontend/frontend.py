@@ -5,12 +5,10 @@ from functools import wraps
 
 from dartplan.database import db
 from dartplan.login import login_required
+from dartplan.authorization import plan_owned_by_user
 from dartplan.mail import welcome_notification
-from dartplan.models import User, Plan, Distributive, Hour, Department
+from dartplan.models import User, Plan
 from dartplan.forms import UserEditForm
-
-MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B',
-           'B/B-', 'B-', 'B-/C+', 'C+', 'C+/C', 'C']
 
 
 # Wrapper to make sure students can't view planner without giving it its range
@@ -45,37 +43,29 @@ def fetch_user():
     else:
         g.user = None
 
-
-# Planner page for signed in users
-# Landing Page for All Users, most will be redirected to login form
+# Default planner page for signed in users
 @bp.route('/planner', methods=['GET'])
 @login_required
 @year_required
 def planner():
     plan = g.user.plans.first()
+    return redirect(url_for('frontend.plan', plan_id=plan.id))
+
+
+@bp.route('/plans/<int:plan_id>', methods=['GET'])
+@plan_owned_by_user
+@login_required
+@year_required
+def plan(plan_id):
+    plan = Plan.query.get_or_404(plan_id)
 
     # Check if terms aren't in the session
     if plan.terms.count() == 0:
         plan.reset_terms()
 
-    dept_options = [{'key': dept.id, 'value': str(dept.abbr)}
-                    for dept in Department.query.order_by('abbr')]
-    hour_options = [{'key': hour.id, 'value': str(hour.period)}
-                    for hour in Hour.query.order_by('id')]
-    term_options = [{'key': term.id, 'value': str(term)}
-                    for term in plan._get_all_terms()]
-    distrib_options = [{'key': distrib.id, 'value': str(distrib.abbr)}
-                       for distrib in Distributive.query.order_by('abbr')]
-    median_options = [{'key': index, 'value': str(median)}
-                      for index, median in enumerate(MEDIANS)]
-
-    return render_template("planner.html",
+    return render_template('app.html',
                            title='Course Plan',
-                           user=g.user, dept_options=dept_options,
-                           hour_options=hour_options,
-                           term_options=term_options,
-                           distrib_options=distrib_options,
-                           median_options=median_options
+                           user=g.user
                            )
 
 
@@ -127,3 +117,8 @@ def disclaimer():
 @bp.app_errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
+
+
+@bp.app_errorhandler(401)
+def unauthorized(error):
+    return render_template('401.html'), 401
