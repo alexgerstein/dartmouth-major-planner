@@ -26,6 +26,7 @@ class config
     $mdThemingProvider.theme 'default'
       .primaryPalette 'green'
       .accentPalette 'amber'
+      .warnPalette 'indigo'
 
 
 

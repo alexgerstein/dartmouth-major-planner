@@ -19,3 +19,9 @@ dartplanApp.directive 'plannerTerm', ->
     replace: true,
     templateUrl: '/static/partials/planner-term.html',
   }
+
+dartplanApp.directive 'plannerSettings', ->
+  return {
+    replace: true,
+    templateUrl: '/static/partials/planner-settings.html',
+  }

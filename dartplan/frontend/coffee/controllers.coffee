@@ -15,6 +15,9 @@ dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'Pla
   $scope.toggleTerm = (term) =>
     TermsService.toggle($scope.plan_id, term.id, !term.on)
 
+  $scope.toggleFifthYear = =>
+    PlansService.toggleFifthYear($scope.plan_id, !$scope.plan.fifth_year)
+
   $scope.$on 'changedCourses', =>
     render()
 

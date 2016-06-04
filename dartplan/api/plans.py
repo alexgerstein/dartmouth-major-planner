@@ -6,6 +6,7 @@ from dartplan.models import Plan
 
 from terms import term_fields
 from offerings import offering_fields
+from users import user_fields
 
 
 class getPlanTerms(fields.Raw):
@@ -16,7 +17,8 @@ plan_fields = {
     'title': fields.String,
     'terms': getPlanTerms,
     'offerings': fields.List(fields.Nested(offering_fields)),
-    'fifth_year': fields.Boolean
+    'fifth_year': fields.Boolean,
+    'user': fields.Nested(user_fields)
 }
 
 

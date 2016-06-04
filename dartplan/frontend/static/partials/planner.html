@@ -36,6 +36,7 @@
 
     <div ng-controller="PlannerController" class="planner" flex="100" flex-gt-md="75">
       <div layout="row" layout-wrap>
+        <planner-settings></planner-settings>
         <planner-term ng-repeat="term in plan.terms"></planner-term>
       </div>
     </div>
