@@ -11,6 +11,13 @@ def plan(db):
 
 
 @pytest.fixture()
+def five_year_plan(db):
+    plan = plan_factories.PlanFactory(fifth_year=True)
+    db.session.commit()
+    return plan
+
+
+@pytest.fixture()
 def plan_with_offering(db):
     plan = plan_factories.PlanFactory()
     term = Term.query.filter_by(year=plan.user.grad_year - 1).first()

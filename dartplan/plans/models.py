@@ -29,6 +29,8 @@ class Plan(db.Model):
                                 secondary=plan_offerings, backref='plans',
                                 lazy='dynamic')
 
+    fifth_year = db.Column(db.Boolean, default=False)
+
     def drop(self, offering):
         deleted = False
         if offering in self.offerings:
@@ -61,6 +63,10 @@ class Plan(db.Model):
         db.session.commit()
         return self
 
+    def swap_fifth_year(self):
+        self.fifth_year = not self.fifth_year
+        db.session.commit()
+
     def reset_terms(self):
         terms = self._get_all_terms()
 
@@ -77,22 +83,26 @@ class Plan(db.Model):
     def _get_all_terms(self):
         all_terms = []
 
+        freshman_year = self.user.grad_year - 4
+        total_years = 4
+        if self.fifth_year:
+            total_years += 1
+
         # Add Freshman Fall
-        t = Term.query.filter_by(year=self.user.grad_year - 4,
+        t = Term.query.filter_by(year=freshman_year,
                                  season=Term.SEASONS[3]).first()
         if t is None:
-            t = Term(year=self.user.grad_year - 4, season=Term.SEASONS[3])
+            t = Term(year=freshman_year, season=Term.SEASONS[3])
             db.session.add(t)
 
         all_terms.append(t)
 
-        for year_diff in reversed(range(4)):
+        for year_diff in range(total_years):
+            year = freshman_year + 1 + year_diff
             for season in Term.SEASONS:
-                t = Term.query.filter_by(year=self.user.grad_year - year_diff,
-                                         season=season).first()
+                t = Term.query.filter_by(year=year, season=season).first()
                 if t is None:
-                    t = Term(year=self.user.grad_year - year_diff,
-                             season=season)
+                    t = Term(year=year, season=season)
                     db.session.add(t)
 
                 all_terms.append(t)

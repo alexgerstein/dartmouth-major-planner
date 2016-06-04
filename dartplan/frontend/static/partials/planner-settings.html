@@ -1,0 +1,7 @@
+<div layout-padding layout="row" layout-align="space-between center" flex='100'>
+  <span>{[plan.title]} Plan - {[plan.user.nickname]} '{[plan.user.class_year()]}</span>
+  <span flex></span>
+  <md-switch class="md-warn" ng-model="plan.fifth_year" aria-label="Five-Year Plan?" ng-click="toggleFifthYear()">
+    <span>Fifth-year?</span>
+  </md-switch>
+</div>

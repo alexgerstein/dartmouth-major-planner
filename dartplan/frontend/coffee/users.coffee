@@ -5,6 +5,9 @@ dartplanApp.factory 'User', ->
     constructor: (options) ->
       {@nickname, @grad_year, @email_course_updates, @email_Dartplan_updates} = options
 
+    class_year: ->
+      @grad_year % 100
+
 dartplanApp.factory 'UsersService', ['$http', 'User', ($http, User) ->
   new class Users
     get: ->
