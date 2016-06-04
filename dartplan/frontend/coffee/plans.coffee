@@ -18,5 +18,6 @@ dartplanApp.factory 'PlansService', ['$http', '$rootScope', '$mdToast', 'Plan', 
     toggleFifthYear: (id, enrolled) ->
       $http.put("/api/plans/#{id}", {'fifth_year': enrolled}).then (result) ->
         $rootScope.$broadcast 'changedCourses'
+        $rootScope.$broadcast 'changedTerms'
         $mdToast.showSimple('Successfully changed fifth-year enrollment.');
 ]

@@ -86,16 +86,25 @@ CourseDialogLauncherController = ($scope, $mdDialog) ->
 dartplanApp.controller 'SearchController', ['$rootScope', '$scope', '$mdDialog', 'TermsService', 'HoursService', 'DepartmentsService', 'DistributivesService', 'MediansService', 'CourseService',  ($rootScope, $scope, $mdDialog, TermsService, HoursService, DepartmentsService, DistributivesService, MediansService, CourseService) ->
   $scope.fields = {}
 
-  TermsService.getPlanTerms($scope.plan_id).then (terms) ->
-    $scope.term_options = terms
-  HoursService.getAll().then (hours) ->
-    $scope.hour_options = hours
-  MediansService.getAll().then (medians) ->
-    $scope.median_options = medians
-  DepartmentsService.getAll().then (departments) ->
-    $scope.department_options = departments
-  DistributivesService.getAll().then (distributives) ->
-    $scope.distributive_options = distributives
+  render = ->
+    getTermOptions()
+    HoursService.getAll().then (hours) ->
+      $scope.hour_options = hours
+    MediansService.getAll().then (medians) ->
+      $scope.median_options = medians
+    DepartmentsService.getAll().then (departments) ->
+      $scope.department_options = departments
+    DistributivesService.getAll().then (distributives) ->
+      $scope.distributive_options = distributives
+
+  getTermOptions = ->
+    TermsService.getPlanTerms($scope.plan_id).then (terms) ->
+      $scope.term_options = terms
+
+  render()
+
+  $scope.$on 'changedTerms', =>
+    getTermOptions()
 
   $scope.submit = ->
     $scope.loading = true
