@@ -1,9 +1,10 @@
 from . import bp
 
-from flask import config, render_template, g, session, redirect, url_for
+from flask import render_template, g, session, redirect, url_for
 from functools import wraps
 
 from dartplan.database import db
+from dartplan.localytics import localytics
 from dartplan.login import login_required
 from dartplan.mail import welcome_notification
 from dartplan.models import User, Plan
@@ -78,6 +79,9 @@ def edit():
 
         form.populate_obj(g.user)
         db.session.commit()
+
+        localytics.track_profile(g.user.net_id,
+                                 {'grad_year': g.user.grad_year})
 
         plan = g.user.plans.first()
         plan.reset_terms()
