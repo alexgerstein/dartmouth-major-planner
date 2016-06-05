@@ -1,16 +1,30 @@
 dartplanApp = angular.module 'dartplanApp'
 
-dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$routeParams', ($scope, $route, $location, $routeParams) ->
+dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$routeParams', 'PlansService', 'UsersService', ($scope, $route, $location, $routeParams, PlansService, UsersService) ->
+  $scope.planLoaded = false
+
+  $scope.getPlan = ->
+    return unless $scope.plan_id
+    PlansService.getPlan($scope.plan_id).then (plan) ->
+      $scope.plan = plan
+      $scope.planLoaded = true
+
+  $scope.getCurrentUser = ->
+    UsersService.get().then (user) ->
+      $scope.user = user
+
+  $scope.isCurrentUser = ->
+    $scope.user and $scope.plan and $scope.plan.user.id == $scope.user.id
+
+  $scope.$route = $route
   $scope.plan_id = $routeParams.id
+  $scope.getPlan()
+  $scope.getCurrentUser()
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
-
   render = ->
-    PlansService.getPlan($scope.plan_id).then (plan) ->
-      $scope.plan = plan
-
-  render()
+    $scope.getPlan()
 
   $scope.toggleTerm = (term) =>
     TermsService.toggle($scope.plan_id, term.id, !term.on)

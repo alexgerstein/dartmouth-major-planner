@@ -9,6 +9,5 @@ distributive_fields = {
 
 
 class DistributiveListAPI(Resource):
-    @login_required
     def get(self):
         return {'distributives': [marshal(distrib, distributive_fields) for distrib in Distributive.query.order_by('abbr')]}

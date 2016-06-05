@@ -5,6 +5,7 @@ from dartplan.login import login_required
 from dartplan.database import db
 
 user_fields = {
+    'id': fields.Integer,
     'nickname': fields.String,
     'grad_year': fields.Integer,
     'email_course_updates': fields.Boolean,

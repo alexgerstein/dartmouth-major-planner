@@ -11,7 +11,10 @@ from users import user_fields
 
 class getPlanTerms(fields.Raw):
     def output(self, key, plan):
-        return [marshal(term, term_fields) for term in plan._get_all_terms()]
+        terms = plan._get_all_terms()
+        for term in terms:
+            term.plan = plan
+        return [marshal(term, term_fields) for term in terms]
 
 plan_fields = {
     'title': fields.String,
@@ -28,8 +31,6 @@ class PlanAPI(Resource):
         self.reqparse.add_argument('fifth_year', type=inputs.boolean)
         super(PlanAPI, self).__init__()
 
-    @plan_owned_by_user
-    @login_required
     def get(self, id):
         plan = Plan.query.get_or_404(id)
         return {'plan': marshal(plan, plan_fields)}

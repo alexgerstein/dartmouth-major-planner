@@ -1,5 +1,5 @@
 <div layout-gt-md="row">
-    <div ng-controller="SearchController" layout-md="row" class="edit" flex="100" flex-gt-md="25">
+    <div ng-if="isCurrentUser()" ng-controller="SearchController" layout-md="row" class="edit" flex="100" flex-gt-md="25">
         <form class="md-whiteframe-z3" ng-submit="submit()" layout-md="column" layout-padding layout-margin name="filterCourses" flex="50">
             <div layout="row">
                 <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
@@ -34,10 +34,15 @@
         </md-list>
     </div>
 
-    <div ng-controller="PlannerController" class="planner" flex="100" flex-gt-md="75">
-      <div layout="row" layout-wrap>
+    <div ng-controller="PlannerController" class="planner" flex>
+      <div layout="row" ng-show='planLoaded' layout-wrap ng-if='plan != null'>
         <planner-settings></planner-settings>
         <planner-term ng-repeat="term in plan.terms"></planner-term>
+      </div>
+      <div layout="row" ng-show='planLoaded' layout-wrap ng-if='plan == null'>
+        <span flex></span>
+        <h1>Plan not found!</span>
+        <span flex></span>
       </div>
     </div>
 </div>

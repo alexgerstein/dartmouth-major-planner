@@ -9,6 +9,5 @@ department_fields = {
 
 
 class DepartmentListAPI(Resource):
-    @login_required
     def get(self):
         return {'departments': [marshal(dept, department_fields) for dept in Department.query.order_by('abbr')]}

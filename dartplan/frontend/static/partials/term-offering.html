@@ -1,7 +1,7 @@
 <md-list-item layout="row" class="md-list-item-text">
   <h3 class="md-body-2">{[offering.name]} ({[offering.hour]})</h3>
   <span flex></span>
-  <md-button class="md-fab md-mini md-primary" ng-click="showTermModal(offering.course)" aria-label="Edit">
+  <md-button ng-if="isCurrentUser()" class="md-fab md-mini md-primary" ng-click="showTermModal(offering.course)" aria-label="Edit">
     <ng-md-icon icon="mode_edit" style="fill: white">    <md-tooltip>
       Edit
     </md-tooltip></ng-md-icon>

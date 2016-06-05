@@ -21,24 +21,24 @@
     <div layout="column" layout-fill>
       <md-toolbar>
         <div class="md-toolbar-tools">
-          <a class="brand" href="{{ url_for('frontend.index')}}" layout="row" layout-align="start center">
+          <a class="brand" ng-href="/index" layout="row" layout-align="start center">
             <img src="{{ url_for ('static', filename='img/p-logo-white.png') }}" style="width: 50px; padding: 0 5px;">
             <span hide show-gt-sm><b>DART</b>Plan</span>
           </a>
           <span flex></span>
           {% if user %}
           <md-button>
-            <a href="{{ url_for('frontend.planner') }}">My Plan</a>
+            <a ng-href="{{ url_for('frontend.planner') }}" target="_self">My Plan</a>
           </md-button>
           <md-button>
-            <a href="{{ url_for('frontend.edit') }}">Settings</a>
+            <a ng-href="{{ url_for('frontend.edit') }}" target="_self">Settings</a>
           </md-button>
           <md-button>
-            <a href="{{ url_for('flask_cas.logout') }}">Logout</a>
+            <a ng-href="{{ url_for('flask_cas.logout') }}" target="_self">Logout</a>
           </md-button>
           {% else %}
           <md-button>
-            <a href="{{ url_for('flask_cas.login') }}">Login</a>
+            <a ng-href="{{ url_for('flask_cas.login') }}" target="_self">Login</a>
           </md-button>
           {% endif %}
         </div>
@@ -50,9 +50,9 @@
 
       <md-toolbar class="md-toolbar-bottom">
         <div class="md-toolbar-tools">
-          <md-button><a href="{{ url_for('frontend.about') }}">About</a></md-button>
+          <md-button><a ng-href="/about">About</a></md-button>
           <span flex></span>
-          <md-button><a href="{{ url_for('frontend.disclaimer') }}">Disclaimer</a></md-button>
+          <md-button><a ng-href="/disclaimer">Disclaimer</a></md-button>
         </div>
       </md-toolbar>
     </div>
