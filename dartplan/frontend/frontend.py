@@ -81,7 +81,13 @@ def edit():
         db.session.commit()
 
         localytics.track_profile(g.user.net_id,
-                                 {'grad_year': g.user.grad_year})
+                                 {'grad_year': g.user.grad_year,
+                                  'name': g.user.full_name,
+                                  'email_course_updates':
+                                  g.user.email_course_updates,
+                                  'email_Dartplan_updates':
+                                  g.user.email_Dartplan_updates
+                                  })
 
         plan = g.user.plans.first()
         plan.reset_terms()
