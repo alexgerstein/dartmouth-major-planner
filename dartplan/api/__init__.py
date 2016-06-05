@@ -18,28 +18,6 @@ from users import UserAPI
 bp = Blueprint('api', __name__)
 api = Api(bp, prefix="/api")
 
-
-# Always track if there is a current user signed in
-# If unrecognized user is in, add them to user database
-@bp.before_request
-def fetch_user():
-
-    if 'user' in session:
-        g.user = User.query.filter_by(netid=session['user']['netid']).first()
-        if g.user is None:
-            g.user = User(session['user']['name'], session['user']['netid'])
-            db.session.add(g.user)
-            db.session.commit()
-
-            plan = Plan(user_id=g.user.id)
-            db.session.add(plan)
-            db.session.commit()
-
-            return (redirect(url_for('frontend.edit')))
-    else:
-        g.user = None
-
-
 api.add_resource(OfferingListAPI, '/plans/<int:plan_id>/offerings',
                  endpoint='offerings')
 api.add_resource(OfferingAPI, '/plans/<int:plan_id>/offerings/<int:id>',

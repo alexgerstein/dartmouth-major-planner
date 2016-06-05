@@ -113,7 +113,6 @@ class OfferingAPI(Resource):
 
 
 class CourseOfferingListAPI(Resource):
-    @login_required
     def get(self, id):
         course = Course.query.get_or_404(id)
         offerings = Offering.query.filter_by(course=course).all()

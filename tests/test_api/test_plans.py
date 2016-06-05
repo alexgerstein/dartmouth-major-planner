@@ -60,3 +60,15 @@ class TestPlanAPI(TestBase):
 
         data = json.loads(enroll_in_extra_year.data)
         assert "Plan already excludes 5th year" in data['errors']['fifth_year'][0]
+
+    def test_enroll_in_fifth_year_unauthorized(self, test_client, user,
+                                               plan_with_offering):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': user.netid}
+
+        fifth_year = dict(fifth_year=True)
+        enroll_in_extra_year = test_client.put('/api/plans/%d' %
+                                               (plan_with_offering.id),
+                                               data=fifth_year)
+        self.check_valid_header_type(enroll_in_extra_year.headers)
+        assert enroll_in_extra_year.status_code == 401
