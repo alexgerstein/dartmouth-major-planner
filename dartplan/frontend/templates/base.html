@@ -93,7 +93,7 @@
           (s = y.createElement(t)).type = 'text/javascript';
           s.src = '//web.localytics.com/v3/localytics.js';
           (c = y.getElementsByTagName(t)[0]).parentNode.insertBefore(s, c);
-          ll('init', "{{ config['LOCALYTICS_APP_KEY'] }}", {domain: 'dartplan.com'});
+          ll('init', "{{ config['LOCALYTICS_APP_KEY'] }}", {trackPageView: true, domain: 'dartplan.com', sessionTimeout: 604800});
       }(window, document, 'script', 'll');
     </script>
   </body>

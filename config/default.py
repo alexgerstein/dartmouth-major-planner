@@ -20,6 +20,8 @@ MAIL_USE_TLS = False
 MAIL_USE_SSL = True
 
 LOCALYTICS_APP_KEY = 'someinvalidkey'
+LOCALYTICS_API_KEY = 'aninvalidkey'
+LOCALYTICS_API_SECRET = 'shhhhtellnoone'
 
 logging.basicConfig(level=logging.WARNING)
 

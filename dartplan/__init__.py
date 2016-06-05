@@ -30,6 +30,9 @@ def create_app(env=None):
     from dartplan.login import flask_cas
     app.register_blueprint(flask_cas)
 
+    from dartplan.localytics import localytics
+    localytics.init_app(app)
+
     from dartplan.frontend import frontend, assets
     app.register_blueprint(frontend.bp)
     assets.init_app(app)
