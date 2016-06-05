@@ -15,6 +15,7 @@ class TestUserAPI(TestBase):
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert data['user']['nickname'] == user.nickname
+        assert data['user']['email'] == "%s@dartmouth.edu" % user.netid
 
     def test_delete_user(self, test_client, plan):
         with test_client.session_transaction() as sess:

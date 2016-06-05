@@ -1,6 +1,6 @@
 from . import bp
 
-from flask import render_template, g, session, redirect, url_for
+from flask import config, render_template, g, session, redirect, url_for
 from functools import wraps
 
 from dartplan.database import db
@@ -92,7 +92,7 @@ def edit():
 
 @bp.app_errorhandler(404)
 def page_not_found(error):
-    return render_template('app.html', user=g.user), 404
+    return render_template('app.html', user=g.user)
 
 
 @bp.app_errorhandler(401)

@@ -19,6 +19,8 @@ MAIL_PORT = 465
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
 
+LOCALYTICS_APP_KEY = 'someinvalidkey'
+
 logging.basicConfig(level=logging.WARNING)
 
 logger = logging.getLogger('DARTplan')

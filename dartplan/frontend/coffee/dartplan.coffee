@@ -32,8 +32,7 @@ class config
     ).
     when('/',
       {
-        redirectTo: '/index',
-        controller: 'MainController'
+        redirectTo: '/index'
       }
     ).
     otherwise(

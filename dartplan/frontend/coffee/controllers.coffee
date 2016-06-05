@@ -20,6 +20,7 @@ dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$rou
   $scope.plan_id = $routeParams.id
   $scope.getPlan()
   $scope.getCurrentUser()
+  ll('tagScreen', $route.current.originalPath)
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
