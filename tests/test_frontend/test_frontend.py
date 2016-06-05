@@ -19,10 +19,3 @@ class TestHomePage:
         rv = test_client.get('/api/plans/1')
         rv.status_code == 303
         assert User.query.filter_by(netid='d36395d').first()
-
-    def test_unauthorized_page(self, test_client, user, plan):
-        with test_client.session_transaction() as sess:
-            sess['user'] = {'netid': user.netid, 'name': 'Alex Gerstein'}
-
-        rv = test_client.get('/api/plans/1', follow_redirects=True)
-        assert 401 == rv.status_code

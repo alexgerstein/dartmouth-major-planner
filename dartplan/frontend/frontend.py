@@ -5,7 +5,6 @@ from functools import wraps
 
 from dartplan.database import db
 from dartplan.login import login_required
-from dartplan.authorization import plan_owned_by_user
 from dartplan.mail import welcome_notification
 from dartplan.models import User, Plan
 from dartplan.forms import UserEditForm
@@ -25,9 +24,8 @@ def year_required(fn):
 
 # Always track if there is a current user signed in
 # If unrecognized user is in, add them to user database
-@bp.before_request
+@bp.before_app_request
 def fetch_user():
-
     if 'user' in session:
         g.user = User.query.filter_by(netid=session['user']['netid']).first()
         if g.user is None:
@@ -43,6 +41,7 @@ def fetch_user():
     else:
         g.user = None
 
+
 # Default planner page for signed in users
 @bp.route('/planner', methods=['GET'])
 @login_required
@@ -53,9 +52,6 @@ def planner():
 
 
 @bp.route('/plans/<int:plan_id>', methods=['GET'])
-@plan_owned_by_user
-@login_required
-@year_required
 def plan(plan_id):
     plan = Plan.query.get_or_404(plan_id)
 
@@ -64,9 +60,9 @@ def plan(plan_id):
         plan.reset_terms()
 
     return render_template('app.html',
-                           title='Course Plan',
-                           user=g.user
-                           )
+                           title='%s Plan - %s' % (plan.title,
+                                                   plan.user.nickname),
+                           user=g.user)
 
 
 # Edit Page to change Name and Graduation Year
@@ -94,31 +90,16 @@ def edit():
                            user=g.user)
 
 
-@bp.route('/')
-@bp.route('/index')
-def index():
-    return render_template("index.html",
-                           user_count=format(User.query.count(), ",d"),
-                           user=g.user)
-
-
-@bp.route('/about')
-def about():
-    return render_template("about.html",
-                           user=g.user)
-
-
-@bp.route('/disclaimer')
-def disclaimer():
-    return render_template("disclaimer.html",
-                           user=g.user)
-
-
 @bp.app_errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html'), 404
+    return render_template('app.html', user=g.user), 404
 
 
 @bp.app_errorhandler(401)
 def unauthorized(error):
-    return render_template('401.html'), 401
+    return render_template('401.html', user=g.user), 401
+
+
+@bp.app_errorhandler(500)
+def server_error(error):
+    return render_template('500.html', user=g.user), 500

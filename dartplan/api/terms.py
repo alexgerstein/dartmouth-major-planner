@@ -1,4 +1,3 @@
-from flask import g
 from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
 from dartplan.authorization import plan_owned_by_user
 from dartplan.login import login_required
@@ -7,8 +6,11 @@ from dartplan.models import Plan, Term
 
 class isOn(fields.Raw):
     def output(self, key, term):
-        plan = g.user and g.user.plans.first()
-        return plan and term in plan.terms
+        try:
+            plan = term.plan
+            return plan and term in plan.terms
+        except AttributeError:
+            return False
 
 
 class getAbbr(fields.Raw):
@@ -27,7 +29,12 @@ class TermListAPI(Resource):
     @login_required
     def get(self, plan_id):
         plan = Plan.query.get_or_404(plan_id)
-        return {'terms': [marshal(term, term_fields) for term in plan._get_all_terms()]}
+        terms = plan._get_all_terms()
+        for term in terms:
+            term.plan = plan
+
+        return {'terms':
+                [marshal(term, term_fields) for term in terms]}
 
 
 class TermAPI(Resource):
@@ -51,5 +58,7 @@ class TermAPI(Resource):
                 return {"errors": {"on": ["Term is already marked off."]}}, 409
 
             plan.swap_onterm(term)
+
+        term.plan = plan
 
         return {'term': marshal(term, term_fields)}

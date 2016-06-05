@@ -55,4 +55,4 @@ def login():
 @flask_cas.route("/logout")
 def logout():
     session.pop('user', None)
-    return redirect(url_for("frontend.index"))
+    return redirect('/index')

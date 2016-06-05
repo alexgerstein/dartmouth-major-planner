@@ -9,6 +9,5 @@ hour_fields = {
 
 
 class HourListAPI(Resource):
-    @login_required
     def get(self):
         return {'hours': [marshal(hour, hour_fields) for hour in Hour.query.order_by('id')]}

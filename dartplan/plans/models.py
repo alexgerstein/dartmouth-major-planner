@@ -95,6 +95,7 @@ class Plan(db.Model):
             t = Term(year=freshman_year, season=Term.SEASONS[3])
             db.session.add(t)
 
+        t.plan = self
         all_terms.append(t)
 
         for year_diff in range(total_years):
@@ -105,6 +106,7 @@ class Plan(db.Model):
                     t = Term(year=year, season=season)
                     db.session.add(t)
 
+                t.plan = self
                 all_terms.append(t)
 
         # Remove extra fall

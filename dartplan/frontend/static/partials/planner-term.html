@@ -2,12 +2,12 @@
   <div class="term-header" layout-padding layout="row" layout-align="space-between center">
     <span>{[term.abbr]}</span>
     <span flex></span>
-    <md-button class="md-accent" ng-click="toggleTerm(term)" ng-switch="term.on" aria-label="Toggle Term Enrollment">
+    <md-button ng-if="isCurrentUser()" class="md-accent" ng-click="toggleTerm(term)" ng-switch="term.on" aria-label="Toggle Term Enrollment">
       <span ng-switch-when="false">On?</span>
       <span ng-switch-when="true">Off?</span>
     </md-button>
   </div>
   <md-list class="term-courses" ng-style="term.on ? '{}' : {'background-color': 'black'}">
-    <term-offering class="md-3-line" ng-if="offering.term.id === term.id" ng-repeat="offering in plan.offerings"></term-offering>
+    <term-offering class="md-3-line" ng-show="offering.term.id === term.id" ng-repeat="offering in plan.offerings"></term-offering>
   </md-list>
 </section>

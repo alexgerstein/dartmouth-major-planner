@@ -57,13 +57,6 @@ class OfferingListAPI(Resource):
 
     @plan_owned_by_user
     @login_required
-    def get(self, plan_id):
-        plan = Plan.query.get_or_404(plan_id)
-        return {'offerings': [marshal(offering, offering_fields)
-                              for offering in plan.offerings.all()]}
-
-    @plan_owned_by_user
-    @login_required
     def post(self, plan_id):
         args = self.reqparse.parse_args()
 
@@ -100,11 +93,6 @@ class OfferingAPI(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('enrolled', type=inputs.boolean)
         super(OfferingAPI, self).__init__()
-
-    @plan_owned_by_user
-    def get(self, plan_id, id):
-        offering = Offering.query.get_or_404(id)
-        return {'offering': marshal(offering, offering_fields)}
 
     @plan_owned_by_user
     @login_required

@@ -9,8 +9,37 @@ class config
     when("/plans/:id",
       {
         templateUrl: '/static/partials/planner.html',
-        controller: 'MainController',
-        controllerAs: 'main'
+        controller: 'MainController'
+      }
+    ).
+    when("/about",
+      {
+        templateUrl: '/static/partials/about.html',
+        controller: 'MainController'
+      }
+    ).
+    when("/disclaimer",
+      {
+        templateUrl: '/static/partials/disclaimer.html',
+        controller: 'MainController'
+      }
+    ).
+    when('/index',
+      {
+        templateUrl: '/static/partials/index.html',
+        controller: 'MainController'
+      }
+    ).
+    when('/',
+      {
+        redirectTo: '/index',
+        controller: 'MainController'
+      }
+    ).
+    otherwise(
+      {
+        templateUrl: '/static/partials/404.html'
+        controller: 'MainController'
       }
     )
 

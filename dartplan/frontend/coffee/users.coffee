@@ -3,7 +3,7 @@ dartplanApp = angular.module 'dartplanApp'
 dartplanApp.factory 'User', ->
   class User
     constructor: (options) ->
-      {@nickname, @grad_year, @email_course_updates, @email_Dartplan_updates} = options
+      {@id, @nickname, @grad_year, @email_course_updates, @email_Dartplan_updates} = options
 
     class_year: ->
       @grad_year % 100
