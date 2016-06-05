@@ -82,7 +82,19 @@
 
     ga('create', 'UA-46450097-1', 'dartplan.com');
     ga('send', 'pageview');
+    </script>
 
+
+    <script>
+      +function(l,y,t,i,c,s) {
+          l['LocalyticsGlobal'] = i;
+          l[i] = function() { (l[i].q = l[i].q || []).push(arguments) };
+          l[i].t = +new Date;
+          (s = y.createElement(t)).type = 'text/javascript';
+          s.src = '//web.localytics.com/v3/localytics.js';
+          (c = y.getElementsByTagName(t)[0]).parentNode.insertBefore(s, c);
+          ll('init', "{{ config['LOCALYTICS_APP_KEY'] }}", {domain: 'dartplan.com'});
+      }(window, document, 'script', 'll');
     </script>
   </body>
 </html>

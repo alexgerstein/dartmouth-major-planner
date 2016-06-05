@@ -15,4 +15,9 @@ dartplanApp.factory 'TermsService', ['$http', '$rootScope', '$mdToast', 'Term', 
       $http.put("/api/plans/#{plan_id}/terms/#{ id }", {'on': enrolled}).then (result) ->
         $rootScope.$broadcast 'changedCourses'
         $mdToast.showSimple('Successfully changed term enrollment.');
+
+        if enrolled
+          ll('tagEvent', 'Term enrolled', {'plan_id': plan_id, 'term_id': id})
+        else
+          ll('tagEvent', 'Term unenrolled', {'plan_id': plan_id, 'term_id': id})
 ]

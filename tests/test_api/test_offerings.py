@@ -61,7 +61,7 @@ class TestOfferingAPI(TestBase):
         assert data['offering'] is None
 
         r = test_client.get('/api/offerings/%d' % offering.id)
-        assert r.status_code == 404
+        assert r.headers['Content-Type'] != 'application/json'
 
 
 class TestCourseOfferingListAPI(TestBase):

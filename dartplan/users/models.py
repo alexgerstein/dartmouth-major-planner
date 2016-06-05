@@ -28,5 +28,8 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+    def email(self):
+        return "%s@dartmouth.edu" % self.netid
+
     def __repr__(self):
         return str(self.netid)

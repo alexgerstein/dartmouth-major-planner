@@ -4,9 +4,17 @@ from flask.ext.restful import Resource, marshal, fields
 from dartplan.login import login_required
 from dartplan.database import db
 
+
+class getEmail(fields.Raw):
+    def output(self, key, user):
+        return user.email()
+
+
 user_fields = {
     'id': fields.Integer,
     'nickname': fields.String,
+    'netid': fields.String,
+    'email': getEmail,
     'grad_year': fields.Integer,
     'email_course_updates': fields.Boolean,
     'email_Dartplan_updates': fields.Boolean

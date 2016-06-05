@@ -20,4 +20,9 @@ dartplanApp.factory 'PlansService', ['$http', '$rootScope', '$mdToast', 'Plan', 
         $rootScope.$broadcast 'changedCourses'
         $rootScope.$broadcast 'changedTerms'
         $mdToast.showSimple('Successfully changed fifth-year enrollment.');
+
+        if enrolled
+          ll('tagEvent', 'Fifth-year enabled', {'plan_id': id})
+        else
+          ll('tagEvent', 'Fifth-year disabled', {'plan_id': id})
 ]

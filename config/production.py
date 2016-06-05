@@ -10,6 +10,8 @@ MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 SQLALCHEMY_NATIVE_UNICODE = False
 
+LOCALYTICS_APP_KEY = os.environ['LOCALYTICS_APP_KEY']
+
 logger = logging.getLogger('DARTplan')
 stream_handler = logging.StreamHandler()
 logger.addHandler(stream_handler)
