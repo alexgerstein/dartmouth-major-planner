@@ -18,6 +18,17 @@ class TestPlanAPI(TestBase):
         assert plan_data['title'] == 'Default'
         assert plan_data['offerings'][0]['name'] == str(offering)
 
+    def test_change_plan_title(self, test_client, plan):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': plan.user.netid}
+
+        title = dict(title='New Title')
+        r = test_client.put('/api/plans/%d' % plan.id, data=title)
+        self.check_valid_header_type(r.headers)
+        data = json.loads(r.data)
+        plan_data = data['plan']
+        assert plan_data['title'] == 'New Title'
+
     def test_enroll_in_fifth_year(self, test_client, plan_with_offering):
         with test_client.session_transaction() as sess:
             sess['user'] = {'netid': plan_with_offering.user.netid}

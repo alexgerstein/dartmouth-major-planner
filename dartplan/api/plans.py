@@ -29,6 +29,7 @@ class PlanAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('fifth_year', type=inputs.boolean)
+        self.reqparse.add_argument('title')
         super(PlanAPI, self).__init__()
 
     def get(self, id):
@@ -41,6 +42,9 @@ class PlanAPI(Resource):
         args = self.reqparse.parse_args()
 
         plan = Plan.query.get_or_404(id)
+
+        if args.title:
+            plan.rename(args.title)
 
         if args.fifth_year is not None:
             if args.fifth_year and plan.fifth_year:

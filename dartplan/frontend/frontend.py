@@ -61,8 +61,7 @@ def plan(plan_id):
         plan.reset_terms()
 
     return render_template('app.html',
-                           title='%s Plan - %s' % (plan.title,
-                                                   plan.user.nickname),
+                           title='%s - %s' % (plan.title, plan.user.nickname),
                            user=g.user)
 
 

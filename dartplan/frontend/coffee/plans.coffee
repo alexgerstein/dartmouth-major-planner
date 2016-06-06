@@ -15,6 +15,11 @@ dartplanApp.factory 'PlansService', ['$http', '$rootScope', '$mdToast', 'Plan', 
       $http.get("/api/plans/#{id}").then (result) ->
         new Plan result.data.plan
 
+    saveTitle: (id, title) ->
+      $http.put("/api/plans/#{id}", {'title': title}).then (result) ->
+        $mdToast.showSimple('New plan title saved.');
+        ll('tagEvent', 'Changed plan name')
+
     toggleFifthYear: (id, enrolled) ->
       $http.put("/api/plans/#{id}", {'fifth_year': enrolled}).then (result) ->
         $rootScope.$broadcast 'changedCourses'

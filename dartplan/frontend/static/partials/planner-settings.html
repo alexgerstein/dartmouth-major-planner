@@ -1,7 +1,10 @@
-<div layout-padding layout="row" layout-align="space-between center" flex='100'>
-  <span><b>{[plan.title]} Plan</b> - <i>{[plan.user.nickname]} '{[plan.user.class_year()]}</i></span>
+<div layout-padding layout="row" layout-align="space-between center">
+  <md-input-container flex='60'>
+    <label>Title</label>
+    <input class='plan-title' ng-model="plan.title" ng-keypress="checkSubmit($event)" ng-blur="saveTitle()">
+  </md-input-container>
   <span flex></span>
-  <md-switch class="md-warn" ng-if="isCurrentUser()" ng-model="plan.fifth_year" aria-label="Five-Year Plan?" ng-click="toggleFifthYear()">
-    <span>Fifth-year?</span>
-  </md-switch>
+  <md-checkbox class="md-warn" flex='40' ng-if="isCurrentUser()" ng-model="plan.fifth_year" aria-label="Five-Year Plan?" ng-click="toggleFifthYear()">
+    Fifth Year?
+  </md-checkbox>
 </div>
