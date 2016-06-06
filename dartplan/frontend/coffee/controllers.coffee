@@ -23,15 +23,25 @@ dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$rou
   ll('tagScreen', $route.current.originalPath)
 ]
 
+dartplanApp.controller 'SettingsController', ['$scope', 'PlansService', ($scope, PlansService) ->
+
+  $scope.toggleFifthYear = =>
+    PlansService.toggleFifthYear($scope.plan_id, !$scope.plan.fifth_year)
+
+  $scope.saveTitle = =>
+    PlansService.saveTitle($scope.plan_id, $scope.plan.title)
+
+  $scope.checkSubmit = (e) =>
+    if e.which == 13
+      e.target.blur()
+]
+
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
   render = ->
     $scope.getPlan()
 
   $scope.toggleTerm = (term) =>
     TermsService.toggle($scope.plan_id, term.id, !term.on)
-
-  $scope.toggleFifthYear = =>
-    PlansService.toggleFifthYear($scope.plan_id, !$scope.plan.fifth_year)
 
   $scope.$on 'changedCourses', =>
     render()

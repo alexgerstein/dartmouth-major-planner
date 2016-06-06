@@ -114,5 +114,10 @@ class Plan(db.Model):
 
         return all_terms
 
+    def rename(self, title):
+        if title != self.title:
+            self.title = title
+            db.session.commit()
+
     def __repr__(self):
         return 'Plan %s (User %s)' % (self.title, self.user, )

@@ -1,42 +1,43 @@
 <div layout-gt-md="row">
     <div ng-if="isCurrentUser()" ng-controller="SearchController" layout-md="row" class="edit" flex="100" flex-gt-md="25">
-        <form class="md-whiteframe-z3" ng-submit="submit()" layout-md="column" layout-padding layout-margin name="filterCourses" flex="50">
-            <div layout="row">
-                <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
-                  <md-option ng-value="opt.id" ng-repeat="opt in department_options">{[opt.abbr]}</md-option>
-                </md-select>
-                <md-select ng-model="fields.term_id" placeholder="Term" flex>
-                  <md-option ng-value="opt.id" ng-repeat="opt in term_options">{[opt.abbr]}</md-option>
-                </md-select>
-            </div>
-            <div layout="row">
-                <md-select ng-model="fields.hour_id" placeholder="Hour" flex>
-                  <md-option ng-value="opt.id" ng-repeat="opt in hour_options">{[opt.period]}</md-option>
-                </md-select>
-            </div>
-            <div layout="row">
-                <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
-                  <md-option ng-value="opt.id" ng-repeat="opt in distributive_options">{[opt.abbr]}</md-option>
-                </md-select>
-                <md-select ng-model="fields.median_id" placeholder="Median" flex>
-                  <md-option ng-value="opt.id" ng-repeat="opt in median_options">{[opt.value]}</md-option>
-                </md-select>
-            </div>
-            <div layout="row">
-                <md-button class="md-raised md-primary" type="submit" ng-disabled="filterCourses.$pristine" flex>Search</md-button>
-            </div>
-        </form>
+      <planner-settings ng-controller="SettingsController"></planner-settings>
+      <form class="md-whiteframe-z3" ng-submit="submit()" layout-md="column" layout-padding layout-margin name="filterCourses" flex="50">
+          <div layout="row">
+              <md-select ng-model="fields.dept_id" placeholder="Dept" flex>
+                <md-option ng-value="opt.id" ng-repeat="opt in department_options">{[opt.abbr]}</md-option>
+              </md-select>
+              <md-select ng-model="fields.term_id" placeholder="Term" flex>
+                <md-option ng-value="opt.id" ng-repeat="opt in term_options">{[opt.abbr]}</md-option>
+              </md-select>
+          </div>
+          <div layout="row">
+              <md-select ng-model="fields.hour_id" placeholder="Hour" flex>
+                <md-option ng-value="opt.id" ng-repeat="opt in hour_options">{[opt.period]}</md-option>
+              </md-select>
+          </div>
+          <div layout="row">
+              <md-select ng-model="fields.distrib_id" placeholder="Distrib" flex>
+                <md-option ng-value="opt.id" ng-repeat="opt in distributive_options">{[opt.abbr]}</md-option>
+              </md-select>
+              <md-select ng-model="fields.median_id" placeholder="Median" flex>
+                <md-option ng-value="opt.id" ng-repeat="opt in median_options">{[opt.value]}</md-option>
+              </md-select>
+          </div>
+          <div layout="row">
+              <md-button class="md-raised md-primary" type="submit" ng-disabled="filterCourses.$pristine" flex>Search</md-button>
+          </div>
+      </form>
 
-        <md-list layout-padding layout-margin class="search-results md-whiteframe-z1" flex="100" flex-md="50">
-            <md-progress-linear ng-if="loading" md-mode="indeterminate">Searching</md-progress-linear>
-            <div ng-if="courses && !courses.length && !loading">No courses found.</div>
-            <course-search-result ng-repeat="course in courses"></course-search-result>
-        </md-list>
+      <md-list layout-padding layout-margin class="search-results md-whiteframe-z1" flex="100" flex-md="50">
+          <md-progress-linear ng-if="loading" md-mode="indeterminate">Searching</md-progress-linear>
+          <div ng-if="courses && !courses.length && !loading">No courses found.</div>
+          <course-search-result ng-repeat="course in courses"></course-search-result>
+      </md-list>
     </div>
 
     <div ng-controller="PlannerController" class="planner" flex>
+      <h3 layout="row" layout-margin ng-show='planLoaded' ng-if="!isCurrentUser()">{[plan.title]} - {[plan.user.nickname]} '{[plan.user.class_year()]}</h3>
       <div layout="row" ng-show='planLoaded' layout-wrap ng-if='plan != null'>
-        <planner-settings></planner-settings>
         <planner-term ng-repeat="term in plan.terms"></planner-term>
       </div>
       <div layout="row" ng-show='planLoaded' layout-wrap ng-if='plan == null'>
