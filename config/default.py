@@ -13,6 +13,8 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_RECORD_QUERIES = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+DATABASE_QUERY_TIMEOUT = 0.5
+
 # email server
 MAIL_SERVER = 'mail.gandi.net'
 MAIL_PORT = 465
