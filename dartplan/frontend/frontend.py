@@ -79,7 +79,7 @@ def edit():
         form.populate_obj(g.user)
         db.session.commit()
 
-        localytics.track_profile(g.user.net_id,
+        localytics.track_profile(g.user.netid,
                                  {'grad_year': g.user.grad_year,
                                   'name': g.user.full_name,
                                   'email_course_updates':
