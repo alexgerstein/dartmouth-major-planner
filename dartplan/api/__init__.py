@@ -42,6 +42,7 @@ api.add_resource(UserAPI, '/user', endpoint='user')
 @bp.after_request
 def after_request(response):
     for query in get_debug_queries():
+        current_app.logger.warning(query.duration)
         if query.duration >= current_app.config.get('DATABASE_QUERY_TIMEOUT'):
             current_app.logger.warning('Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' %
                                        (query.statement, query.parameters, query.duration, query.context))
