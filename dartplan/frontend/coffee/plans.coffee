@@ -16,6 +16,11 @@ dartplanApp.factory 'PlansService', ['$http', '$rootScope', '$mdToast', 'Plan', 
       $http.get("/api/plans/#{id}").then (result) ->
         new Plan result.data.plan
 
+    createPlan: (title, fifth_year) ->
+      plan_details = {'title': title, 'fifth_year': fifth_year}
+      $http.post('/api/plans', plan_details).then (result) ->
+        new Plan result.data.plan
+
     getPlans: ->
       $http.get("/api/plans").then (result) ->
         new Plan plan for plan in result.data.plans

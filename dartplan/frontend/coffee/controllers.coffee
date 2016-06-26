@@ -16,6 +16,9 @@ dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$rou
   $scope.isCurrentUser = ->
     $scope.user and $scope.plan and $scope.plan.user.id == $scope.user.id
 
+  $scope.isProUser = ->
+    $scope.user and $scope.user.is_pro
+
   $scope.$route = $route
   $scope.plan_id = $routeParams.id
   $scope.getPlan()
@@ -36,9 +39,18 @@ dartplanApp.controller 'SettingsController', ['$scope', 'PlansService', ($scope,
       e.target.blur()
 ]
 
-dartplanApp.controller 'PlansController', ['$scope', 'PlansService', ($scope, PlansService) ->
+dartplanApp.controller 'PlansController', ['$scope', '$mdDialog', 'PlansService', ($scope, $mdDialog, PlansService) ->
   PlansService.getPlans().then (plans) ->
     $scope.plans = plans
+
+    $scope.showNewPlanDialog = ->
+      $mdDialog.show({
+          controller: NewPlanDialogController,
+          scope: $scope,
+          preserveScope: true,
+          templateUrl: '/static/partials/new-plan-dialog.html',
+          clickOutsideToClose: true
+        })
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
@@ -66,6 +78,14 @@ dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'Pla
 OfferingInfoDialogController = ($scope, $mdDialog) ->
   $scope.cancel = ->
     $mdDialog.cancel()
+
+NewPlanDialogController = ($scope, $mdDialog, PlansService) ->
+  $scope.cancel = ->
+    $mdDialog.cancel()
+
+  $scope.createNewPlan = ->
+    PlansService.createPlan($scope.new_plan_title, $scope.new_plan_fifth_year).then (plan) ->
+      window.location.href = '/plans/' + plan.id
 
 CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, course, plan_id) ->
   $scope.custom = {}

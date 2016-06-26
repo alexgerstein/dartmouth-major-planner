@@ -9,8 +9,16 @@
         <md-button class="md-primary" ng-href="plans/{[plan.id]}" aria-label="Edit" layout-align='center center'>
           View Plan
         </md-button>
+        <md-divider></md-divider>
       </md-list-item>
-      <md-divider></md-divider>
     </md-list>
+
+    <div ng-if="isProUser" layout='row'>
+      <span flex></span>
+      <md-button class="md-primary" aria-lable="Create New Plan" ng-click="showNewPlanDialog()">
+        + Create a New Plan
+      </md-button>
+      <span flex></span>
+    </div>
   </div>
 </div>

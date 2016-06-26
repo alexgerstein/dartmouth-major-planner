@@ -1,0 +1,20 @@
+<md-dialog>
+  <md-dialog-content class="sticky-container">
+    <form ng-submit="createNewPlan()" flex="50">
+      <md-input-container flex='60'>
+        <label>Plan Title</label>
+        <input class='plan-title' ng-model="new_plan_title">
+      </md-input-container>
+      <md-checkbox class="md-warn" flex='40' ng-model="new_plan_fifth_year" aria-label="Five-Year Plan?">
+        Fifth Year?
+      </md-checkbox>
+    </form>
+  </md-dialog-content>
+  <div class="md-actions" layout="row">
+    <span flex></span>
+    <md-button ng-click="cancel()" class="md-primary">
+     Cancel
+    </md-button>
+    <md-button class="md-primary" type="submit" ng-click="createNewPlan()" aria-label="Create New Plan">Create</md-button>
+  </div>
+</md-dialog>
