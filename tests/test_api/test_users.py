@@ -17,6 +17,8 @@ class TestUserAPI(TestBase):
         assert data['user']['nickname'] == user.nickname
         assert data['user']['email'] == "%s@dartmouth.edu" % user.netid
         assert not data['user']['is_pro']
+        assert data['user']['number_of_plans'] == 0
+
 
     def test_delete_user(self, test_client, plan):
         with test_client.session_transaction() as sess:

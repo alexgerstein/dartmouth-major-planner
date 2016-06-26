@@ -35,9 +35,9 @@ class TestPlanListAPI(TestBase):
         assert plan_data.get('title') == 'My Plan'
         assert plan_data.get('fifth_year')
 
-    def test_post_plans_unauthorized(self, test_client, user):
+    def test_post_plans_unauthorized(self, test_client, plan):
         with test_client.session_transaction() as sess:
-            sess['user'] = {'netid': user.netid}
+            sess['user'] = {'netid': plan.user.netid}
 
         data = {'title': 'My Plan', 'fifth_year': True}
 

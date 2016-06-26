@@ -14,6 +14,11 @@ class getIsPro(fields.Raw):
     def output(self, key, user):
         return user.is_pro()
 
+
+class getNumberOfPlans(fields.Raw):
+    def output(self, key, user):
+        return user.plans.count()
+
 user_fields = {
     'id': fields.Integer,
     'nickname': fields.String,
@@ -22,7 +27,8 @@ user_fields = {
     'grad_year': fields.Integer,
     'email_course_updates': fields.Boolean,
     'email_Dartplan_updates': fields.Boolean,
-    'is_pro': getIsPro
+    'is_pro': getIsPro,
+    'number_of_plans': getNumberOfPlans
 }
 
 

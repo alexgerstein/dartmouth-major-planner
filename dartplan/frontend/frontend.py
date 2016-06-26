@@ -34,10 +34,6 @@ def fetch_user():
             db.session.add(g.user)
             db.session.commit()
 
-            plan = Plan(user_id=g.user.id)
-            db.session.add(plan)
-            db.session.commit()
-
             return (redirect(url_for('frontend.edit')))
     else:
         g.user = None
@@ -97,10 +93,7 @@ def edit():
                                   g.user.email_Dartplan_updates
                                   })
 
-        plan = g.user.plans.first()
-        plan.reset_terms()
-
-        return redirect(url_for('frontend.planner'))
+        return redirect(url_for('frontend.plans'))
     return render_template('edit.html',
                            form=form, title='Edit Profile',
                            description="Change the nickname, graduation year, \
