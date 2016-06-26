@@ -40,20 +40,29 @@ dartplanApp.controller 'SettingsController', ['$scope', 'PlansService', ($scope,
 ]
 
 dartplanApp.controller 'PlansController', ['$scope', '$mdDialog', '$location', 'PlansService', ($scope, $mdDialog, $location, PlansService) ->
-  PlansService.getPlans().then (plans) ->
-    $scope.plans = plans
+  $scope.showNewPlanDialog = ->
+    if $scope.isProUser() || ($scope.user.number_of_plans == 0)
+      $mdDialog.show({
+        controller: NewPlanDialogController,
+        scope: $scope,
+        preserveScope: true,
+        templateUrl: '/static/partials/new-plan-dialog.html',
+        clickOutsideToClose: true
+      })
+    else
+      $location.path('/pro')
 
-    $scope.showNewPlanDialog = ->
-      if $scope.isProUser() || ($scope.user.number_of_plans == 0)
-        $mdDialog.show({
-          controller: NewPlanDialogController,
-          scope: $scope,
-          preserveScope: true,
-          templateUrl: '/static/partials/new-plan-dialog.html',
-          clickOutsideToClose: true
-        })
-      else
-        $location.path('/pro')
+  $scope.setAsDefault = (plan_id) ->
+    PlansService.setAsDefault(plan_id).then (plan) ->
+      $scope.default_plan_id = plan.id
+
+  $scope.get_plans = ->
+    PlansService.getPlans().then (plans) ->
+      for plan in plans
+        $scope.default_plan_id = plan.id if plan.default
+      $scope.plans = plans
+
+  $scope.get_plans()
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->

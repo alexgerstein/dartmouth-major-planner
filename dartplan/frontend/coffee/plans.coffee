@@ -19,16 +19,24 @@ dartplanApp.factory 'PlansService', ['$http', '$rootScope', '$mdToast', 'Plan', 
     createPlan: (title, fifth_year) ->
       plan_details = {'title': title, 'fifth_year': fifth_year}
       $http.post('/api/plans', plan_details).then (result) ->
+        ll('tagEvent', 'Created new plan')
         new Plan result.data.plan
 
     getPlans: ->
       $http.get("/api/plans").then (result) ->
         new Plan plan for plan in result.data.plans
 
+    setAsDefault: (id) ->
+      $http.put("/api/plans/#{id}", {'default': true}).then (result) ->
+        $mdToast.showSimple('Plan set as default.');
+        ll('tagEvent', 'Set plan as default')
+        new Plan result.data.plan
+
     saveTitle: (id, title) ->
       $http.put("/api/plans/#{id}", {'title': title}).then (result) ->
         $mdToast.showSimple('New plan title saved.');
         ll('tagEvent', 'Changed plan name')
+        new Plan result.data.plan
 
     toggleFifthYear: (id, enrolled) ->
       $http.put("/api/plans/#{id}", {'fifth_year': enrolled}).then (result) ->

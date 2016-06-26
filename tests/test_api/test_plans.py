@@ -58,7 +58,7 @@ class TestPlanAPI(TestBase):
         plan_data = data['plan']
         offering = plan_with_offering.offerings.first()
         assert plan_data['title'] == 'Default'
-        assert plan_data['default']
+        assert not plan_data['default']
         assert plan_data['offerings'][0]['name'] == str(offering)
 
     def test_change_plan_title(self, test_client, plan):
@@ -71,6 +71,20 @@ class TestPlanAPI(TestBase):
         data = json.loads(r.data)
         plan_data = data['plan']
         assert plan_data['title'] == 'New Title'
+
+    def test_set_default(self, test_client, plan_with_offering):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': plan_with_offering.user.netid}
+
+        default_plan = dict(default=True)
+        set_default_plan = test_client.put('/api/plans/%d' %
+                                           (plan_with_offering.id),
+                                           data=default_plan)
+        self.check_valid_header_type(set_default_plan.headers)
+
+        data = json.loads(set_default_plan.data)
+
+        assert data['plan']['default'] is True
 
     def test_enroll_in_fifth_year(self, test_client, plan_with_offering):
         with test_client.session_transaction() as sess:

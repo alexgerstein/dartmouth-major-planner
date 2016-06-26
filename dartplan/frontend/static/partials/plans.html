@@ -3,10 +3,13 @@
     <h1 class='md-display-2'>My Plans</h1>
 
     <md-list>
-      <md-list-item ng-repeat="plan in ::plans | orderBy: 'title'" class="edit">
+      <md-list-item ng-repeat="plan in plans | orderBy: 'title'" class="edit">
         <h2>{[plan.title]}</h2>
-        <span layout-padding ng-show="plan.default">(Default)</span>
+        <span layout-padding ng-show="plan.id == default_plan_id">(Default)</span>
         <span flex></span>
+        <md-button class="md-primary" ng-hide="plan.id == default_plan_id" ng-click="setAsDefault(plan.id)" aria-label="Set as Default" layout-align='center center'>
+          Set as Default
+        </md-button>
         <md-button class="md-primary" ng-href="plans/{[plan.id]}" aria-label="Edit" layout-align='center center'>
           View Plan
         </md-button>
