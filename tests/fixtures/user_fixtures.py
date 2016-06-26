@@ -10,6 +10,13 @@ def user(db):
 
 
 @pytest.fixture()
+def pro_user(db):
+    user = user_factories.UserFactory(amount_paid=100)
+    db.session.commit()
+    return user
+
+
+@pytest.fixture()
 def user_with_two_plans(db):
     user = user_factories.UserFactory()
     plan_factories.PlanFactory(user=user)

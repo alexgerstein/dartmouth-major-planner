@@ -11,3 +11,4 @@ class UserFactory(BaseFactory):
     netid = factory.Sequence(lambda n: u'%d' % n)
     full_name = factory.Sequence(lambda n: u'User %d' % n)
     grad_year = factory.fuzzy.FuzzyInteger(2015, 2020)
+    amount_paid = 0

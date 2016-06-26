@@ -17,3 +17,14 @@ def plan_owned_by_user(fn):
 
         return fn(*args, **kwargs)
     return wrapper
+
+
+# Wrapper function so no one can view someone else's plan
+def is_pro_user(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not g.user.is_pro():
+            return abort(401)
+
+        return fn(*args, **kwargs)
+    return wrapper
