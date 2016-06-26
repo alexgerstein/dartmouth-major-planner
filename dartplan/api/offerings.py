@@ -1,5 +1,5 @@
 from flask import g
-from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
+from flask_restful import Resource, fields, marshal, reqparse, inputs
 from sqlalchemy.orm.exc import NoResultFound
 
 from dartplan.authorization import plan_owned_by_user

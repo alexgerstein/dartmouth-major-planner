@@ -13,12 +13,12 @@ class Offering(db.Model):
     __tablename__ = 'offering'
 
     id = db.Column(db.Integer, primary_key=True)
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
-    term_id = db.Column(db.Integer, db.ForeignKey('term.id'))
-    hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), index=True)
+    term_id = db.Column(db.Integer, db.ForeignKey('term.id'), index=True)
+    hour_id = db.Column(db.Integer, db.ForeignKey('hour.id'), index=True)
     desc = db.Column(db.Unicode(25000))
 
-    median = db.Column(db.String(5))
+    median = db.Column(db.String(5), index=True)
 
     distributives = db.relationship("Distributive",
                                     secondary=offering_distribs,

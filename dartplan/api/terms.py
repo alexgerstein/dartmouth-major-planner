@@ -1,4 +1,4 @@
-from flask.ext.restful import Resource, fields, marshal, reqparse, inputs
+from flask_restful import Resource, fields, marshal, reqparse, inputs
 from dartplan.authorization import plan_owned_by_user
 from dartplan.login import login_required
 from dartplan.models import Plan, Term

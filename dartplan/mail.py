@@ -1,6 +1,6 @@
 #!../flask/bin/python
 
-from flask.ext.mail import Message, Mail
+from flask_mail import Message, Mail
 from flask import render_template
 
 import logging

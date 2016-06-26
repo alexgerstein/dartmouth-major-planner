@@ -1,4 +1,4 @@
-from flask.ext.restful import Resource
+from flask_restful import Resource
 from dartplan.login import login_required
 
 MEDIANS = ['A', 'A/A-', 'A-', 'A-/B+', 'B+', 'B+/B', 'B',

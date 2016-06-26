@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, g, session, redirect, url_for
-from flask.ext.restful import Api
-from flask.ext.sqlalchemy import get_debug_queries
+from flask_restful import Api
+from flask_sqlalchemy import get_debug_queries
 
 from dartplan.database import db
 from dartplan.models import User, Plan
@@ -42,7 +42,6 @@ api.add_resource(UserAPI, '/user', endpoint='user')
 @bp.after_request
 def after_request(response):
     for query in get_debug_queries():
-        current_app.logger.warning(query.duration)
         if query.duration >= current_app.config.get('DATABASE_QUERY_TIMEOUT'):
             current_app.logger.warning('Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' %
                                        (query.statement, query.parameters, query.duration, query.context))
