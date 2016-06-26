@@ -11,6 +11,7 @@ class PlanFactory(BaseFactory):
     title = 'Default'
     user = factory.SubFactory(UserFactory)
     terms = factory.PostGenerationMethodCall('reset_terms')
+    default = True
 
     @factory.post_generation
     def offerings(self, create, extracted, **kwargs):
