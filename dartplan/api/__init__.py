@@ -25,13 +25,14 @@ api.add_resource(OfferingAPI, '/plans/<int:plan_id>/offerings/<int:id>',
                  endpoint='offering')
 api.add_resource(CourseListAPI, '/courses', endpoint='courses')
 api.add_resource(CourseAPI, '/courses/<int:id>', endpoint='course')
-api.add_resource(CourseOfferingListAPI, '/courses/<int:id>/offerings',
-                 endpoint='course_offerings')
 api.add_resource(DistributiveListAPI, '/distributives',
                  endpoint='distributives')
 api.add_resource(DepartmentListAPI, '/departments', endpoint='departments')
 api.add_resource(HourListAPI, '/hours', endpoint='hours')
 api.add_resource(MedianListAPI, '/medians', endpoint='medians')
+api.add_resource(CourseOfferingListAPI,
+                 '/plans/<int:plan_id>/courses/<int:course_id>/offerings',
+                 endpoint='course_offerings')
 api.add_resource(TermListAPI, '/plans/<int:plan_id>/terms', endpoint='terms')
 api.add_resource(TermAPI, '/plans/<int:plan_id>/terms/<int:id>',
                  endpoint='term')
