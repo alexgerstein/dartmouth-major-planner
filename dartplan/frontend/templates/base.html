@@ -24,12 +24,18 @@
           <a class="brand" ng-href="/index" layout="row" layout-align="start center">
             <img src="{{ url_for ('static', filename='img/p-logo-white.png') }}" style="width: 50px; padding: 0 5px;">
             <span hide show-gt-sm><b>DART</b>Plan</span>
+            {% if user and user.is_pro() %}<span class='md-accent' layout-padding><i>PRO</i></span> {% endif %}
           </a>
           <span flex></span>
           {% if user %}
           <md-button ng-href="/plans">
             My Plans
           </md-button>
+          {% if not user.is_pro() %}
+            <md-button class='md-accent' ng-href="/pro">
+              Pro
+            </md-button>
+          {% endif %}
           <md-button ng-href="{{ url_for('frontend.edit') }}" target="_self">
             Settings
           </md-button>

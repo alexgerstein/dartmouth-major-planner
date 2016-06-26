@@ -66,6 +66,8 @@ def plan(plan_id):
 
 
 @bp.route('/plans', methods=['GET'])
+@login_required
+@year_required
 def plans():
     return render_template('app.html',
                            title='My Plans',

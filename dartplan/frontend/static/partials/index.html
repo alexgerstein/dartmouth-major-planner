@@ -15,27 +15,29 @@
     <img src="/static/img/dartplan-landing.png" flex-gt-sm="60">
   </div>
 
-  <div class="landing-promo" layout="row">
-    <div class="promo" layout="column" flex>
+  <div class="landing-promo" layout="row" layout-align="space-between center">
+    <span flex></span>
+    <div class="promo" layout="column" flex='20'>
       <ng-md-icon icon="filter_list" class="promo-logo" size="75px"></ng-md-icon>
       <div class="md-headline">Filter</div>
-      <h4 class="md-subhead">Search for courses by department, term and period.</h4>
+      <h4 class="md-subhead">Search for courses by department, term, median, distrib, and period.</h4>
     </div>
-    <div class="promo" layout="column" flex>
+    <div class="promo" layout="column" flex='20'>
       <ng-md-icon icon="add" class="promo-logo" size="75px"></ng-md-icon>
       <div class="md-headline">Add</div>
       <h4 class="md-subhead">Drag a course into your course plan and instantly see when it's offered.</h4>
     </div>
-    <div class="promo" layout="column" flex>
+    <div class="promo" layout="column" flex='20'>
       <ng-md-icon icon="refresh" class="promo-logo" size="75px"></ng-md-icon>
       <div class="md-headline">Refresh</div>
       <h4 class="md-subhead">Revise class sections and off-terms. Your plan will update automatically.</h4>
     </div>
+    <span flex></span>
   </div>
 
   <div class="landing-closing">
     <div layout="row" layout-align="center">
-      <h1 class="md-display-2" flex="45" flex-sm="100">Sign up now to start using DARTplan</h1>
+      <h1 class="md-display-2" flex="45" flex-sm="100">Sign up now to start using DARTPlan</h1>
     </div>
     <div>
       <a ng-href="/login" target="_self"><md-button class="md-raised md-accent">Sign Up</md-button></a>
