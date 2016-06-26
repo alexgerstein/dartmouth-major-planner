@@ -27,18 +27,18 @@
           </a>
           <span flex></span>
           {% if user %}
-          <md-button>
-            <a ng-href="/plans">My Plans</a>
+          <md-button ng-href="/plans">
+            My Plans
           </md-button>
-          <md-button>
-            <a ng-href="{{ url_for('frontend.edit') }}" target="_self">Settings</a>
+          <md-button ng-href="{{ url_for('frontend.edit') }}" target="_self">
+            Settings
           </md-button>
-          <md-button>
-            <a ng-href="{{ url_for('flask_cas.logout') }}" target="_self">Logout</a>
+          <md-button ng-href="{{ url_for('flask_cas.logout') }}" target="_self">
+            Logout
           </md-button>
           {% else %}
-          <md-button>
-            <a ng-href="{{ url_for('flask_cas.login') }}" target="_self">Login</a>
+          <md-button ng-href="{{ url_for('flask_cas.login') }}" target="_self">
+            Login
           </md-button>
           {% endif %}
         </div>
@@ -50,9 +50,9 @@
 
       <md-toolbar class="md-toolbar-bottom">
         <div class="md-toolbar-tools">
-          <md-button><a ng-href="/about">About</a></md-button>
+          <md-button ng-href="/about">About</md-button>
           <span flex></span>
-          <md-button><a ng-href="/disclaimer">Disclaimer</a></md-button>
+          <md-button ng-href="/disclaimer">Disclaimer</md-button>
         </div>
       </md-toolbar>
     </div>

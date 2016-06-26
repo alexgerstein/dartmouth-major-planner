@@ -12,8 +12,11 @@ from courses import course_fields
 
 class isEnrolled(fields.Raw):
     def output(self, key, offering):
-        plan = g.user and g.user.plans.first()
-        return plan and (offering in plan.offerings)
+        try:
+            plan = offering.plan
+            return plan and offering in plan.offerings
+        except AttributeError:
+            return False
 
 
 class isUserAdded(fields.Raw):
@@ -105,7 +108,7 @@ class OfferingAPI(Resource):
         if args.enrolled is not None:
             if args.enrolled:
                 plan.enroll(offering)
-
+                offering.plan = plan
             else:
                 if plan.drop(offering):
                     return {'offering': None}
@@ -113,8 +116,13 @@ class OfferingAPI(Resource):
 
 
 class CourseOfferingListAPI(Resource):
-    def get(self, id):
-        course = Course.query.get_or_404(id)
+    def get(self, plan_id, course_id):
+        course = Course.query.get_or_404(course_id)
+        plan = Plan.query.get_or_404(plan_id)
         offerings = Offering.query.filter_by(course=course).all()
+
+        for offering in offerings:
+            offering.plan = plan
+
         return {'offerings': [marshal(offering, offering_fields)
                               for offering in offerings]}

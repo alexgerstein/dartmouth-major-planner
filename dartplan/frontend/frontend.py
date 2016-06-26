@@ -65,6 +65,13 @@ def plan(plan_id):
                            user=g.user)
 
 
+@bp.route('/plans', methods=['GET'])
+def plans():
+    return render_template('app.html',
+                           title='My Plans',
+                           user=g.user)
+
+
 # Edit Page to change Name and Graduation Year
 @bp.route('/edit', methods=['GET', 'POST'])
 @login_required

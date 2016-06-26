@@ -49,7 +49,7 @@ def login():
     else:
         return cas_login(callback_url)
 
-    return redirect(url_for('frontend.planner'))
+    return redirect(url_for('frontend.plans'))
 
 
 @flask_cas.route("/logout")

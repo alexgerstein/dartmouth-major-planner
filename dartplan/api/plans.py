@@ -52,6 +52,9 @@ class PlanListAPI(Resource):
                     fifth_year=args.fifth_year)
         db.session.add(plan)
         db.session.commit()
+
+        plan.reset_terms()
+
         return {'plan': marshal(plan, plan_fields)}
 
 

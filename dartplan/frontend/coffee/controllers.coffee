@@ -16,6 +16,9 @@ dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$rou
   $scope.isCurrentUser = ->
     $scope.user and $scope.plan and $scope.plan.user.id == $scope.user.id
 
+  $scope.isProUser = ->
+    $scope.user and $scope.user.is_pro
+
   $scope.$route = $route
   $scope.plan_id = $routeParams.id
   $scope.getPlan()
@@ -36,9 +39,18 @@ dartplanApp.controller 'SettingsController', ['$scope', 'PlansService', ($scope,
       e.target.blur()
 ]
 
-dartplanApp.controller 'PlansController', ['$scope', 'PlansService', ($scope, PlansService) ->
+dartplanApp.controller 'PlansController', ['$scope', '$mdDialog', '$location', 'PlansService', ($scope, $mdDialog, $location, PlansService) ->
   PlansService.getPlans().then (plans) ->
     $scope.plans = plans
+
+    $scope.showNewPlanDialog = ->
+      $mdDialog.show({
+          controller: NewPlanDialogController,
+          scope: $scope,
+          preserveScope: true,
+          templateUrl: '/static/partials/new-plan-dialog.html',
+          clickOutsideToClose: true
+        })
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
@@ -67,13 +79,22 @@ OfferingInfoDialogController = ($scope, $mdDialog) ->
   $scope.cancel = ->
     $mdDialog.cancel()
 
+NewPlanDialogController = ($scope, $mdDialog, $location, PlansService) ->
+  $scope.cancel = ->
+    $mdDialog.cancel()
+
+  $scope.createNewPlan = ->
+    PlansService.createPlan($scope.new_plan_title, $scope.new_plan_fifth_year).then (plan) ->
+      $mdDialog.cancel()
+      $location.path('/plans/' + plan.id)
+
 CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, course, plan_id) ->
   $scope.custom = {}
   $scope.course = course
   $scope.plan_id = plan_id
   $scope.offeringsLoading = true
   $scope.customTermsLoading = true
-  OfferingsService.getCourseOfferings($scope.course.id).then (offerings) ->
+  OfferingsService.getCourseOfferings(plan_id, $scope.course.id).then (offerings) ->
     $scope.offerings = offerings
     $scope.offeringsLoading = false
 
@@ -84,9 +105,11 @@ CourseDialogController = ($scope, $mdDialog, OfferingsService, TermsService, cou
   $scope.toggleEnroll = (plan_id, offering) ->
     offering.enrolled = !offering.enrolled
     if offering.user_added and offering.enrolled
-      OfferingsService.enrollCustomOffering(plan_id, offering.course.id, offering.term.id)
+      OfferingsService.enrollCustomOffering(plan_id, offering.course.id, offering.term.id).then (offering) ->
+        $mdDialog.cancel()
     else
-      OfferingsService.toggle(plan_id, offering.id, offering.enrolled)
+      OfferingsService.toggle(plan_id, offering.id, offering.enrolled).then (offering) ->
+        $mdDialog.cancel()
 
   $scope.enrollCustomOffering = (plan_id) ->
     existingOffering = ($scope.offerings.filter (i) -> i.term.id.toString() is $scope.custom.term_id)[0]
