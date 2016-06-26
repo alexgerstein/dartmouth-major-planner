@@ -18,7 +18,7 @@ class Plan(db.Model):
     __tablename__ = 'plan'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), default='Default')
+    title = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
 
     user = db.relationship('User')

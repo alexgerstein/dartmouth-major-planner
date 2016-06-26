@@ -21,6 +21,30 @@ class TestPlanListAPI(TestBase):
         assert second_plan.get('id')
         assert first_plan.get('id') != second_plan.get('id')
 
+    def test_post_plans(self, test_client, pro_user):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': pro_user.netid}
+
+        data = {'title': 'My Plan', 'fifth_year': True}
+
+        r = test_client.post('/api/plans', data=data)
+        self.check_valid_header_type(r.headers)
+        data = json.loads(r.data)
+        plan_data = data['plan']
+        assert plan_data.get('id')
+        assert plan_data.get('title') == 'My Plan'
+        assert plan_data.get('fifth_year')
+
+    def test_post_plans_unauthorized(self, test_client, user):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': user.netid}
+
+        data = {'title': 'My Plan', 'fifth_year': True}
+
+        r = test_client.post('/api/plans', data=data)
+        self.check_valid_header_type(r.headers)
+        assert r.status_code == 401
+
 
 class TestPlanAPI(TestBase):
 

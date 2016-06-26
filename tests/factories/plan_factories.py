@@ -8,6 +8,7 @@ class PlanFactory(BaseFactory):
     class Meta:
         model = Plan
 
+    title = 'Default'
     user = factory.SubFactory(UserFactory)
     terms = factory.PostGenerationMethodCall('reset_terms')
 

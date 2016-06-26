@@ -1,8 +1,11 @@
 from dartplan.database import db
 
+MIN_PRO_PAYMENT = 1
+
 
 class User(db.Model):
     __tablename__ = 'user'
+
     id = db.Column(db.Integer, primary_key=True)
     netid = db.Column(db.String(15), index=True, unique=True)
     full_name = db.Column(db.String(200))
@@ -12,13 +15,17 @@ class User(db.Model):
     email_course_updates = db.Column(db.Boolean)
     email_Dartplan_updates = db.Column(db.Boolean)
 
+    amount_paid = db.Column(db.Numeric, default=0.00)
+    last_paid = db.Column(db.Date)
+
     plans = db.relationship('Plan', lazy='dynamic',
                             cascade='all, delete-orphan')
 
-    def __init__(self, full_name, netid, grad_year=None):
+    def __init__(self, full_name, netid, grad_year=None, amount_paid=0):
         self.full_name = full_name
         self.netid = netid
         self.nickname = full_name
+        self.amount_paid = amount_paid
         self.email_Dartplan_updates = True
         self.email_course_updates = True
 
@@ -30,6 +37,9 @@ class User(db.Model):
 
     def email(self):
         return "%s@dartmouth.edu" % self.netid
+
+    def is_pro(self):
+        return self.amount_paid >= MIN_PRO_PAYMENT
 
     def __repr__(self):
         return str(self.netid)

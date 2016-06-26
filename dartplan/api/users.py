@@ -10,6 +10,10 @@ class getEmail(fields.Raw):
         return user.email()
 
 
+class getIsPro(fields.Raw):
+    def output(self, key, user):
+        return user.is_pro()
+
 user_fields = {
     'id': fields.Integer,
     'nickname': fields.String,
@@ -17,7 +21,8 @@ user_fields = {
     'email': getEmail,
     'grad_year': fields.Integer,
     'email_course_updates': fields.Boolean,
-    'email_Dartplan_updates': fields.Boolean
+    'email_Dartplan_updates': fields.Boolean,
+    'is_pro': getIsPro
 }
 
 
