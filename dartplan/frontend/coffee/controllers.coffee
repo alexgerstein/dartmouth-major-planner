@@ -3,10 +3,6 @@ dartplanApp = angular.module 'dartplanApp'
 dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$routeParams', 'PlansService', 'UsersService', ($scope, $route, $location, $routeParams, PlansService, UsersService) ->
   $scope.planLoaded = false
 
-  $scope.getPlans = ->
-    PlansService.getPlans().then (plans) ->
-      $scope.plans = plans
-
   $scope.getPlan = ->
     return unless $scope.plan_id
     PlansService.getPlan($scope.plan_id).then (plan) ->
@@ -23,7 +19,6 @@ dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$rou
   $scope.$route = $route
   $scope.plan_id = $routeParams.id
   $scope.getPlan()
-  $scope.getPlans()
   $scope.getCurrentUser()
   ll('tagScreen', $route.current.originalPath)
 ]
@@ -39,6 +34,11 @@ dartplanApp.controller 'SettingsController', ['$scope', 'PlansService', ($scope,
   $scope.checkSubmit = (e) =>
     if e.which == 13
       e.target.blur()
+]
+
+dartplanApp.controller 'PlansController', ['$scope', 'PlansService', ($scope, PlansService) ->
+  PlansService.getPlans().then (plans) ->
+    $scope.plans = plans
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->
