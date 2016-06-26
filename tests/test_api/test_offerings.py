@@ -65,8 +65,9 @@ class TestOfferingAPI(TestBase):
 
 
 class TestCourseOfferingListAPI(TestBase):
-    def test_get_offerings(self, test_client, offering):
-        r = test_client.get('/api/courses/%d/offerings' % offering.course.id)
+    def test_get_offerings(self, test_client, plan_with_offering):
+        offering = plan_with_offering.offerings.first()
+        r = test_client.get('/api/plans/%d/courses/%d/offerings' % (plan_with_offering.id, offering.course.id))
         self.check_valid_header_type(r.headers)
         data = json.loads(r.data)
         assert data['offerings'][0]['name'] == str(offering)

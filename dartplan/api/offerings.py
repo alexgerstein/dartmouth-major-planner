@@ -108,7 +108,7 @@ class OfferingAPI(Resource):
         if args.enrolled is not None:
             if args.enrolled:
                 plan.enroll(offering)
-
+                offering.plan = plan
             else:
                 if plan.drop(offering):
                     return {'offering': None}
