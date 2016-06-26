@@ -1,5 +1,5 @@
 from flask import g, session
-from flask.ext.restful import Resource, marshal, fields
+from flask_restful import Resource, marshal, fields
 
 from dartplan.login import login_required
 from dartplan.database import db

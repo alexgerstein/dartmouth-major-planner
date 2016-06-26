@@ -1,6 +1,6 @@
 from flask import session, redirect, url_for, request
-from flask.ext.admin import Admin
-from flask.ext.admin.contrib.sqla import ModelView
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 from dartplan.database import db
 from dartplan.models import User, Course, Offering

@@ -1,4 +1,4 @@
-from flask.ext.restful import Resource, fields, marshal, reqparse
+from flask_restful import Resource, fields, marshal, reqparse
 
 from dartplan.models import Course, Offering, Department, Distributive
 

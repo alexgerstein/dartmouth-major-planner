@@ -1,4 +1,4 @@
-from flask.ext.restful import Resource, fields, marshal
+from flask_restful import Resource, fields, marshal
 from dartplan.login import login_required
 from dartplan.models import Department
 

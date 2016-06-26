@@ -8,7 +8,8 @@ class Course(db.Model):
     number = db.Column(db.Float)
     name = db.Column(db.String(300), index=True)
 
-    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'),
+                              index=True)
 
     offerings = db.relationship('Offering', backref='course')
     avg_median = db.Column(db.String(5))

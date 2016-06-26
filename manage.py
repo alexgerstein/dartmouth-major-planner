@@ -6,9 +6,9 @@ from dartplan.database import db
 from dartplan.models import *
 from scrapers.scrape_all import scrape_all
 from scrapers.scrape_update import scrape_update
-from flask.ext.script import Manager, Shell, Server
-from flask.ext.migrate import MigrateCommand
-from flask.ext.assets import ManageAssets
+from flask_script import Manager, Shell, Server
+from flask_migrate import MigrateCommand
+from flask_assets import ManageAssets
 
 app = create_app(os.environ.get("APP_CONFIG_FILE") or "development")
 manager = Manager(app)

@@ -3,13 +3,13 @@ from dartplan.models import Term
 
 plan_offerings = db.Table('plan_offerings',
                           db.Column('plan_id', db.Integer,
-                                    db.ForeignKey('plan.id')),
+                                    db.ForeignKey('plan.id'), index=True),
                           db.Column('offering_id', db.Integer,
-                                    db.ForeignKey('offering.id')))
+                                    db.ForeignKey('offering.id'), index=True))
 
 plan_terms = db.Table('plan_terms',
                       db.Column('plan_id', db.Integer,
-                                db.ForeignKey('plan.id')),
+                                db.ForeignKey('plan.id'), index=True),
                       db.Column('term_id', db.Integer,
                                 db.ForeignKey('term.id')))
 
@@ -19,7 +19,7 @@ class Plan(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), default='Default')
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
 
     user = db.relationship('User')
     terms = db.relationship("Term",
