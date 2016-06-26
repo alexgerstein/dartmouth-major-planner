@@ -23,8 +23,9 @@ def plan_owned_by_user(fn):
 def is_pro_user(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        if not g.user.is_pro():
-            return abort(401)
+        if g.user and g.user.is_pro():
+            return fn(*args, **kwargs)
 
-        return fn(*args, **kwargs)
+        return abort(401)
+
     return wrapper

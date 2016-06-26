@@ -43,8 +43,8 @@ class PlanListAPI(Resource):
     def get(self):
         return {'plans': [marshal(plan, plan_fields) for plan in g.user.plans]}
 
-    @login_required
     @is_pro_user
+    @login_required
     def post(self):
         args = self.reqparse.parse_args()
 
