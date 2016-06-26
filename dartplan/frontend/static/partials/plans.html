@@ -1,0 +1,19 @@
+<div layout="row" layout-align='center center'>
+  <div flex="50">
+    <h1>My Plans</h1>
+
+    <md-list ng-controller="SettingsController">
+      <md-list-item ng-repeat="plan in ::plans" class="edit">
+        <md-input-container flex='60'>
+          <label>Plan Title</label>
+          <input class='plan-title' ng-model="plan.title" ng-keypress="checkSubmit($event)" ng-blur="saveTitle(plan)">
+        </md-input-container>
+        <span flex></span>
+        <md-button class="md-primary" ng-href="plans/{[plan.id]}" aria-label="Edit" layout-align='center center'>
+          View Plan
+        </md-button>
+      </md-list-item>
+      <md-divider></md-divider>
+    </md-list>
+  </div>
+</div>

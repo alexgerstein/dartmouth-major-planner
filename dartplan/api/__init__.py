@@ -13,7 +13,7 @@ from hours import HourListAPI
 from departments import DepartmentListAPI
 from distributives import DistributiveListAPI
 from medians import MedianListAPI
-from plans import PlanAPI
+from plans import PlanAPI, PlanListAPI
 from users import UserAPI
 
 bp = Blueprint('api', __name__)
@@ -36,6 +36,7 @@ api.add_resource(TermListAPI, '/plans/<int:plan_id>/terms', endpoint='terms')
 api.add_resource(TermAPI, '/plans/<int:plan_id>/terms/<int:id>',
                  endpoint='term')
 api.add_resource(PlanAPI, '/plans/<int:id>', endpoint='plan')
+api.add_resource(PlanListAPI, '/plans', endpoint='plans')
 api.add_resource(UserAPI, '/user', endpoint='user')
 
 

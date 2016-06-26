@@ -1,3 +1,4 @@
+from flask import g
 from flask_restful import Resource, marshal, fields, reqparse, inputs
 
 from dartplan.authorization import plan_owned_by_user
@@ -17,12 +18,23 @@ class getPlanTerms(fields.Raw):
         return [marshal(term, term_fields) for term in terms]
 
 plan_fields = {
+    'id': fields.Integer,
     'title': fields.String,
-    'terms': getPlanTerms,
-    'offerings': fields.List(fields.Nested(offering_fields)),
     'fifth_year': fields.Boolean,
     'user': fields.Nested(user_fields)
 }
+
+plan_detail_fields = {
+    'terms': getPlanTerms,
+    'offerings': fields.List(fields.Nested(offering_fields)),
+}
+
+plan_detail_fields = dict(plan_detail_fields, **plan_fields)
+
+
+class PlanListAPI(Resource):
+    def get(self):
+        return {'plans': [marshal(plan, plan_fields) for plan in g.user.plans]}
 
 
 class PlanAPI(Resource):
@@ -34,7 +46,7 @@ class PlanAPI(Resource):
 
     def get(self, id):
         plan = Plan.query.get_or_404(id)
-        return {'plan': marshal(plan, plan_fields)}
+        return {'plan': marshal(plan, plan_detail_fields)}
 
     @plan_owned_by_user
     @login_required
@@ -57,4 +69,4 @@ class PlanAPI(Resource):
 
             plan.swap_fifth_year()
 
-        return {'plan': marshal(plan, plan_fields)}
+        return {'plan': marshal(plan, plan_detail_fields)}

@@ -3,6 +3,10 @@ dartplanApp = angular.module 'dartplanApp'
 dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$routeParams', 'PlansService', 'UsersService', ($scope, $route, $location, $routeParams, PlansService, UsersService) ->
   $scope.planLoaded = false
 
+  $scope.getPlans = ->
+    PlansService.getPlans().then (plans) ->
+      $scope.plans = plans
+
   $scope.getPlan = ->
     return unless $scope.plan_id
     PlansService.getPlan($scope.plan_id).then (plan) ->
@@ -19,17 +23,18 @@ dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$rou
   $scope.$route = $route
   $scope.plan_id = $routeParams.id
   $scope.getPlan()
+  $scope.getPlans()
   $scope.getCurrentUser()
   ll('tagScreen', $route.current.originalPath)
 ]
 
 dartplanApp.controller 'SettingsController', ['$scope', 'PlansService', ($scope, PlansService) ->
 
-  $scope.toggleFifthYear = =>
-    PlansService.toggleFifthYear($scope.plan_id, !$scope.plan.fifth_year)
+  $scope.toggleFifthYear = (plan) =>
+    PlansService.toggleFifthYear(plan.id, !plan.fifth_year)
 
-  $scope.saveTitle = =>
-    PlansService.saveTitle($scope.plan_id, $scope.plan.title)
+  $scope.saveTitle = (plan) =>
+    PlansService.saveTitle(plan.id, plan.title)
 
   $scope.checkSubmit = (e) =>
     if e.which == 13

@@ -1,10 +1,10 @@
 <div layout-padding layout="row" layout-align="space-between center">
   <md-input-container flex='60'>
     <label>Plan Title</label>
-    <input class='plan-title' ng-model="plan.title" ng-keypress="checkSubmit($event)" ng-blur="saveTitle()">
+    <input class='plan-title' ng-model="plan.title" ng-keypress="checkSubmit($event)" ng-blur="saveTitle(plan)">
   </md-input-container>
   <span flex></span>
-  <md-checkbox class="md-warn" flex='40' ng-if="isCurrentUser()" ng-model="plan.fifth_year" aria-label="Five-Year Plan?" ng-click="toggleFifthYear()">
+  <md-checkbox class="md-warn" flex='40' ng-model="plan.fifth_year" aria-label="Five-Year Plan?" ng-click="toggleFifthYear(plan)">
     Fifth Year?
   </md-checkbox>
 </div>
