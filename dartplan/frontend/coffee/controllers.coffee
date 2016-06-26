@@ -44,7 +44,7 @@ dartplanApp.controller 'PlansController', ['$scope', '$mdDialog', '$location', '
     $scope.plans = plans
 
     $scope.showNewPlanDialog = ->
-      if $scope.isProUser()
+      if $scope.isProUser() || ($scope.user.number_of_plans == 0)
         $mdDialog.show({
           controller: NewPlanDialogController,
           scope: $scope,

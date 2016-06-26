@@ -1,7 +1,7 @@
 from flask import g
 from flask_restful import Resource, marshal, fields, reqparse, inputs
 
-from dartplan.authorization import plan_owned_by_user, is_pro_user
+from dartplan.authorization import plan_owned_by_user, can_create_new_plan
 from dartplan.login import login_required
 from dartplan.models import Plan
 from dartplan.database import db
@@ -43,7 +43,7 @@ class PlanListAPI(Resource):
     def get(self):
         return {'plans': [marshal(plan, plan_fields) for plan in g.user.plans]}
 
-    @is_pro_user
+    @can_create_new_plan
     @login_required
     def post(self):
         args = self.reqparse.parse_args()
