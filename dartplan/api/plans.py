@@ -22,6 +22,7 @@ plan_fields = {
     'id': fields.Integer,
     'title': fields.String,
     'fifth_year': fields.Boolean,
+    'default': fields.Boolean,
     'user': fields.Nested(user_fields)
 }
 
@@ -48,8 +49,9 @@ class PlanListAPI(Resource):
     def post(self):
         args = self.reqparse.parse_args()
 
+        default = g.user.plans.count() == 0
         plan = Plan(user=g.user, title=args.title,
-                    fifth_year=args.fifth_year)
+                    fifth_year=args.fifth_year, default=default)
         db.session.add(plan)
         db.session.commit()
 

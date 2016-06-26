@@ -58,6 +58,7 @@ class TestPlanAPI(TestBase):
         plan_data = data['plan']
         offering = plan_with_offering.offerings.first()
         assert plan_data['title'] == 'Default'
+        assert plan_data['default']
         assert plan_data['offerings'][0]['name'] == str(offering)
 
     def test_change_plan_title(self, test_client, plan):

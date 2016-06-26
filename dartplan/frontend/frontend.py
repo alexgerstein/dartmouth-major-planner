@@ -44,7 +44,7 @@ def fetch_user():
 @login_required
 @year_required
 def planner():
-    plan = g.user.plans.first()
+    plan = g.user.plans.filter_by(default=True).first()
     return redirect(url_for('frontend.plan', plan_id=plan.id))
 
 

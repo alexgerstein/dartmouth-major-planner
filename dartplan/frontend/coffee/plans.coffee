@@ -3,7 +3,7 @@ dartplanApp = angular.module 'dartplanApp'
 dartplanApp.factory 'Plan', ['Term', 'Offering', 'User', (Term, Offering, User) ->
   class Plan
     constructor: (options) ->
-      {@id, @title, @fifth_year} = options
+      {@id, @title, @fifth_year, @default} = options
       if options.terms
         @terms = (new Term term for term in options.terms)
         @offerings = (new Offering offering for offering in options.offerings)
