@@ -44,13 +44,16 @@ dartplanApp.controller 'PlansController', ['$scope', '$mdDialog', '$location', '
     $scope.plans = plans
 
     $scope.showNewPlanDialog = ->
-      $mdDialog.show({
+      if $scope.isProUser()
+        $mdDialog.show({
           controller: NewPlanDialogController,
           scope: $scope,
           preserveScope: true,
           templateUrl: '/static/partials/new-plan-dialog.html',
           clickOutsideToClose: true
         })
+      else
+        $location.path('/pro')
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->

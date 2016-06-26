@@ -1,9 +1,9 @@
 <div layout="row" layout-align='center center' ng-controller="PlansController">
   <div flex="50">
-    <h1>My Plans</h1>
+    <h1 class='md-display-2'>My Plans</h1>
 
     <md-list>
-      <md-list-item ng-repeat="plan in ::plans" class="edit">
+      <md-list-item ng-repeat="plan in ::plans | orderBy: 'title'" class="edit">
         <h2>{[plan.title]}</h2>
         <span flex></span>
         <md-button class="md-primary" ng-href="plans/{[plan.id]}" aria-label="Edit" layout-align='center center'>
@@ -13,7 +13,7 @@
       </md-list-item>
     </md-list>
 
-    <div ng-if="isProUser" layout='row'>
+    <div layout='row'>
       <span flex></span>
       <md-button class="md-primary" aria-lable="Create New Plan" ng-click="showNewPlanDialog()">
         + Create a New Plan

@@ -18,6 +18,12 @@ class config
         controller: 'MainController'
       }
     ).
+    when("/pro",
+      {
+        templateUrl: '/static/partials/pro.html',
+        controller: 'MainController'
+      }
+    ).
     when("/about",
       {
         templateUrl: '/static/partials/about.html',
