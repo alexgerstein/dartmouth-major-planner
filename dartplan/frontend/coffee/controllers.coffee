@@ -25,15 +25,20 @@ dartplanApp.controller 'MainController', ['$scope', '$route', '$location', '$rou
 
 dartplanApp.controller 'SettingsController', ['$scope', 'PlansService', ($scope, PlansService) ->
 
-  $scope.toggleFifthYear = =>
-    PlansService.toggleFifthYear($scope.plan_id, !$scope.plan.fifth_year)
+  $scope.toggleFifthYear = (plan) =>
+    PlansService.toggleFifthYear(plan.id, !plan.fifth_year)
 
-  $scope.saveTitle = =>
-    PlansService.saveTitle($scope.plan_id, $scope.plan.title)
+  $scope.saveTitle = (plan) =>
+    PlansService.saveTitle(plan.id, plan.title)
 
   $scope.checkSubmit = (e) =>
     if e.which == 13
       e.target.blur()
+]
+
+dartplanApp.controller 'PlansController', ['$scope', 'PlansService', ($scope, PlansService) ->
+  PlansService.getPlans().then (plans) ->
+    $scope.plans = plans
 ]
 
 dartplanApp.controller 'PlannerController', ['$scope', '$mdDialog', '$sce', 'PlansService', 'TermsService', ($scope, $mdDialog, $sce, PlansService, TermsService) ->

@@ -3,10 +3,11 @@ dartplanApp = angular.module 'dartplanApp'
 dartplanApp.factory 'Plan', ['Term', 'Offering', 'User', (Term, Offering, User) ->
   class Plan
     constructor: (options) ->
-      {@title, @fifth_year} = options
-      @terms = (new Term term for term in options.terms)
-      @offerings = (new Offering offering for offering in options.offerings)
-      @user = new User options.user
+      {@id, @title, @fifth_year} = options
+      if options.terms
+        @terms = (new Term term for term in options.terms)
+        @offerings = (new Offering offering for offering in options.offerings)
+        @user = new User options.user
 ]
 
 dartplanApp.factory 'PlansService', ['$http', '$rootScope', '$mdToast', 'Plan', ($http, $rootScope, $mdToast, Plan) ->
@@ -14,6 +15,10 @@ dartplanApp.factory 'PlansService', ['$http', '$rootScope', '$mdToast', 'Plan', 
     getPlan: (id) ->
       $http.get("/api/plans/#{id}").then (result) ->
         new Plan result.data.plan
+
+    getPlans: ->
+      $http.get("/api/plans").then (result) ->
+        new Plan plan for plan in result.data.plans
 
     saveTitle: (id, title) ->
       $http.put("/api/plans/#{id}", {'title': title}).then (result) ->

@@ -1,0 +1,16 @@
+<div layout="row" layout-align='center center' ng-controller="PlansController">
+  <div flex="50">
+    <h1>My Plans</h1>
+
+    <md-list>
+      <md-list-item ng-repeat="plan in ::plans" class="edit">
+        <h2>{[plan.title]}</h2>
+        <span flex></span>
+        <md-button class="md-primary" ng-href="plans/{[plan.id]}" aria-label="Edit" layout-align='center center'>
+          View Plan
+        </md-button>
+      </md-list-item>
+      <md-divider></md-divider>
+    </md-list>
+  </div>
+</div>

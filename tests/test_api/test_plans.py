@@ -4,6 +4,24 @@ import json
 from . import TestBase
 
 
+class TestPlanListAPI(TestBase):
+    def test_get_plans(self, test_client, user_with_two_plans):
+        with test_client.session_transaction() as sess:
+            sess['user'] = {'netid': user_with_two_plans.netid}
+
+        r = test_client.get('/api/plans')
+        self.check_valid_header_type(r.headers)
+        data = json.loads(r.data)
+        plans_data = data['plans']
+        assert len(plans_data) == 2
+
+        first_plan = plans_data[0]
+        second_plan = plans_data[1]
+        assert first_plan.get('id')
+        assert second_plan.get('id')
+        assert first_plan.get('id') != second_plan.get('id')
+
+
 class TestPlanAPI(TestBase):
 
     def test_get_plan(self, test_client, plan_with_offering):
