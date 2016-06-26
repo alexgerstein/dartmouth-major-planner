@@ -68,6 +68,13 @@ class Plan(db.Model):
         self.fifth_year = not self.fifth_year
         db.session.commit()
 
+    def set_as_default(self):
+        self.user.plans.filter_by(default=True).update({'default': False})
+        db.session.commit()
+
+        self.default = True
+        db.session.commit()
+
     def reset_terms(self):
         terms = self._get_all_terms()
 

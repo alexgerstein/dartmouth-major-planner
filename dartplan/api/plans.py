@@ -64,6 +64,7 @@ class PlanAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('fifth_year', type=inputs.boolean)
+        self.reqparse.add_argument('default', type=inputs.boolean)
         self.reqparse.add_argument('title')
         super(PlanAPI, self).__init__()
 
@@ -80,6 +81,13 @@ class PlanAPI(Resource):
 
         if args.title:
             plan.rename(args.title)
+
+        if args.default is not None:
+            if args.default and plan.default:
+                return {"errors":
+                        {"default": ["Plan already set as default."]}}, 409
+
+            plan.set_as_default()
 
         if args.fifth_year is not None:
             if args.fifth_year and plan.fifth_year:
