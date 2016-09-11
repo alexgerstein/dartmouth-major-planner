@@ -14,12 +14,12 @@ import string
 from dartplan import mail
 
 from dartplan.database import db
-from dartplan.models import Hour, Term, Plan, Distributive, Offering, Course
+from dartplan.models import Hour, Department, Term, Plan, Distributive, Offering, Course
 
 # Base URLs
 BASE_URL = "http://dartmouth.smartcatalogiq.com"
-UG_DEPT_URL = "/en/2015/orc/Departments-Programs-Undergraduate"
-GRAD_DEPT_URL = "/en/2015/orc/Departments-Programs-Graduate"
+UG_DEPT_URL = "/en/current/orc/Departments-Programs-Undergraduate"
+GRAD_DEPT_URL = "/en/current/orc/Departments-Programs-Graduate"
 
 # Timetable Setup
 TIMETABLE_BASE = "http://oracle-www.dartmouth.edu/dart/groucho/timetable.subject_search?distribradio=alldistribs&subjectradio=allsubjects&termradio=selectterms&hoursradio=allhours&terms=no_value&depts=no_value&periods=no_value&distribs=no_value&distribs_i=no_value&distribs_wc=no_value&sortorder=dept&pmode=public&term=&levl=&fys=n&wrt=n&pe=n&review=n&crnl=no_value&classyear=2008&searchtype=Subject+Area(s)"
@@ -208,7 +208,7 @@ def fix_offering_typos(c1, d1, stripped_offering, hours_offered, terms_offered, 
     elif stripped_offering == "4th":
         stripped_offering = ""
 
-    elif (d1.abbr == 'ECS'):
+    elif (d1.abbr == 'PH'):
         stripped_offering = ""
 
     elif "." in stripped_offering:
