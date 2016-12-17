@@ -3,7 +3,7 @@ Find the courses that fit.
 ## Description
 Webapp for Dartmouth students to plan their courses for their time at Dartmouth. Instead of individually looking up the courses that you want to take and checking for conflicts. The app scrapes all course catalogue pages and provides a simple interface to select the classes _you_ want to take.
 
-Currently at [www.dartplan.com](http://www.dartplan.com). DartmouthID required.
+Formerly hosted at [www.dartplan.com](http://www.dartplan.com).
 
 ## Statuses
 [![Build Status](https://travis-ci.org/alexgerstein/dartmouth-major-planner.svg?branch=master)](https://travis-ci.org/alexgerstein/dartmouth-major-planner)
